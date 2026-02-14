@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="windows-1251"?>
+
+<!-- 
+	MCM
+-->
+<string_table>
+
+	<string id="ui_mcm_menu_pda_inter">
+		<text>PDA interactive</text>
+	</string>
+
+	<!-- Keybind -->
+	<string id="ui_mcm_menu_pda_keys">
+		<text>Keybind</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_keystitle">
+		<text>Keybind</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_keys_int_pda_key">
+		<text>Keybind</text>
+	</string>
+
+		<!-- TAB EXCLUSION -->
+	<string id="ui_mcm_menu_pda_tabs">
+		<text>Tab Visibility</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_tabstitle">
+		<text>Tab Visibility (requires PDA restart)</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_raid_enabled">
+		<text>Show Raid Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_raid_enabled_desc">
+		<text>Enable or disable the Raid tab in the PDA interface.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_info_enabled">
+		<text>Show Buy Info Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_info_enabled_desc">
+		<text>Enable or disable the Buy Info tab in the PDA interface.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_games_enabled">
+		<text>Show Games Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_games_enabled_desc">
+		<text>Enable or disable the Games tab in the PDA interface.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_trade_enabled">
+		<text>Show Trade Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_trade_enabled_desc">
+		<text>Enable or disable the Trade (Buy Item) tab in the PDA interface.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_notes_enabled">
+		<text>Show Notes Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_notes_enabled_desc">
+		<text>Enable or disable the Notes tab in the PDA interface.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_comms_enabled">
+		<text>Show Comms Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_comms_enabled_desc">
+		<text>Enable or disable the Comms (Banter) tab in the PDA interface.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_tasks_enabled">
+		<text>Show Tasks Tab</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tabs_tab_tasks_enabled_desc">
+		<text>Enable or disable the Tasks tab in the PDA interface.</text>
+	</string>
+
+		<!-- RAID -->
+	<string id="ui_mcm_menu_pda_raid">
+		<text>Raid</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_raidtitle">
+		<text>Raid</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_raid_raid_offer_mult">
+		<text>Respond chance multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_raid_raid_offer_mult_desc">
+		<text>Chance that squads will respond to your raid offer. Higher = more responses.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_raid_raid_base_price">
+		<text>Base price</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_raid_raid_base_price_desc">
+		<text>Base cost to hire a squad for raiding. Final price depends on squad strength.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_raid_raid_price_power">
+		<text>Price power</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_raid_raid_price_power_desc">
+		<text>The lower variable is the more it will decrease the cost of expensive squads.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_raid_raid_max_time">
+		<text>Max time (days)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_raid_raid_max_time_desc">
+		<text>Maximum time in game days for squad to reach the target location.</text>
+	</string>
+
+
+		<!-- FIND -->
+	<string id="ui_mcm_menu_pda_info">
+		<text>Info</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_infotitle">
+		<text>Info</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_info_find_respond_mult">
+		<text>Respond chance multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_info_find_respond_mult_desc">
+		<text>Chance that stalkers will respond to your info requests. Higher = more responses.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_info_find_see_distance">
+		<text>Distance to target</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_info_find_see_distance_desc">
+		<text>Radius in which Senders should be from the target and be able to send message.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_info_find_can_lie">
+		<text>NPC can lie</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_info_find_can_lie_desc">
+		<text>Based on faction, reputation and relations. NPCs will have a chance to lie about target's location.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_info_find_base_price">
+		<text>Base price</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_info_find_base_price_desc">
+		<text>Base cost to buy information about targets (artifacts, mutants, anomalies, etc.).</text>
+	</string>
+
+
+		<!-- GAMES -->
+	<string id="ui_mcm_menu_pda_games">
+		<text>Games</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_gamestitle">
+		<text>Games</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_games_puzzle_reward">
+		<text>Puzzle reward</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_games_puzzle_reward_desc">
+		<text>Money reward for completing the 15-puzzle game.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_games_slots_bet">
+		<text>Slot machine bet</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_games_slots_bet_desc">
+		<text>Amount of money to bet per slot machine spin.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_games_sudoku_reward">
+		<text>Sudoku reward</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_games_sudoku_reward_desc">
+		<text>Money reward for completing a Sudoku puzzle.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_games_sudoku_diff">
+		<text>Sudoku difficulty</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_games_sudoku_diff_desc">
+		<text>Difficulty level: 1 = Easy, 2 = Medium, 3 = Hard.</text>
+	</string>
+
+
+		<!-- TRADE -->
+	<string id="ui_mcm_menu_pda_trade">
+		<text>Trade</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_tradetitle">
+		<text>Trade</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_respond_mult">
+		<text>Respond chance multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_respond_mult_desc">
+		<text>Chance that traders will respond to your item requests. Higher = more responses.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_delivery_price_mult">
+		<text>Delivery price mult</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_delivery_price_mult_desc">
+		<text>Higher is more expensive delivery. Delivery price also based on trader type.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_delivery_time_mult">
+		<text>Delivery time multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_delivery_time_mult_desc">
+		<text>Lesser variable will make delivery shorter. Delivery time is based on distance.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_stalker_pool">
+		<text>Stalkers pool (in %)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_stalker_pool_desc">
+		<text>Amount from ALL stalkers that will be in a trade pool. Less stalkers means traders will respond more often, value of 0 means only traders can respond.</text>
+	</string>
+
+
+		<!-- Comms -->
+	<string id="ui_mcm_menu_pda_banter">
+		<text>Comms</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_bantertitle">
+		<text>Comms</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_distance">
+		<text>SOS Radius</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_distance_desc">
+		<text>Maximum distance for SOS signal to reach friendly squads.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_duration">
+		<text>SOS Duration (seconds)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_duration_desc">
+		<text>When time is out - responded NPCs will go back (if they are not in combat already).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_cooldown">
+		<text>SOS Cooldown (seconds)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_cooldown_desc">
+		<text>Time before you can send another SOS signal.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_limit">
+		<text>SOS Max squads respond</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_banter_banter_sos_limit_desc">
+		<text>Maximum amount of squads that can respond to the call.</text>
+	</string>
+
+
+		<!-- Tasks -->
+	<string id="ui_mcm_menu_pda_tasks">
+		<text>Tasks</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_taskstitle">
+		<text>Tasks</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_respond_mult">
+		<text>Respond chance multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_respond_mult_desc">
+		<text>Chance that task givers will have tasks available. Higher = more tasks.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_max_tasks">
+		<text>Max active tasks (Need reloading)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_max_tasks_desc">
+		<text>Maximum number of PDA tasks you can have active at once.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_base_reward">
+		<text>Base reward</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_base_reward_desc">
+		<text>This value then multiplied for target's difficulty (rank for stalkers for example).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_cooldown">
+		<text>NPC target reset time</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_cooldown_desc">
+		<text>NPCs pick new target after this time (in game hours).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_goodwill_mult">
+		<text>Goodwill/reputation multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_goodwill_mult_desc">
+		<text>"1" is +25 to goodwill of task giver's faction and player's reputation when task is complete. "0" disables it.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_giver_radius">
+		<text>Task giver radius</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_giver_radius_desc">
+		<text>Task givers will respond only if they are in this radius, "10000" is the entire Zone, "5000" is roughly half. (Can help with small freezes at the moment you press find task button.)</text>
+	</string>
+
+		<!-- mutant -->
+	<string id="ui_mcm_pda_inter_tasks_mutants_header">
+		<text>Mutant hunt</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_mutant_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_mutant_reward_desc">
+		<text>Multiplier for mutant hunt rewards. Base reward depends on mutant type (dogs = low, chimera = high).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_mutant_distance">
+		<text>Radius to pick "Mutant hunt" target</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_mutant_distance_desc">
+		<text>Maximum distance from task giver to find mutant targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_mutant_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_mutant_cd_desc">
+		<text>Hours before task giver offers a new mutant hunt task.</text>
+	</string>
+
+		<!-- bounty -->
+	<string id="ui_mcm_pda_inter_tasks_bounty_header">
+		<text>Bounty</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_bounty_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_bounty_reward_desc">
+		<text>Multiplier for bounty rewards. Base reward depends on target's rank.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_bounty_distance">
+		<text>Radius to pick "Bounty" target</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_bounty_distance_desc">
+		<text>Maximum distance from task giver to find bounty targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_bounty_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_bounty_cd_desc">
+		<text>Hours before task giver offers a new bounty task.</text>
+	</string>
+
+		<!-- guide -->
+	<string id="ui_mcm_pda_inter_tasks_guide_header">
+		<text>Guide</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guide_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guide_reward_desc">
+		<text>Multiplier for guide rewards. Base reward depends on distance to destination.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guide_time_mult">
+		<text>Guide task time multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guide_time_mult_desc">
+		<text>Multiplier for time limit. Lower = less time to complete guide tasks.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guide_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guide_cd_desc">
+		<text>Hours before task giver offers a new guide task.</text>
+	</string>
+
+		<!-- fetch items -->
+	<string id="ui_mcm_pda_inter_tasks_items_header">
+		<text>Find items</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_items_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_items_reward_desc">
+		<text>Multiplier for item fetch rewards. Base reward depends on item value.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_items_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_items_cd_desc">
+		<text>Hours before task giver offers a new find items task.</text>
+	</string>
+
+		<!-- squad -->
+	<string id="ui_mcm_pda_inter_tasks_squad_header">
+		<text>Dangerous squad</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_squad_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_squad_reward_desc">
+		<text>Multiplier for dangerous squad rewards. Base reward depends on squad members' ranks.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_squad_distance">
+		<text>Radius to pick "Dangerous squad" target</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_squad_distance_desc">
+		<text>Maximum distance from task giver to find enemy squad targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_squad_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_squad_cd_desc">
+		<text>Hours before task giver offers a new dangerous squad task.</text>
+	</string>
+
+		<!-- stealth -->
+	<string id="ui_mcm_pda_inter_tasks_stealth_header">
+		<text>Steal item</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_stealth_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_stealth_reward_desc">
+		<text>Multiplier for steal item rewards.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_stealth_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_stealth_cd_desc">
+		<text>Hours before task giver offers a new steal item task.</text>
+	</string>
+
+		<!-- guard -->
+	<string id="ui_mcm_pda_inter_tasks_guard_header">
+		<text>Guard position</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guard_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guard_reward_desc">
+		<text>Multiplier for guard position rewards. Payment doubles at night (20:00-05:00).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guard_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_guard_cd_desc">
+		<text>Hours before task giver offers a new guard task.</text>
+	</string>
+
+		<!-- scout -->
+	<string id="ui_mcm_pda_inter_tasks_scout_header">
+		<text>Scout</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_scout_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_scout_reward_desc">
+		<text>Multiplier for scout mission rewards.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_scout_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_scout_cd_desc">
+		<text>Hours before task giver offers a new scout task.</text>
+	</string>
+
+		<!-- artefact -->
+	<string id="ui_mcm_pda_inter_tasks_artefact_header">
+		<text>Find artefact</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_artefact_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_artefact_reward_desc">
+		<text>Multiplier for find artefact rewards.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_artefact_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_artefact_cd_desc">
+		<text>Hours before task giver offers a new find artefact task.</text>
+	</string>
+
+		<!-- delivery -->
+	<string id="ui_mcm_pda_inter_tasks_delivery_header">
+		<text>Courier</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_delivery_reward">
+		<text>Reward multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_delivery_reward_desc">
+		<text>Multiplier for courier/delivery rewards. Base reward depends on distance.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_delivery_cd">
+		<text>Cooldown (game hours)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_delivery_cd_desc">
+		<text>Hours before task giver offers a new courier task.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_stash_chance">
+		<text>Stash Drop Chance</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_stash_chance_desc">
+		<text>Chance to receive a random stash as bonus reward when completing any PDA task. 0 = disabled, 0.2 = 20% chance, 1 = 100% chance.</text>
+	</string>
+
+
+		<!-- Incoming -->
+	<string id="ui_mcm_menu_pda_inc">
+		<text>Incoming messages</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_inctitle">
+		<text>Incoming messages</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_enable">
+		<text>Stalker SOS enable</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_enable_desc">
+		<text>Stalkers occasionally ask for help when they are under attack.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_chance">
+		<text>Stalker SOS chance</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_chance_desc">
+		<text>Chance that stalkers under attack will send SOS messages. 1.0 = 100%.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_money">
+		<text>Base money reward</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_money_desc">
+		<text>Base money reward for rescuing stalkers who sent SOS.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_stash">
+		<text>Stash reward chance</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_stash_desc">
+		<text>"1" will make stashes as the only possible reward.</text>
+	</string>
+
+
+		<!-- Debug -->
+	<string id="ui_mcm_menu_pda_debug">
+		<text>Misc/Debug</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_debugxtitle">
+		<text>Misc/Debug</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_debug_debugx">
+		<text>Debug</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_debug_debugx_desc">
+		<text>To display info and stuff in console.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_debug_notes_export">
+		<text>Export Notes to .txt</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_debug_notes_export_desc">
+		<text>Exporting all Notes to the .txt file in Anomaly root folder.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_debug_cancel_tasks">
+		<text>Cancel all active tasks</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_debug_cancel_tasks_desc">
+		<text>Canceling all active tasks from this addon.</text>
+	</string>
+
+
+</string_table>
