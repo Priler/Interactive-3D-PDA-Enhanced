@@ -1,0 +1,752 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<string_table>
+	
+    <string id="stalker_search_cant_find_pda">
+		<text>Не удалось найти ни один КПК, зарегистрированный под выбранным именем</text>
+	</string>
+	<string id="stalker_search_signal_lost">
+		<text>Сигнал КПК потерян</text>
+	</string>
+	<string id="stalker_search_signal_found">
+		<text>отслеживается под номером</text>
+	</string>
+	<string id="stalker_search_title">
+		<text>Сигнал КПК</text>
+	</string>
+	<string id="stalker_search_description">
+		<text>Отслеживается активный сигнал КПК, зарегистрированного под выбранным именем.</text>
+	</string>
+	
+
+	<string id="stalker_search_payment_query">
+		<text>Заплатить %s РУБ?</text>
+	</string>
+	
+	<string id="stalker_search_payment_not_enough">
+		<text>Слишком дорого: (%s / %s)</text>
+	</string>
+		
+	<string id="stalker_search_snitch_header">
+		<text>Личное сообщение:</text>
+	</string>
+	
+	<string id="stalker_search_snitch_meeting_pre">
+		<text>Анон:\nПохоже еще один человек наконец смог получить доступ к нашей Системе Отслеживания Целей Инфопредпринимателей. Чтож, до тех пор, пока у тебя хватает денег, тебе всегда дозволено использовать данный инструмент для своей выгоды.\n \nОднако, тебе стоит знать: если ты вмешаешься в наш бизнес,\nмы используем эту систему, чтобы достать тебя.\n \nТы не сможешь спрятаться от нас.\nПоэтому, стой на нашей хорошей стороне, и тогда мы будем помогать друг другу.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_meeting_1">
+		<text>Анон:\nПривет. Тебе может быть интересно, кто я такой и как я пробрался в твои закрытые личные сообщения.\nМой ответ: не твоё дело.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_2">
+		<text>Анон:\nЯ и мои "коллеги" из сети инфопредпринимателей наблюдали за тобой некоторое время, и мы находим твои методы... интересными.\nУ меня есть для тебя предложение.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_3">
+		<text>Анон:\nТвой КПК только что был дополнен одним из наших особых инструментов, созданных для обнаружения наших целей. Если у тебя достаточно денег и желания найти человека, всё, что нам требуется, это его имя.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_4">
+		<text>Анон:\nПодвох? Используя эту программу, ты автоматически соглашаешься на передачу некоторого количества вычислительной мощи твоего КПК на обнаружение сталкеров вокруг тебя.\n \nНе всем понравится находиться рядом с крысой.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_5">
+		<text>Анон:\nКак будешь готов, просто запусти новую прогу на своём КПК и введи имя своей цели.</text>
+	</string>
+	
+	
+	
+	<string id="stalker_search_empty_string">
+		<text>Запрос отклонён: Отсутствует имя цели.</text>
+	</string>
+	
+	<string id="stalker_search_target_lost_before_accepted">
+		<text>Запрос отклонён: Потерян сигнал цели.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_target_lost_before_accepted">
+		<text>Хм, кто бы это ни был, его КПК отрубился прямо перед тем как ты успел нажать кнопку подтверждения.</text>
+	</string>
+	
+	<string id="stalker_search_transferring">
+		<text>Отправлено %s РУБ.</text>
+	</string>
+	
+	<string id="stalker_search_low_rank">
+		<text>Запрос отклонён: недостаточный уровень допуска</text>
+	</string>
+	
+	
+	<string id="stalker_search_snitch_low_pda">
+		<text>У этого сталкера продвинутые протоколы шифрования. У нас не хватает агентов с подобными устройствами внутри Зоны, чтобы мы могли его обнаружить. Если ты достанешь более новую модель КПК, возможно у нас будет больше шансов.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_low_money">
+		<text>Извини, приятель, мы не можем обслуживать тебя без достойной оплаты с твоей стороны. Сервера и оборудование сами за себя не заплатят.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_novice_1">
+		<text>Странно, КПК этого сталкера зарегистрировано под двумя разными аккаунтами. Возможно, он украл его у кого-то другого.</text>
+	</string>
+	<string id="stalker_search_snitch_found_enemy_novice_2">
+		<text>Недавно зарегистрированный аккаунт. Ты планируешь ограбить новичка?</text>
+	</string>
+	<string id="stalker_search_snitch_found_enemy_novice_3">
+		<text>КПК этого человека не имеет никакой защиты. Простая работа.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_novice_1">
+		<text>Это может быть и новичок, но не будь слишком самоуверенным. Даже ржавое ружъе бъет как поезд, стоит лишь зарядить его жеканом.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_novice_2">
+		<text>Судя по его снаряге, он может сдохнуть раньше чем ты до него доберешься.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_novice_3">
+		<text>Этот сталкер новичок ... вряд ли на нём что-то кроме куртки.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_trainee_1">
+		<text>Его пароль "12345". Неужели некоторые люди настолько ленивы, что никогда не меняют заводские настройки?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_trainee_2">
+		<text>Этот парень забыл изменить настройки приватности данных о его местоположении.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_trainee_3">
+		<text>Шифрование низкого уровня. Легко взломать.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_trainee_1">
+		<text>Ещё одна зарубка на твоём оружии, не так ли?</text>                            
+	</string>                                  
+	<string id="stalker_search_snitch_accept_enemy_trainee_2">
+		<text>Получишь бонусные очки, если заколешь его ножом. Шучу, не будь дураком.</text>                            
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_trainee_3">
+		<text>Ты уверен, что он стоит твоих трудов?</text>
+	</string>
+
+	<string id="stalker_search_snitch_found_enemy_experienced_1">
+		<text>Его КПК, должно быть, какой-то старой модели. Никакой защиты. Ну либо он так уверен в себе ..</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_experienced_2">
+		<text>Этот сталкер продолжает посылать какой-то сигнал неизвестному контакту. Странно, но зато упрощает нам задачу.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_experienced_3">
+		<text>Дешёвое снаряжение, должно быть несложно разобраться с ним.</text>
+	</string>
+
+	<string id="stalker_search_snitch_accept_enemy_experienced_1">
+		<text>Не забывай, большинство сталкеров не ходят в одиночку.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_experienced_2">
+		<text>Еще один потенциальный клиент. Похоже, ему стоило заплатить нам раньше.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_experienced_3">
+		<text>Не забывай, даже если бросание болтов в некоторые аномалии поможет разрядить их и позволить тебе пройти, гораздо безопаснее просто обойти их. Большинство новичков умирают от слишком большой уверенности.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_professional_1">
+		<text>Этот парень знает много, но он слишком самоуверенный.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_professional_2">
+		<text>Этот КПК зарегистрирован под другим именем, но в его файлах есть имя, введённое тобой. Украденная личность?</text>
+	</string>
+	<string id="stalker_search_snitch_found_enemy_professional_3">
+		<text>Хм, карта показывает два разных КПК с этим именем. Очередная попытка скрыться от нас?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_professional_1">
+		<text>Следи за мутантами. Со всеми боями между сталкерами, эти твари уже совсем распоясались.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_professional_2">
+		<text>Я бы сказал тебе "Никому не говори!", но большинство сталкеров в Зоне и так знают про эту систему. Они просто ценят свои жизни достаточно сильно, чтобы не пытаться вмешиваться в наши дела.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_professional_3">
+		<text>Новый день, новая гора трупов.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_veteran_1">
+		<text>Этот мужик видел достаточно битв за свою жизнь. Постарайся не стать очередной частью его опыта.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_veteran_2">
+		<text>Этот стал очень опытным в охоте на мутантов, но мы оба знаем кто здесь настоящий монстр.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_veteran_3">
+		<text>Наша база данных говорит нам что этот парень возможно был настоящим ветераном войны перед входом в Зону. Украденная доблесть, или вправду ветеран? Скоро узнаем.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_veteran_1">
+		<text>Не забудь продавать найденные тобой КПК твоему местному инфопредпринимателю, мы очень ценим любую информацию, которую они могут содержать.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_veteran_2">
+		<text>Не стесняйся всадить полный магазин пуль ему в ноги. Это научит его и его друзей платить нам в следующий раз.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_veteran_3">
+		<text>Не забудь зярядить своё оружие.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_expert_1">
+		<text>Этот сталкер известен своими навыками лидерства. Лучше подходить к нему, когда он вдали от своего отряда.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_expert_2">
+		<text>Этот чел называет себя экспертом каждый раз, когда делает пост в соц. сети. Не проверишь ли, насколько правдивы его слова?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_expert_3">
+		<text>Этот мужик знает, что делает, но ты здесь тоже не новичок, не так ли?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_expert_1">
+		<text>Целься в голову.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_expert_2">
+		<text>Удачной охоты.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_expert_3">
+		<text>Советую поглядывать за спину, кто-то только что заплатил нам крупную сумму за отслеживание твоей позиции. Ничего личного.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_master_1">
+		<text>Этот тип - крепкий орешек. Ты уверен, что хочешь возиться с ним?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_master_2">
+		<text>Сильное шифрование. Походу у этого чела куча денег.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_master_3">
+		<text>Этого жёлудя сложно сломать. Подходи осторожно.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_master_1">
+		<text>Смотри не сдохни, нам нужны твои деньги.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_master_2">
+		<text>Советую взять пробивные патроны.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_master_3">
+		<text>Не начинай бой с ним вблизи.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_legend_1">
+		<text>Этот человек передал нам большое количество денег, чтобы мы не отслеживали его. Заплати нам вдвойне, и мы пересмотрим его контракт.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_legend_2">
+		<text>Этот - хорошо известный сталкер, он убил почти две сотни человек. Советую проверить своё снаряжение перед тем, как подходить к нему ближе.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_enemy_legend_3">
+		<text>Высокотехнологичное снаряжение и броня. Не пытайся взять на себя этого зверя в ближнем бою.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_legend_1">
+		<text>Постарайся не убивать всех моих клиентов. Поддерживать наши сервера в таких условиях не дёшево.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_legend_2">
+		<text>Удачи, она тебе понадобится.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_legend_3">
+		<text>Не забывай, ты всегда можешь сбежать от боя.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_novice_1">
+		<text>Еще один из новых парней. Больше нечего сказать.</text>
+	</string>
+	<string id="stalker_search_snitch_found_neutral_novice_2">
+		<text>Просто новый сталкер. Изображение в его профиле это фото его кота. Похоже он совсем не понимает, во что он ввязался.</text>
+	</string>
+	<string id="stalker_search_snitch_found_neutral_novice_3">
+		<text>Я не знаю его, походу он новенький.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_novice_1">
+		<text>Заводишь новых друзей, или..?</text>
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_novice_2">
+		<text>Принял, отслеживаем цель.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_novice_3">
+		<text>Ну что, каков твой план? Помочь ему, или прекратить его страдания?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_trainee_1">
+		<text>Просто случайный чувак. Никто не будет скучать по нему.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_trainee_2">
+		<text>Этот КПК такой старой модели, удивительно что он вообще ещё может посылать какие-либо сигналы.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_trainee_3">
+		<text>Этот парень должен Сиду дохрена денег. Похоже тот жирный ублюдок смог сцапать еще одного человека своими завышенными ценами.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_trainee_1">
+		<text>Не забудь, если ты сможешь достать их КПК, мы заплатим неплохую сумму за любую полечную информацию.</text>                            
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_trainee_2">
+		<text>Окей, надеюсь знание его позиции стоило твоих денег.</text>                            
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_trainee_3">
+		<text>Не пойму, на кой тебе сдался этот чел, но раз ты платишь, мы работаем.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_experienced_1">
+		<text>Обычный мужик, ничего особенного.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_experienced_2">
+		<text>Этот чел утверждал, что он был у Оазиса, но он никогда не давал доказательств. Если он вдруг помрёт, проверь его карманы на информацию об этом.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_experienced_3">
+		<text>У этого человека большой список криминальной активности во внешнем мире. Неудивительно, что теперь он в Зоне.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_experienced_1">
+		<text>Не забывай двигаться плавно. Зона забирает тех, кто торопится.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_experienced_2">
+		<text>Цель обнаружена, активируем датчики движения.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_experienced_3">
+		<text>Деньги получены, был рад иметь с тобой дело.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_professional_1">
+		<text>"Профессиональный сталкер", написанно в его профиле. Слишком много таких "профессионалов" подыхают в наши дни.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_professional_2">
+		<text>Какая-то аномалия продолжает сбивать его сигнал, но наша система предсказания движения к этому подготовлена.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_professional_3">
+		<text>Этот человек раньше работал в качестве нашего агента, но позже решил, что следить за людьми слишком аморально. Я не сильно расстроюсь, если ты всадишь пулю ему в голову.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_professional_1">
+		<text>Убедись, что ты принёс достаточно аптечек для этой работы.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_professional_2">
+		<text>Удачи.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_professional_3">
+		<text>Вот он. Проверь свою карту.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_veteran_1">
+		<text>Сигнал получен, но больше информации нет. Тут ты сам за себя.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_veteran_2">
+		<text>У этого парня тонна денег на его аккаунте, но его оборудование такого дерьмового качества. Он что, пытается собрать денег для своей семьи?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_veteran_3">
+		<text>Последний раз, когда я следил за этим, множество дружелюбных сигналов вокруг него пропали с карты. Этот парень ушёл, оставив несколько человек умирать.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_veteran_1">
+		<text>Следи за своим снаряжением, ты не хочешь застрять с кучей хлама в рюкзаке прямо во время боя.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_veteran_2">
+		<text>Нашел координаты, которые похоже ведут к одному из его тайников. Нет, я не поделюсь ими с тобой. Ничего личного, просто бизнес.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_veteran_3">
+		<text>Замечено много активности мутантов в твоей области. Не броди тут без дробовика в руках.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_expert_1">
+		<text>Хм, этот человек не существует в нашей базе данных. Откуда он здесь оказался?</text>
+	</string>
+	<string id="stalker_search_snitch_found_neutral_expert_2">
+		<text>За голову этого сталкера назначена награда. Кому он так насолил?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_expert_3">
+		<text>История его передвижения показывает, что он пользуется какими-то странными неизвестными путями для путешествия по Зоне. Похоже, нам стоит обновить наши карты.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_expert_1">
+		<text>Если ты планируешь избавиться от него, возьми что-нибудь для пробития его брони.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_expert_2">
+		<text>Небольшие помехи с сигналом, но это не должно нам помешать.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_expert_3">
+		<text>Да, кстати, тут пара сталкеров сообщили о том, что они видели какое-то.. летающее чёрное облако.. плюющееся кипящей кровью в людей? Какая-то странная хрень.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_master_1">
+		<text>Наши приборы говорят о том, что этот парень пользуется мобилой вместо КПК. Я думал, мобилы хреново работают в Зоне? Походу у него какая-то новая модель.</text>
+	</string>
+	<string id="stalker_search_snitch_found_neutral_master_2">
+		<text>История передвижения этого человека показывает будто он был повсюду, походу он пытается спрятать последнее место, где он находился.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_master_3">
+		<text>У этого есть тонна контрактов с наёмниками, что он затеял?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_master_1">
+		<text>Чёрт, у этого чела такое странное дерьмо в его приватных сообщениях. Походу я не смогу заснуть сегодня ночью.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_master_2">
+		<text>Соверую прихватить с собой немного взрывчатки. Никогда не знаешь, в какой момент она может пригодиться.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_master_3">
+		<text>Слушай, я знаю что эта система в основном предназначена для того, чтобы помочь нам убивать людей, но постарайся не совершать убиства без необходимости. Наша статистика показывает, что мы продолжаем терять всё больше и больше сталкеров. Если так будет продолжаться, мы можем упустить контроль над Зоной.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_legend_1">
+		<text>Похоже этот сталкер очень известен среди его людей. Интересно, что принесло ему такую славу?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_legend_2">
+		<text>Крайне много помех вокруг сигнала этого парня. Возможно электра или какой-то артифакт.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_neutral_legend_3">
+		<text>Воу, его история движения показывает внезапные изменения, будто он мгновенно перемещался на очень большие дистанции. Неужели кто-то научился использовать пространственные аномалии для своей выгоды?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_legend_1">
+		<text>Ты же не планируешь убить очередного потенциального клиента нашей системы, правда?</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_legend_2">
+		<text>Надеюсь ты знаешь своё дело.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_legend_3">
+		<text>Что бы ты ни планировал, удачи.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_novice_1">
+		<text>Этот человек довольно новый. Также по какой-то причине твой аккаунт есть в списке его друзей.</text>
+	</string>
+	<string id="stalker_search_snitch_found_friend_novice_2">
+		<text>Этот сталкер сделал данные о его местоположении публичными. Очень наивно.</text>
+	</string>
+	<string id="stalker_search_snitch_found_friend_novice_3">
+		<text>Он самостоятельно делится данными об его положении с твоим аккаунтом. Вы что, друзья?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_novice_1">
+		<text>Ты же просто идёшь помочь новичку, да?</text>
+	</string>
+	<string id="stalker_search_snitch_accept_friend_novice_2">
+		<text>Окей, посмотрим к чему это приведёт.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_friend_novice_3">
+		<text>Дай угадаю, ты планируешь избавить его от всех проблем... что бы это ни значило.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_trainee_1">
+		<text>Этот - новенький в Зоне. Похоже он одобряет всё, что ты делаешь.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_trainee_2">
+		<text>Этот чел верит тебе достаточно сильно, чтобы поделиться с тобой его положением.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_trainee_3">
+		<text>Он говорил много хорошего о тебе в своих приватных сообщениях.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_trainee_1">
+		<text>Ты же не планируешь ограбить дружелюбного новичка... или планируешь?</text>                            
+	</string>
+	<string id="stalker_search_snitch_accept_friend_trainee_2">
+		<text>Интересно видеть как ты идешь на помощь новым сталкерам. Или у тебя другие планы для этого парня?</text>                            
+	</string>
+	<string id="stalker_search_snitch_accept_friend_trainee_3">
+		<text>Не уверен какой бизнес можно вести с новичками, большинство не могут позволись себе даже вторую аптечку.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_experienced_1">
+		<text>Текст в КПК этого чела не похож ни на одно шифрование, которое мы знаем... Погоди, он что, просто заполнил его случайными буквами?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_experienced_2">
+		<text>История движения показывает, что этот сталкер путешествовал между множеством различных враждебных фракций. Возможно шпион, или контрактный работник.</text>                                 
+	</string>                                        
+	<string id="stalker_search_snitch_found_friend_experienced_3">
+		<text>Цель обнаружена. Погоди, нет, это не тот чел... ээ... Цель обнаружена!</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_experienced_1">
+		<text>Эй, мне сообщили, что сталкеры стали слышать какие-то странные голоса в их радио, так что будь осторожен, когда будешь путешествовать по своей территории. Это может быть сильный контроллер, или какой-то новый мутант, который балуется с нашими устройствами.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_experienced_2">
+		<text>Не похоже, что он враждебен к тебе, поэтому советую не стрелять, пока не будешь уверен, что хочешь его смерти.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_experienced_3">
+		<text>Запрос получен, отслеживаю цель.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_professional_1">
+		<text>Карты у этого парня показывают какую-то подземную сеть под... ээ... Нам надо будет исследовать это.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_professional_2">
+		<text>Онлайн-счёт этого сталкера: -4294967295 РУБ. Что он натворил в своём аккаунте?</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_professional_3">
+		<text>Вроде как, у этого чела где-то хранится огромная коллекция артифактов. Жаль в его КПК больше нет информации об этом.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_professional_1">
+		<text>Эй, если он когда-либо заговорит о том, чем он занимается, ты знаешь кто всегда готов купить эту информацию.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_professional_2">
+		<text>Если его вдруг настигнет несчастный случай, нам бы хотелось взглянуть на его КПК поближе.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_professional_3">
+		<text>Если можешь избежать его убийства, это было бы неплохо для нас. Мы бы хотели задать ему пару вопросов.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_veteran_1">
+		<text>У этого парня на его КПК установлен DOOM. Классика.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_veteran_2">
+		<text>Я читал, что он выжил после около 30 выстрелов в его тело. Должно быть, у него был какой-то защитный или целебный артифакт.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_veteran_3">
+		<text>Один из этих старомодных сталкеров. Эти парни никогда не используют болты или продвинутые технологии для избегания опасностей, потому что они научились чувствовать присутствие аномалий и мутантов самостоятельно.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_veteran_1">
+		<text>Не забывай об опасностях Зоны. То, что тебя окружают "друзья", не означает, что до тебя не могут добраться.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_veteran_2">
+		<text>Планируешь помочь с его работой, или забрать его добычу?</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_veteran_3">
+		<text>Перед тем, как ты совершишь очередное убийство, попробуй поговорить с одним из этих парней. Кто знает, какую информации они могут иметь.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_expert_1">
+		<text>Судя по его соц. сетям, он не против твоего присутствия в Зоне. Может быть неплохим напарником.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_expert_2">
+		<text>Этот сталкер - реальный эксперт. Может стать хорошим выбором в отряд, если только его уже не забрали другие.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_expert_3">
+		<text>У этого парня более сотни различных контрактов, записанных в его КПК. Как он собирается выполнить все его обещания?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_expert_1">
+		<text>Ты знаешь как это работает, просто глянь на карту.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_expert_2">
+		<text>Новый день, новая работа.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_expert_3">
+		<text>Кстати, я знаю, что это не моё дело, но почему твоя история передвижения показывает, что ты был... а, забудь.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_master_1">
+		<text>Этот человек был в зоне очень долгое время. Глядя на все места, где он был, удивительно что он всё еще живой.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_master_2">
+		<text>Этот раньше был охотником за головами. Скорее всего имеет достаточно выручки для хорошего снаряжения.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_master_3">
+		<text>Похоже, что он на самом деле знает, что делает. Может быть неплохо иметь его в напарниках.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_master_1">
+		<text>Принял оплату, ставлю метки на карту.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_master_2">
+		<text>Мне становится крайне любопытно какие дела ты ведёшь с этими людьми. Помни, если ты получишь любую ценную информацию, ты всегда можешь продать её нам.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_master_3">
+		<text>Эй, я только что получил информацию, что мы вновь потеряли контакт с, как минимум, тремя нашими агентами одновременно. Это может быть какая-то хорошо скоординированная атака. Если бы я был на твоём месте, я бы поглядывал за спину.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_legend_1">
+		<text>Этот парень - один из наших лучших клиентов. Тебе будет немало стоить, чтобы заставить нас подумать о выдаче его позиции.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_legend_2">
+		<text>Настоящая легенда в этих землях. Если сможешь уговорить его работать с тобой, он будет сильным союзником.</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_friend_legend_3">
+		<text>Этот добился многого в то короткое время, что он провёл в Зоне. Может быть полезно иметь его в своей команде.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_legend_1">
+		<text>Идёшь за легендами? Это становится интересно.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_legend_2">
+		<text>Подумай дважды, прежде чем пытаться вонзить нож в его спину.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_friend_legend_3">
+		<text>Должен сказать, в последнее время ты взаимодействуешь с очень интересными людьми.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_target_signal_cancel_1">
+		<text>Принял, ожидаю новую цель.</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_cancel_2">
+		<text>Деньги не возвращаем.</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_cancel_3">
+		<text>Надеюсь ты получил то, за что заплатил.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_target_signal_lost_1">
+		<text>Сигнал потерян. Твоя работа?</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_lost_2">
+		<text>Он пропал с радара, хорошая работа. Или плохая работа? Зависит от того, что ты планировал.</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_lost_3">
+		<text>Он пропал с наших карт, теперь ты сам за себя.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_zombie_1">
+		<text>Хм, я думал это чел умер очень давно. Почему его КПК всё еще активен?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_zombie_2">
+		<text>Эй, это же тот парень, который считался пропавшим месяц назад! Может ты сможешь пойти и спросить его, как он выжил?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_zombie_3">
+		<text>О, это тот чувак, который обещал принести мне кусок мозга контроллера! Ты не мог бы пойти и спросить его, каков у него прогресс?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_zombie_1">
+		<text>Подожди ка... оу... забудь...</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_zombie_2">
+		<text>Погодь, на самом деле, походу сейчас ты идёшь уже лишь к толпе зомби.</text>                                  
+	</string>
+	<string id="stalker_search_snitch_accept_zombie_3">
+		<text>Странно, в какой-то момент его история сообщений просто стала кучей неразберихи... что случилось?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_player_1">
+		<text>Да, у нас в базе данных есть этот парень. Я бы назвал его крайне доверчивым идио... *кхе* я имею ввиду, очень опытным сталкером и нашим ценным клиентом!</text>                                 
+	</string>                                        
+	<string id="stalker_search_snitch_found_player_2">
+		<text>Охренеть, он прямо рядом с тобой, живее убирайся от туда!.. Погоди ка.. это же просто ты.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_player_3">
+		<text>Эй, какого чёрта ты делаешь? Почему ты ищешь своё имя? Что ты пытаешься узнать? Всё, с чем я могу помочь, это восстановление твоей удалённой истории браузера, у нас есть полный набор этого дерьмя в нашей базе данных.</text>
+	</string>
+	<string id="stalker_search_snitch_found_player_4">
+		<text>Я знаю, что мы не берём оплату за простую проверку того, существует ли какой-либо человек, но это не значит, что мы не тратим на это свои ресурсы! Прекращай тратить наше время своими запросами по случайным именам!</text>                                 
+	</string>
+	<string id="stalker_search_snitch_found_player_5">
+		<text>Да, я знаком с этим придурком. В этот самый момент он тратит ценные ресурсы нашей системы просто чтобы посмотреть информацию про самого себя!</text>
+	</string>
+
+	
+	<string id="stalker_search_snitch_dead_target_1">
+		<text>Эта запись есть в нашей базе данных, но КПК либо отключен, либо глубоко под землёй. Похоже он спрятался, или, что более вероятно, уже не жилец.</text>                                  
+	</string>                                     
+	<string id="stalker_search_snitch_dead_target_2">
+		<text>Я знаю этого человека, но не могу достать его сигнал. Возможно кто-то ещё добрался до него раньше тебя.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_dead_target_3">
+		<text>Мы видели его сигнал некоторое время назад, но сейчас может быть уже поздно идти за ним. Я сообщу, если он вдруг вернётся в сеть.</text>
+	</string>
+	<string id="stalker_search_snitch_dead_target_4">
+		<text>Этот человек существует, но его нет нигде на наших картах. Я думаю, что Зона забрала этого парня.</text>
+	</string>
+	<string id="stalker_search_snitch_dead_target_5">
+		<text>Давно не видел о нём новой информации. Возможно он мёртв.</text>
+	</string>
+	
+	
+	<string id="ui_mcm_menu_stalker_tracking">
+		<text>Поиск сталкеров</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_rank_to_reach">
+		<text>Необходимое звание для доступа к инструменту отслеживания</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_rank_to_reach_desc">
+		<text>Игрок должен достигнуть этого ранга для использования инструмента отслеживания.\nЕсли вы уже открыли его в своём сохранении, смена этой настройки не имеет эффекта.\n1 = новичок\n2 = начинающий(1999)\n3 = опытный(3999)\n4 = профи(6999)\n5 = ветеран(9999)\n6 = эксперт(14999)\n7 = мастер(20999)\n8 = легенда(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_decay">
+		<text>Время отображения сообщений(в секундах)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_decay_desc">
+		<text>Как долго сообщения из сети инфопредпринимателей стоят на экране перед исчезновением. Установка этого значения на 0 отключает эти сообщения.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_sound">
+		<text>Звук сообщений инфопредпринимателей</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_sound_desc">
+		<text>Звук сообщений, которые появляются при использовании инструмента отслеживания целей. Не влияет на звуки сообщения о получении доступа к инструменту.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_1_max_rank">
+		<text>Максимальный отслеживаемый ранг (КПК 1.0)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_2_max_rank">
+		<text>Максимальный отслеживаемый ранг (КПК 2.0)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_3_max_rank">
+		<text>Максимальный отслеживаемый ранг (КПК 3.0)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_1_max_rank_desc">
+		<text>Звания выше выбранного не могут быть обнаружены этим КПК.\n1 = новичок\n2 = начинающий(1999)\n3 = опытный(3999)\n4 = профи(6999)\n5 = ветеран(9999)\n6 = эксперт(14999)\n7 = мастер(20999)\n8 = легенда(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_2_max_rank_desc">
+		<text>Звания выше выбранного не могут быть обнаружены этим КПК.\n1 = новичок\n2 = начинающий(1999)\n3 = опытный(3999)\n4 = профи(6999)\n5 = ветеран(9999)\n6 = эксперт(14999)\n7 = мастер(20999)\n8 = легенда(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_3_max_rank_desc">
+		<text>Звания выше выбранного не могут быть обнаружены этим КПК.\n1 = новичок\n2 = начинающий(1999)\n3 = опытный(3999)\n4 = профи(6999)\n5 = ветеран(9999)\n6 = эксперт(14999)\n7 = мастер(20999)\n8 = легенда(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_base_cost">
+		<text>Основная цена</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_base_cost_desc">
+		<text>Основная цена использования инструмента отслеживания, используется для установки итоговой цены, относительно отношения цели и её ранга. Множители настраиваются ниже.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_friend_multiplier">
+		<text>Множитель дружественной цели</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_neutral_multiplier">
+		<text>Множитель нейтральной цели</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_enemy_multiplier">
+		<text>Множитель враждебной цели</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_friend_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от того, является ли цель другом, нейтральным, или врагом.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_neutral_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от того, является ли цель другом, нейтральным, или врагом.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_enemy_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от того, является ли цель другом, нейтральным, или врагом.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_novice_multiplier">
+		<text>Множитель цели - новичка</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_trainee_multiplier">
+		<text>Множитель цели - начинающего</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_experienced_multiplier">
+		<text>Множитель цели - опытного</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_professional_multiplier">
+		<text>Множитель цели - профи</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_veteran_multiplier">
+		<text>Множитель цели - ветерана</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_expert_multiplier">
+		<text>Множитель цели - эксперта</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_master_multiplier">
+		<text>Множитель цели - мастера</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_legend_multiplier">
+		<text>Множитель цели - легенды</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_novice_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_trainee_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_experienced_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_professional_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_veteran_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_expert_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_master_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_legend_multiplier_desc">
+		<text>Основная цена умножается на это значение, в зависимости от ранга цели.</text>
+	</string>
+	
+</string_table>

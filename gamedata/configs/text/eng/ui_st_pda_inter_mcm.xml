@@ -203,6 +203,93 @@
 		<text>Trade</text>
 	</string>
 
+	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_reveal">
+		<text>Reveal scams via taunt message</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_reveal_desc">
+		<text>If a trader scams you, send a news message taunting you, so you know it was a scam. Off = silent failure.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_use_engine_pricing">
+		<text>Use trader pricing exponent (GAMMA Economy compatibility)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_use_engine_pricing_desc">
+		<text>If a trader profile defines sell_item_exponent (used by GAMMA Economy and similar mods), apply it to PDA Market prices so quotes match the in-person trader. Off = always use linear cost * discount (vanilla formula).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_fallback_exponent">
+		<text>Fallback price exponent</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_fallback_exponent_desc">
+		<text>Used when the trader profile has no sell_item_exponent. Lower = high-cost items closer to in-person price. 0.85 keeps PDA quotes within ~10-20% of vanilla trader. 1.0 = pure linear.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_price_mult">
+		<text>PDA price multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_price_mult_desc">
+		<text>Global multiplier on PDA market item prices (delivery fee scales with it too). 1.0 = vanilla formula, 0.5 = half, 2.0 = double. Tune to match your in-person trader prices.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_strict_stock">
+		<text>Strict trader stock filter</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_strict_stock_desc">
+		<text>Off (default): traders may broker any item in a category they sell (sells AKs, can offer SR-25). On: traders only offer the exact items in their buy_supplies list. Realistic but very restrictive.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_debug_traders_only">
+		<text>[DEBUG] Traders only (no random stalkers)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_debug_traders_only_desc">
+		<text>Filters offers to profiled traders only. Excludes random stalker pool. For testing trader-specific pricing and filters.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_debug_always_offer">
+		<text>[DEBUG] Always find offers for any item</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_tasks_task_debug_always_offer">
+		<text>[DEBUG] Always find tasks</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tasks_task_debug_always_offer_desc">
+		<text>Forces 100%% task offer chance from any qualifying giver regardless of response chance. For testing only.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_debug_always_offer_desc">
+		<text>Forces 100%% offer chance from any qualifying trader regardless of item availability, response chance, relations, or item tier. For testing only.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_revenge">
+		<text>Refund on killing the scammer</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_revenge_desc">
+		<text>If you (or a companion) kill a scammer NPC within 5 days, partial RU refund. Day 1: 80%, day 2: 60%, day 3: 40%, days 4-5: 20%. After 5 days the entry expires.</text>
+	</string>
+
+	<string id="ui_mcm_menu_pda_market_cats">
+		<text>Market Categories</text>
+	</string>
+	<string id="ui_mcm_pda_inter_mkttitle">
+		<text>Market Category Visibility</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_melee"><text>Show Melee</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_pistols"><text>Show Pistols</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_rifles"><text>Show Rifles</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_ammo"><text>Show Ammo</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_explosives"><text>Show Explosives</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_w_addons"><text>Show Weapon Addons</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_outfits"><text>Show Outfits</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_headgear"><text>Show Headgear</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_backpacks"><text>Show Backpacks</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_devices"><text>Show Devices</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_mutant_parts"><text>Show Mutant Parts</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_artefacts"><text>Show Artefacts</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_medicine"><text>Show Medicine</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_food"><text>Show Food</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_repair"><text>Show Repair</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_others"><text>Show Others</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_trash"><text>Show Trash</text></string>
+
 	<string id="ui_mcm_pda_inter_pda_trade_trade_respond_mult">
 		<text>Respond chance multiplier</text>
 	</string>
@@ -582,6 +669,135 @@
 	</string>
 	<string id="ui_mcm_pda_inter_pda_inc_inc_sos_stash_desc">
 		<text>"1" will make stashes as the only possible reward.</text>
+	</string>
+
+
+		<!-- Stalker Search (Track Stalkers By Name) -->
+	<string id="ui_mcm_menu_pda_stalker_search">
+		<text>Track Stalkers</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_sstitle">
+		<text>Track Stalkers By Name</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_message_decay">
+		<text>Message decay (sec)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_message_decay_desc">
+		<text>How long received messages stay on screen. 0 disables messages.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_message_sound">
+		<text>Message sound</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_message_sound_desc">
+		<text>Sound played when a snitch message arrives.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_pda_1_max_rank">
+		<text>PDA tier 1 max rank</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_pda_1_max_rank_desc">
+		<text>Highest rank index searchable with a tier 1 PDA.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_pda_2_max_rank">
+		<text>PDA tier 2 max rank</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_pda_2_max_rank_desc">
+		<text>Highest rank index searchable with a tier 2 PDA.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_pda_3_max_rank">
+		<text>PDA tier 3 max rank</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_pda_3_max_rank_desc">
+		<text>Highest rank index searchable with a tier 3 PDA.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_base_cost">
+		<text>Base service cost</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_base_cost_desc">
+		<text>Starting price (RU) for a snitch lookup before multipliers.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_friend_multiplier">
+		<text>Friend price multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_friend_multiplier_desc">
+		<text>Price multiplier when the target is a friend.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_neutral_multiplier">
+		<text>Neutral price multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_neutral_multiplier_desc">
+		<text>Price multiplier when the target is neutral.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_enemy_multiplier">
+		<text>Enemy price multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_enemy_multiplier_desc">
+		<text>Price multiplier when the target is an enemy.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_novice_multiplier">
+		<text>Novice rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_novice_multiplier_desc">
+		<text>Price multiplier for tracking novice-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_trainee_multiplier">
+		<text>Trainee rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_trainee_multiplier_desc">
+		<text>Price multiplier for tracking trainee-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_experienced_multiplier">
+		<text>Experienced rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_experienced_multiplier_desc">
+		<text>Price multiplier for tracking experienced-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_professional_multiplier">
+		<text>Professional rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_professional_multiplier_desc">
+		<text>Price multiplier for tracking professional-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_veteran_multiplier">
+		<text>Veteran rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_veteran_multiplier_desc">
+		<text>Price multiplier for tracking veteran-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_expert_multiplier">
+		<text>Expert rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_expert_multiplier_desc">
+		<text>Price multiplier for tracking expert-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_master_multiplier">
+		<text>Master rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_master_multiplier_desc">
+		<text>Price multiplier for tracking master-rank targets.</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_legend_multiplier">
+		<text>Legend rank multiplier</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_legend_multiplier_desc">
+		<text>Price multiplier for tracking legend-rank targets.</text>
 	</string>
 
 

@@ -10,7 +10,7 @@
 	</string>
 	
 	<string id="pda_btn_interactive">
-		<text>Interactive</text>
+		<text>Network</text>
 	</string>
 
 	<string id="pda_raid_choose">
@@ -39,6 +39,18 @@
 
 	<string id="pda_squad_hire">
 		<text>Hire:</text>
+	</string>
+
+	<string id="pda_raid_squad_gone">
+		<text>This squad is no longer available.</text>
+	</string>
+
+	<string id="pda_raid_not_enough_money">
+		<text>Not enough RU to hire this squad.</text>
+	</string>
+
+	<string id="pda_raid_party_full">
+		<text>Your party is full (%d/%d). Dismiss companions first.</text>
 	</string>
 
 	<string id="pda_relation_friend">
@@ -191,6 +203,100 @@
 
 	<string id="pda_trade_order_1">
 		<text>Sending a man right away. I will give you coordinates when it's ready.</text>
+	</string>
+
+	<string id="pda_trade_scam_header">
+		<text>[SCAMMED]</text>
+	</string>
+
+	<string id="pda_trade_scam_revenge_header">
+		<text>[REVENGE]</text>
+	</string>
+
+	<string id="pda_trade_scam_revenge_recovered">
+		<text>Found a wallet on the body. Recovered</text>
+	</string>
+
+	<string id="pda_trade_scam_revenge_of_what">
+		<text>of what they took</text>
+	</string>
+
+	<string id="pda_trade_scam_blocked">
+		<text>You've been BLOCKED by the user.</text>
+	</string>
+
+	<string id="pda_trader_rep_trusted">
+		<text>Trusted</text>
+	</string>
+
+	<string id="pda_trader_rep_shady">
+		<text>Shady</text>
+	</string>
+
+	<string id="pda_trader_rep_good">
+		<text>Good</text>
+	</string>
+
+	<string id="pda_trader_rep_unknown">
+		<text>Unknown</text>
+	</string>
+
+	<string id="pda_trader_rep_scam_flag">
+		<text>*SCAM*</text>
+	</string>
+
+	<string id="pda_trade_money_sent">
+		<text>Money sent:</text>
+	</string>
+
+	<string id="pda_trade_scam_generic_1">
+		<text>What an idiot. Ha ha. No goods coming, friend.</text>
+	</string>
+	<string id="pda_trade_scam_generic_2">
+		<text>Good luck finding what you need. Hasta la vista.</text>
+	</string>
+	<string id="pda_trade_scam_generic_3">
+		<text>Look boys, we got a newbie here. You got SCAMMED, brother. Say thanks for the lesson.</text>
+	</string>
+	<string id="pda_trade_scam_generic_4">
+		<text>Order? What order? I don't recall any order.</text>
+	</string>
+	<string id="pda_trade_scam_generic_5">
+		<text>Tough day in the Zone, eh? Should have asked around about me first.</text>
+	</string>
+	<string id="pda_trade_scam_generic_6">
+		<text>Consider it tuition. The Zone teaches hard lessons.</text>
+	</string>
+	<string id="pda_trade_scam_generic_7">
+		<text>Money received. Goods? Yeah, about those...</text>
+	</string>
+	<string id="pda_trade_scam_generic_8">
+		<text>You wired the RU like a champ. Stop checking your stash, nothing is coming.</text>
+	</string>
+
+	<string id="pda_trade_scam_bandit_1">
+		<text>Cheeki breeki, ha ha. Thanks for the donation, frayer.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_2">
+		<text>Another day in the Zone for another loser. Not gonna get what you paid for, mate. Live with it.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_3">
+		<text>Eh, frayer, dimaye? You bought air. Air is expensive in the Zone.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_4">
+		<text>Nu pogodi, sucker. Come find me if you can. Bring more RU.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_5">
+		<text>Ha ha ha. Boys, count this one. Easy money.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_6">
+		<text>You bought trust, stalker. Trust ain't returnable. No refunds in the Zone.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_7">
+		<text>Hey hey, the brigada says spasibo. Drinks on you tonight.</text>
+	</string>
+	<string id="pda_trade_scam_bandit_8">
+		<text>Should've stayed at the Cordon, rookie. Now your wallet stayed there too.</text>
 	</string>
 
 	<string id="pda_trade_order_2">
@@ -605,7 +711,7 @@
 	</string>
 
 	<string id="pda_main_menu_trade">
-		<text>Buy Item</text>
+		<text>Market</text>
 	</string>
 
 	<string id="pda_find_menu_artefact">
@@ -617,7 +723,7 @@
 	</string>
 
 	<string id="pda_find_menu_stalker">
-		<text>Stalker</text>
+		<text>Track stalker</text>
 	</string>
 
 	<string id="pda_find_menu_stalker_confirm">
@@ -881,6 +987,14 @@
 		<text>Confirm</text>
 	</string>
 
+	<string id="pda_banter_track_header">
+		<text>Track Stalker</text>
+	</string>
+
+	<string id="pda_banter_track_confirm">
+		<text>Search</text>
+	</string>
+
 	<string id="pda_task_main_menu">
 		<text>Tasks</text>
 	</string>
@@ -924,7 +1038,7 @@
 	</string>
 
 	<string id="pda_economy_total">
-		<text>Total:</text>
+		<text>Total earned:</text>
 	</string>
 
 </string_table>

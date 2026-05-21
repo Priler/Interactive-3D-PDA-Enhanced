@@ -599,11 +599,23 @@
 			<text complex_mode="1" r="190" g="190" b="190" align="c" vert_align="c" font="letterica18">pda_trade_menu_quantity</text>
 		</quantity_item_header>
 
-		<!-- Quantity input box -->
-		<quantity_item_input x="447" y="95" width="116" height="25">
+		<!-- Quantity input box (input + -/+ stepper fit within 116px right column) -->
+		<quantity_item_input x="447" y="95" width="68" height="25">
 			<text complex_mode="1" r="190" g="190" b="190" align="c" vert_align="c" font="letterica18" />
 			<texture>ui_inGame2_edit_box_2</texture>
 		</quantity_item_input>
+
+		<!-- Quantity minus button -->
+		<quantity_minus_btn x="517" y="95" width="22" height="25" check_mode="0">
+			<text complex_mode="1" align="c" vert_align="c" font="letterica18">-</text>
+			<texture>ui_inter_pda_btn</texture>
+		</quantity_minus_btn>
+
+		<!-- Quantity plus button -->
+		<quantity_plus_btn x="541" y="95" width="22" height="25" check_mode="0">
+			<text complex_mode="1" align="c" vert_align="c" font="letterica18">+</text>
+			<texture>ui_inter_pda_btn</texture>
+		</quantity_plus_btn>
 
 		<!-- Level header -->
 		<level_item_header x="447" y="125" width="116" height="20">

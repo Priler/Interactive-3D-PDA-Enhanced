@@ -15,8 +15,10 @@ function CustomPDAX:BuildTradeUpperMenu()
 	self.trade_category_scrollbar = xml:InitScrollView("mid_container_4:category_scrollbar", self.pda_t[4].mid_cont)
 	self.trade_category_cont = xml:InitStatic("mid_container_4:category_cont", self.trade_category_scrollbar)
 	self.trade_categories = {}
+	self.market_category_order = {}
 	local cur_category_row = 0
 	for group, ar in pairs_(pda_inter_x_trade.categorized_items) do
+		self.market_category_order[#self.market_category_order + 1] = group
 		self.trade_categories[group] = {}
 		self.trade_categories[group].btn = xml:Init3tButton("mid_container_4:category_cont:category_btn", self.trade_category_cont)
 		self:Register(self.trade_categories[group].btn, group .. "_btn")
@@ -121,10 +123,15 @@ function CustomPDAX:BuildTradeUpperMenu()
 	self.choosen_item = xml:InitTextWnd("mid_container_4:choosen_item", self.pda_t[4].mid_cont)
 
 	-- quantity
-	self.trade_quantity = nil
+	self.trade_quantity = 1
 	self.trade_quan_header = xml:InitTextWnd("mid_container_4:quantity_item_header", self.pda_t[4].mid_cont)
+	self.trade_quan_minus = xml:Init3tButton("mid_container_4:quantity_minus_btn", self.pda_t[4].mid_cont)
+	self:Register(self.trade_quan_minus, "quantity_minus_btn")
 	self.trade_quan_input = xml:InitEditBox("mid_container_4:quantity_item_input", self.pda_t[4].mid_cont)
 	self:Register(self.trade_quan_input, "quantity_item_input")
+	self.trade_quan_input:SetText("1")
+	self.trade_quan_plus = xml:Init3tButton("mid_container_4:quantity_plus_btn", self.pda_t[4].mid_cont)
+	self:Register(self.trade_quan_plus, "quantity_plus_btn")
 
 	-- location
 	self.trade_level_table = {}
@@ -154,6 +161,55 @@ function CustomPDAX:BuildTradeUpperMenu()
 	self.trade_tooltip = xml:InitStatic("mid_container_4:trade_tooltip", self.pda_t[4].mid_cont)
 	self.trade_tooltip:Show(false)
 
+	self:RefreshMarketCategories()
+end
+
+function CustomPDAX:RefreshMarketCategories()
+	if not (self.trade_categories and self.market_category_order) then return end
+
+	local sample
+	for _, group in ipairs(self.market_category_order) do
+		local t = self.trade_categories[group]
+		if t and t.btn then sample = t.btn break end
+	end
+	if not sample then return end
+
+	local h = sample:GetHeight()
+	local gap_y = 5
+	local visible_row = 0
+
+	for _, group in ipairs(self.market_category_order) do
+		local t = self.trade_categories[group]
+		if t and t.btn then
+			local enabled = pda_inter_gui.is_market_category_enabled and pda_inter_gui.is_market_category_enabled(group)
+			if enabled == nil then enabled = true end
+
+			if enabled then
+				t.btn:SetWndPos(vector2():set(0, (h + gap_y) * visible_row))
+				t.btn:Show(true)
+				visible_row = visible_row + 1
+			else
+				t.btn:Show(false)
+				if t.trade_scrollbar and t.trade_scrollbar:IsShown() then
+					t.trade_scrollbar:Show(false)
+				end
+				if self.trade_selected_category == group then
+					self.trade_selected_category = nil
+					self.trade_selected_item_sec = nil
+					self.trade_selected_item_name = nil
+					if self.choosen_item then self.choosen_item:SetText("") end
+				end
+			end
+		end
+	end
+
+	if self.trade_category_cont then
+		local scroll_w = self.trade_category_cont:GetWidth()
+		local def_h = self.trade_category_cont:GetHeight()
+		local needed = visible_row * (h + gap_y)
+		if needed < def_h then needed = def_h end
+		self.trade_category_cont:SetWndSize(vector2():set(scroll_w, needed))
+	end
 end
 
 function CustomPDAX:InitTradeCallbacks()
@@ -175,6 +231,21 @@ function CustomPDAX:InitTradeCallbacks()
 	end
 
 	self:AddCallback("level_item_list", ui_events.LIST_ITEM_SELECT, self.OnSelectTradeLevel, self)
+	self:AddCallback("quantity_minus_btn", ui_events.BUTTON_CLICKED, self.OnClickTradeQuantityMinus, self)
+	self:AddCallback("quantity_plus_btn", ui_events.BUTTON_CLICKED, self.OnClickTradeQuantityPlus, self)
+end
+
+function CustomPDAX:OnClickTradeQuantityMinus()
+	local q = tonumber(self.trade_quan_input:GetText()) or 1
+	q = q - 1
+	if q < 1 then q = 1 end
+	self.trade_quan_input:SetText(tostring(q))
+end
+
+function CustomPDAX:OnClickTradeQuantityPlus()
+	local q = tonumber(self.trade_quan_input:GetText()) or 0
+	q = q + 1
+	self.trade_quan_input:SetText(tostring(q))
 end
 
 class "list_item" (CUIListBoxItem)
@@ -208,22 +279,44 @@ function CustomPDAX:ResetTradeMenu()
 	-- reset choosen text
 	self.choosen_item:SetText("")
 
-	-- reset quantity input
-	self.trade_quantity = nil
-	self.trade_quan_input:SetText("")
+	self.trade_quantity = 1
+	self.trade_quan_input:SetText("1")
 
 	-- reset level list and image
 	self.trade_selected_level = nil
 	self.trade_level_list:RemoveAll()
 
+	local cur_level = level.name()
+	local cur_idx
 	for i = 1, #self.trade_level_table do
 		local _itm = list_item(i)
 		_itm.fn:SetText		(gt(self.trade_level_table[i]))
 		_itm.trade_id = self.trade_level_table[i]
 		self.trade_level_list:AddExistingItem(_itm)
+		if self.trade_level_table[i] == cur_level then
+			cur_idx = i - 1
+		end
 	end
 
-	--self.trade_level_list:SetText("")
+	if cur_idx and pmain.pdax_level_list[cur_level] then
+		self.trade_selected_level = cur_level
+		local level_map = pmain.pdax_level_list[cur_level]
+		if level_map and level_map[2] then
+			self.trade_level_img:InitTexture("encyclopedia_locations_" .. level_map[2] .. "_image")
+		end
+
+		local list = self.trade_level_list
+		if list.SetSelectedIDX then
+			list:SetSelectedIDX(cur_idx)
+		elseif list.SetSelectedIndex then
+			list:SetSelectedIndex(cur_idx)
+		elseif list.SetCurrentSel then
+			list:SetCurrentSel(cur_idx)
+		elseif list.SetActiveItem then
+			list:SetActiveItem(cur_idx)
+		end
+	end
+
 	self.trade_level_img:Show(false)
 
 end
@@ -267,6 +360,12 @@ function CustomPDAX:OnClickExecTrade(num)
 
 		-- take actor money
 		db.actor:give_money(-price)
+
+		-- self-receipt news
+		local def_clr = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
+		local gold_clr = strformat("%c[%s,%s,%s,%s]", 255, 230, 200, 80)
+		local receipt = gold_clr .. gt("pda_trade_money_sent") .. " " .. def_clr .. price .. " RU"
+		dynamic_news_helper.send_tip(receipt, db.actor:character_name(), nil, 8, db.actor:character_icon(), nil, "npc")
 
 		-- update money text
 		self:UpdMoneyText()
@@ -315,11 +414,12 @@ function CustomPDAX:OnSelectTradeItem(item_sec)
 end
 
 function CustomPDAX:OnSelectTradeLevel()
-	--self.trade_selected_level = self.trade_level_table[self.trade_level_list:CurrentID()] OLD
-	self.trade_selected_level = self.trade_level_list:GetSelectedItem().trade_id
+	local item = self.trade_level_list:GetSelectedItem()
+	if not item then return end
+	self.trade_selected_level = item.trade_id
 
-	--local level_map = pmain.pdax_level_list[self.trade_selected_level] OLD
 	local level_map = pmain.pdax_level_list[self.trade_selected_level]
+	if not level_map then return end
 
 	-- map
 	self.trade_level_img:InitTexture("encyclopedia_locations_" .. level_map[2] .. "_image")
@@ -350,16 +450,58 @@ function CustomPDAX:UpdTradeLowerMenu()
 		local name_clr = trade_t[i].name_color and green_clr or def_clr
 		local name = gt("st_mm_new_game_name")
 		local reputation = gt("ui_st_reputation")
-		local rep_clr = pmain.val_to_clr(trade_t[i].reputation, "red_to_green", -2000, 2000)
-		local rep_to_name = gt(utils_obj.get_reputation_name(trade_t[i].reputation))
+
+		-- PDA tier gates the reputation detail for random-stalker offers
+		local pda_tier = 1
+		local pda_item = db.actor and db.actor:item_in_slot(8)
+		local pda_sec = pda_item and pda_item:section() or ""
+		if pda_sec == "device_pda_2" then pda_tier = 2
+		elseif pda_sec == "device_pda_3" then pda_tier = 3
+		end
+
+		local red_clr = strformat("%c[%s,%s,%s,%s]", 255, 220, 60, 60)
+		local rep_clr, rep_to_name, scam_flag = nil, nil, ""
+
+		if trade_t[i].name_color then
+			-- profiled trader: always "Trusted"
+			rep_clr = green_clr
+			rep_to_name = gt("pda_trader_rep_trusted")
+		else
+			local rep_val = trade_t[i].reputation or 0
+			if pda_tier == 1 then
+				local rep_norm = (2000 - rep_val) / 4000
+				if rep_norm >= 0.70 then
+					rep_clr = red_clr
+					rep_to_name = gt("pda_trader_rep_shady")
+				elseif rep_norm <= 0.30 then
+					rep_clr = green_clr
+					rep_to_name = gt("pda_trader_rep_good")
+				else
+					rep_clr = def_clr
+					rep_to_name = gt("pda_trader_rep_unknown")
+				end
+			else
+				rep_clr = pmain.val_to_clr(rep_val, "red_to_green", -2000, 2000)
+				rep_to_name = gt(utils_obj.get_reputation_name(rep_val))
+			end
+
+			-- PDA tier 3: append scam flag for high-scam-probability offers
+			if pda_tier >= 3 then
+				local rep_norm = (2000 - rep_val) / 4000
+				if rep_norm >= 0.70 then
+					scam_flag = " " .. red_clr .. gt("pda_trader_rep_scam_flag")
+				end
+			end
+		end
+
 		local dist_clr = pmain.val_to_clr(trade_t[i].distance, "red_to_green", 9600, 1)
 		local dist = round_idp(trade_t[i].distance / 1000, 1)
 
 		local name_str = name .. " " .. name_clr .. trade_t[i].name .. "\\n"
-		local reputation_str = reputation .. ": " .. rep_clr .. rep_to_name .. "\\n"
+		local reputation_str = def_clr .. reputation .. ": " .. rep_clr .. rep_to_name .. scam_flag .. "\\n"
 		local delivery_str = def_clr .. gt("pda_delivery_time") .. ": " .. math.ceil(trade_t[i].delivery_time / 3600) .. gt("pda_delivery_h") .. "\\n" .. "(" .. dist_clr .. dist .. def_clr .. gt("pda_delivery_km") .. ")"
 
-		self.bottom[i].descr:SetText(name_str .. (trade_t[i].name_color and "" or reputation_str) .. delivery_str)
+		self.bottom[i].descr:SetText(name_str .. reputation_str .. delivery_str)
 
 		-- update button
 		self.bottom[i].btn:TextControl():SetText(gt("pda_order_btn_text") .. " " .. trade_t[i].price .. "  RU")
@@ -373,29 +515,51 @@ function CustomPDAX:TradeUpdate()
 	if not self.tabs_initialized or not self.tabs_initialized[4] then
 		return
 	end
-	
-	-- Trade Send button conditions and tooltip
-	if self.cur_tree == 4 then
 
-		-- send btn conds
-		local quantity = tonumber(self.trade_quan_input:GetText())
-		if self.trade_selected_item_sec and self.trade_selected_item_name and self.trade_selected_level and (quantity and type(quantity) == "number") then
-			self.trade_quantity = quantity
-			self.send_btn:Enable(true)
-		else
-			self.send_btn:Enable(false)
+	if self.cur_tree ~= 4 then return end
+
+	-- send btn conds
+	local quantity = tonumber(self.trade_quan_input:GetText())
+	if self.trade_selected_item_sec and self.trade_selected_item_name and self.trade_selected_level and (quantity and type(quantity) == "number") then
+		self.trade_quantity = quantity
+		self.send_btn:Enable(true)
+	else
+		self.send_btn:Enable(false)
+	end
+
+	local tg = time_global()
+	if self._trade_tooltip_tmr and tg < self._trade_tooltip_tmr then return end
+	self._trade_tooltip_tmr = tg + 150
+
+	if not self.trade_selected_category then
+		if self._trade_tooltip_shown then
+			self.trade_tooltip:Show(false)
+			self._trade_tooltip_shown = false
+			self._trade_tooltip_last = nil
 		end
+		return
+	end
 
-		-- tooltip
+	local hovered
+	for idx, t in ipairs(self.trade_categories[self.trade_selected_category].item_btns) do
+		if t.icon and t.icon:IsCursorOverWindow() then
+			hovered = t
+			break
+		end
+	end
+
+	if hovered then
+		if not self._trade_tooltip_shown then
+			self.trade_tooltip:Show(true)
+			self._trade_tooltip_shown = true
+		end
+		if self._trade_tooltip_last ~= hovered.str_name then
+			self.trade_tooltip:TextControl():SetText(gt(hovered.str_name))
+			self._trade_tooltip_last = hovered.str_name
+		end
+	elseif self._trade_tooltip_shown then
 		self.trade_tooltip:Show(false)
-
-		if self.trade_selected_category then
-			for idx, t in ipairs(self.trade_categories[self.trade_selected_category].item_btns) do
-				if t.icon and t.icon:IsCursorOverWindow() then
-					self.trade_tooltip:Show(true)
-					self.trade_tooltip:TextControl():SetText(gt(t.str_name))
-				end
-			end
-		end
+		self._trade_tooltip_shown = false
+		self._trade_tooltip_last = nil
 	end
 end

@@ -226,7 +226,9 @@ function check_level_danger()
 		return true
 	end
 
-	if pda_inter_gui.pdax_level_list[level.name()][1] > Hired_squad.danger then
+	local lvl_entry = pda_inter_gui.pdax_level_list[level.name()]
+	local lvl_danger = lvl_entry and lvl_entry[1]
+	if lvl_danger and Hired_squad.danger and lvl_danger > Hired_squad.danger then
 		local msg = gt("pda_raid_high_danger")
 		dynamic_news_helper.send_tip(msg, nil, nil, 5, Hired_squad.icon, "news", "npc")
 		CreateTimeEvent("raid_danger_check_e", "raid_danger_check_a", 300 + math.random(-60, 60), dismiss_by_danger)

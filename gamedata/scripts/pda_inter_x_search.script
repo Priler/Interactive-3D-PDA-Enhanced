@@ -1,0 +1,806 @@
+local ss_target_id
+local tm = task_manager.get_task_manager()
+local pda_opened = false
+local found = false
+local base_cost = 200
+local service_cost = 200
+local relation = "unknown"
+local npc_rank = "novice"
+local npc_name = "Default"
+local player_name = "Doofus" --for some reason i can't call db.actor:character_name() right away without it failing to compile
+local message_decay = 13000
+local message_sound = "pda_tips"
+local sender_header = game.translate_string("stalker_search_snitch_header")
+local sender_icon = "ui_inGame2_Radiopomehi"
+local reached_rank = true
+local pda_1_max_rank = 3
+local pda_2_max_rank = 6
+local pda_3_max_rank = 8
+local tracking_task_active = false
+local containsRussianE = false
+
+local relation_multipliers = {
+	["friend"] = 1,
+	["neutral"] = 2,
+	["enemy"] = 3,
+	["unknown"] = 1,
+}
+
+local rank_multipliers = {
+	["novice"] = 1,
+	["trainee"] = 2,
+	["experienced"] = 3,
+	["professional"] = 4,
+	["veteran"] = 5,
+	["expert"] = 6,
+	["master"] = 8,
+	["legend"] = 10,
+}
+
+local rank_to_index = {
+	["novice"] = 1,
+	["trainee"] = 2,
+	["experienced"] = 3,
+	["professional"] = 4,
+	["veteran"] = 5,
+	["expert"] = 6,
+	["master"] = 7,
+	["legend"] = 8,
+}
+
+local message_sounds = {
+	[0] = "pda_task",
+	[1] = "pda_alarm",
+	[2] = "pda_communication_lost",
+	[3] = "pda_beep_1",
+	[4] = "pda_beep_2",
+	[5] = "pda_welcome",
+	[6] = "pda_tips",
+	[7] = "None",
+}
+
+local witness_radius = 250
+local lie_chance_base = 0.15
+local lie_chance_bandit = 0.40
+local query_cooldown = 90
+local query_cooldowns = {}
+local archetypes = { mercenary = 3, vengeful = 3, cautious = 3, cocky = 2 }
+local archetype_keys = { "mercenary", "vengeful", "cautious", "cocky" }
+local dir_keys = { "n", "ne", "e", "se", "s", "sw", "w", "nw" }
+local LOC_TEMPLATE_COUNT = 4
+
+local function ss_pick_archetype()
+	return archetype_keys[math.random(#archetype_keys)]
+end
+
+local function ss_get_lie_chance(comm)
+	if comm == "bandit" or comm == "renegade" then
+		return lie_chance_bandit
+	end
+	return lie_chance_base
+end
+
+local function ss_cardinal_from_dir(dir)
+	if not dir then return "holding" end
+	local x, z = dir.x, dir.z
+	if (x * x + z * z) < 0.0025 then return "holding" end
+	local angle = math.atan2(x, z)
+	if angle < 0 then angle = angle + 2 * math.pi end
+	local sector = math.floor(((angle + math.pi / 8) / (math.pi / 4))) % 8
+	return dir_keys[sector + 1] or "holding"
+end
+
+local function ss_collect_smarts()
+	local smarts = {}
+	local smart_ini = ini_file("misc\\simulation.ltx")
+	smart_ini:section_for_each(function(section)
+		local smart = SIMBOARD and SIMBOARD.smarts_by_names and SIMBOARD.smarts_by_names[section]
+		if smart then
+			local lid = game_graph():vertex(smart.m_game_vertex_id):level_id()
+			smarts[smart.id] = lid
+		end
+	end)
+	return smarts
+end
+
+local function ss_nearest_smart(se_target)
+	local smarts = ss_collect_smarts()
+	local target_lid = game_graph():vertex(se_target.m_game_vertex_id):level_id()
+	local target_pos = se_target.position
+	local best, best_dist
+	for sid, slid in pairs(smarts) do
+		if slid == target_lid then
+			local s = alife_object(sid)
+			if s and s.position then
+				local d = target_pos:distance_to(s.position)
+				if (not best_dist) or d < best_dist then
+					best_dist = d
+					best = s
+				end
+			end
+		end
+	end
+	return best
+end
+
+local function ss_random_lie_smart(se_target)
+	local smarts = ss_collect_smarts()
+	local pool = {}
+	local target_lid = game_graph():vertex(se_target.m_game_vertex_id):level_id()
+	local truth = ss_nearest_smart(se_target)
+	local truth_id = truth and truth.id
+	for sid, slid in pairs(smarts) do
+		if sid ~= truth_id then
+			local s = alife_object(sid)
+			if s then pool[#pool + 1] = s end
+		end
+	end
+	if #pool == 0 then return truth end
+	return pool[math.random(#pool)]
+end
+
+local function ss_find_witness(se_target, radius)
+	if not se_target then return nil end
+	local target_pos = se_target.position
+	local target_lid = game_graph():vertex(se_target.m_game_vertex_id):level_id()
+	local witnesses = {}
+	for i = 1, 65534 do
+		local se = alife_object(i)
+		if se and IsStalker(nil, se:clsid()) and se:alive() and se.id ~= se_target.id and se.id ~= AC_ID then
+			local se_lid = game_graph():vertex(se.m_game_vertex_id):level_id()
+			if se_lid == target_lid and se.position then
+				local d = se.position:distance_to(target_pos)
+				if d <= radius then
+					local comm = se:community()
+					if comm ~= "monolith" and comm ~= "zombied" and comm ~= "greh" then
+						witnesses[#witnesses + 1] = se
+					end
+				end
+			end
+		end
+	end
+	if #witnesses == 0 then return nil end
+	return witnesses[math.random(#witnesses)]
+end
+
+local function ss_build_message(loc_name, dir_key, archetype)
+	local loc_tmpl = game.translate_string("ss_loc_" .. math.random(1, LOC_TEMPLATE_COUNT))
+	local dir_str = game.translate_string("ss_dir_" .. dir_key)
+	local tail_n = archetypes[archetype] or 3
+	local tail = game.translate_string("ss_tail_" .. archetype .. "_" .. math.random(1, tail_n))
+	local loc_clause
+	if loc_tmpl:find("%%s") then
+		loc_clause = strformat(loc_tmpl, loc_name)
+	else
+		loc_clause = loc_tmpl .. " " .. loc_name
+	end
+	return loc_clause .. ". " .. dir_str .. ". " .. tail
+end
+
+local function ss_cardinal_from_xz(dx, dz)
+	if (dx * dx + dz * dz) < 4 then return "holding" end
+	local angle = math.atan2(dx, dz)
+	if angle < 0 then angle = angle + 2 * math.pi end
+	local sector = math.floor(((angle + math.pi / 8) / (math.pi / 4))) % 8
+	return dir_keys[sector + 1] or "holding"
+end
+
+local function ss_refund_and_notify(price, witness_icon, decay)
+	if not db.actor then return end
+	if price and price > 0 then
+		db.actor:give_money(price)
+	end
+	local header = game.translate_string("ss_anonymous_sender")
+	local body = game.translate_string("ss_target_lost_refund")
+	db.actor:give_game_news(header, body, witness_icon, 0, decay)
+end
+
+local function ss_dispatch_tip(target_id, archetype, is_lying, witness_icon, decay, sound, price)
+	local se0 = alife_object(target_id)
+	local start_tg = time_global()
+
+	if not se0 then
+		ss_refund_and_notify(price, witness_icon, decay)
+		return
+	end
+
+	local pos0 = se0.position
+	local lid0 = game_graph():vertex(se0.m_game_vertex_id):level_id()
+	local ev_id = "ss_tip_e_" .. target_id .. "_" .. start_tg
+	local ac_id = "ss_tip_a_" .. target_id .. "_" .. start_tg
+
+	local function deliver()
+		if time_global() - start_tg < 5000 then return end
+		if not db.actor then return true end
+
+		local se = alife_object(target_id)
+		if not se then
+			ss_refund_and_notify(price, witness_icon, decay)
+			return true
+		end
+
+		local dir_key
+		if is_lying then
+			local pool = { "n", "ne", "e", "se", "s", "sw", "w", "nw", "holding" }
+			dir_key = pool[math.random(#pool)]
+		else
+			local lid1 = game_graph():vertex(se.m_game_vertex_id):level_id()
+			if lid1 ~= lid0 then
+				dir_key = "holding"
+			else
+				local p1 = se.position
+				dir_key = ss_cardinal_from_xz(p1.x - pos0.x, p1.z - pos0.z)
+			end
+		end
+
+		local smart
+		if is_lying then
+			smart = ss_random_lie_smart(se)
+		else
+			smart = ss_nearest_smart(se)
+		end
+		local loc_name
+		if smart then
+			loc_name = game.translate_string("st_" .. smart:name() .. "_name")
+		else
+			loc_name = game.translate_string("ss_unknown_location")
+		end
+
+		local body = ss_build_message(loc_name, dir_key, archetype)
+		local header = game.translate_string("ss_anonymous_sender")
+		db.actor:give_game_news(header, body, witness_icon, 0, decay)
+		if sound ~= "None" then
+			xr_sound.set_sound_play(AC_ID, sound)
+		end
+		return true
+	end
+
+	CreateTimeEvent(ev_id, ac_id, 0, deliver)
+end
+
+local function ss_check_cooldown(name)
+	if not name then return 0 end
+	local key = string.lower(name)
+	local tg = time_global()
+	local exp = query_cooldowns[key]
+	if exp and tg < exp then
+		return math.ceil((exp - tg) / 1000)
+	end
+	return 0
+end
+
+local function ss_set_cooldown(name)
+	if not name then return end
+	query_cooldowns[string.lower(name)] = time_global() + (query_cooldown * 1000)
+end
+
+function loadsettings()
+	if not pda_inter_mcm then return end
+	local g = pda_inter_mcm.get_config
+
+	local md = g("ss_message_decay")
+	if md then message_decay = md * 1000 end
+
+	local ms = g("ss_message_sound")
+	if ms and message_sounds[ms] then message_sound = message_sounds[ms] end
+
+	pda_1_max_rank = g("ss_pda_1_max_rank") or pda_1_max_rank
+	pda_2_max_rank = g("ss_pda_2_max_rank") or pda_2_max_rank
+	pda_3_max_rank = g("ss_pda_3_max_rank") or pda_3_max_rank
+	base_cost = g("ss_base_cost") or base_cost
+	relation_multipliers["friend"]      = g("ss_friend_multiplier")      or relation_multipliers["friend"]
+	relation_multipliers["neutral"]     = g("ss_neutral_multiplier")     or relation_multipliers["neutral"]
+	relation_multipliers["enemy"]       = g("ss_enemy_multiplier")       or relation_multipliers["enemy"]
+	rank_multipliers["novice"]          = g("ss_novice_multiplier")       or rank_multipliers["novice"]
+	rank_multipliers["trainee"]         = g("ss_trainee_multiplier")      or rank_multipliers["trainee"]
+	rank_multipliers["experienced"]     = g("ss_experienced_multiplier")  or rank_multipliers["experienced"]
+	rank_multipliers["professional"]    = g("ss_professional_multiplier") or rank_multipliers["professional"]
+	rank_multipliers["veteran"]         = g("ss_veteran_multiplier")      or rank_multipliers["veteran"]
+	rank_multipliers["expert"]          = g("ss_expert_multiplier")       or rank_multipliers["expert"]
+	rank_multipliers["master"]          = g("ss_master_multiplier")       or rank_multipliers["master"]
+	rank_multipliers["legend"]          = g("ss_legend_multiplier")       or rank_multipliers["legend"]
+	witness_radius      = g("ss_witness_radius")     or witness_radius
+	lie_chance_base     = g("ss_lie_chance_base")    or lie_chance_base
+	lie_chance_bandit   = g("ss_lie_chance_bandit")  or lie_chance_bandit
+	query_cooldown      = g("ss_query_cooldown")     or query_cooldown
+end
+
+local function actor_on_first_update()
+	reached_rank = true
+end
+
+
+
+--rating = novice, 1999, trainee, 3999, experienced, 6999, professional, 9999, veteran, 14999, expert, 20999, master, 27999, legend
+--ranks.get_player_rank_name()
+--ranks.get_se_obj_rank_name(se_obj)
+
+		function CheckRelation(npc)
+			if (xr_conditions.actor_enemy(db.actor,npc)) then
+				return "enemy"
+			elseif (xr_conditions.actor_neutral(db.actor,npc)) then
+				return "neutral"
+			elseif (xr_conditions.actor_friend(db.actor,npc)) then
+				return "friend"
+			else
+				actor_menu.set_msg(1,"Error: npc's relation to actor doesn't match friend, neutral or enemy",4)
+				return "unknown"
+			end
+		end
+		
+		
+		
+		
+		function CheckFactionRelation(npc)
+			if (game_relations.is_factions_enemies(get_actor_true_community(), npc:community())) then
+				return "enemy"
+			elseif (game_relations.is_factions_neutrals(get_actor_true_community(), npc:community())) then
+				return "neutral"
+			elseif (game_relations.is_factions_friends(get_actor_true_community(), npc:community())) then
+				return "friend"
+			else
+				actor_menu.set_msg(1,"Error: npc's relation to actor doesn't match friend, neutral or enemy",10)
+				return "unknown"
+			end
+		end
+		
+		function SnitchMessage(string_to_translate,relation_to_actor,npc_rank,type,count,decay)
+		if(message_decay ~= 0) then
+			local msg
+			if (type == "random_npc_found") then
+				msg = game.translate_string(string_to_translate .. "_" .. relation_to_actor .. "_" .. npc_rank .. "_" ..  tostring(math.random(count)))
+			elseif (type == "random_default") then
+				msg = game.translate_string(string_to_translate .. "_" .. tostring(math.random(count)))
+			else
+				msg = game.translate_string(string_to_translate)
+			end
+			db.actor:give_game_news(sender_header, msg, sender_icon, 0, decay)
+		end
+		if (message_sound ~= "None") then
+			xr_sound.set_sound_play(AC_ID, message_sound)
+		end
+		end
+	
+		local function process_pda_info(npc,info_id)
+			if info_id == "ui_pda" then
+				pda_opened = true
+			elseif info_id == "ui_pda_hide" then
+				pda_opened = false
+			end
+		end
+
+		function onkey_release(key)
+			local bind = dik_to_bind(key)
+			if ((bind == key_bindings.kWPN_FIREMODE_NEXT) and pda_opened) then
+				try_open_search(db.actor)
+			end
+		end
+
+		function try_open_search(actor)
+			func_stalkersearch(actor or db.actor)
+		end
+
+		
+----------------------------------------------------------------------
+-- UI Item Property
+----------------------------------------------------------------------
+
+function func_stalkersearch(obj)
+	start(obj)
+end
+
+
+-------------------------------------------------------------------
+GUI = nil -- instance, don't touch
+function start(obj)
+
+	if (not obj) then
+		return
+	end
+	
+	hide_hud_inventory()
+	
+	if (tracking_task_active) then
+		tm:set_task_cancelled("tracking_stalker_task") --cancel task
+		tracking_task_active = false
+		found = false
+		SnitchMessage("stalker_search_snitch_target_signal_cancel",nil,nil,"random_default",3,message_decay)
+	end
+	
+	if (not GUI) then
+		GUI = UIFindActivePDA()
+	end
+	
+	if (GUI) and (not GUI:IsShown()) then
+		GUI:ShowDialog(true)
+		GUI:Reset(obj)
+		
+		Register_UI("UIFindActivePDA","item_backpack")
+	end
+	
+
+end
+		
+
+class "UIFindActivePDA" (CUIScriptWnd)
+
+function UIFindActivePDA:__init() super()
+	self:InitControls()
+	self:InitCallBacks()
+end
+
+function UIFindActivePDA:__finalize()
+end
+
+function UIFindActivePDA:InitControls()
+	self:SetWndRect(Frect():set(0,0,1024,768))
+	self:SetAutoDelete(true)
+	--self:Enable(true)
+
+	local xml					= CScriptXmlInit()
+	xml:ParseFile				("ui_items_backpack.xml")
+
+	self.dialog					= xml:InitStatic("backpack", self)
+	xml:InitStatic("backpack:background", self.dialog)
+
+	self.input = xml:InitEditBox("backpack:input",self.dialog)
+	self:Register(self.input,"fld_input")
+
+	local in_pos = self.input:GetWndPos()
+	local in_w = self.input:GetWidth()
+	self.lbl_prompt = CUITextWnd()
+	self.lbl_prompt:SetAutoDelete(true)
+	self.lbl_prompt:SetWndRect(Frect():set(0, 0, in_w, 22))
+	self.lbl_prompt:SetWndPos(vector2():set(in_pos.x, in_pos.y - 26))
+	self.lbl_prompt:SetText(game.translate_string("ss_enter_name"))
+	self.lbl_prompt:SetTextColor(GetARGB(255, 220, 220, 220))
+	self.lbl_prompt:SetFont(GetFontLetterica18Russian())
+	self.dialog:AttachChild(self.lbl_prompt)
+
+	local btn = xml:Init3tButton("backpack:btn_cancel", self.dialog)
+	self:Register(btn,"btn_cancel")
+
+	btn = xml:Init3tButton("backpack:btn_ok", self.dialog)
+	self:Register(btn,"btn_ok")
+end
+
+function UIFindActivePDA:InitCallBacks()
+	self:AddCallback("btn_ok", ui_events.BUTTON_CLICKED, self.OnAccept, self)
+	self:AddCallback("btn_cancel", ui_events.BUTTON_CLICKED, self.Close, self)
+end
+
+function UIFindActivePDA:Reset(obj)
+	self.id = obj:id()
+	self.section = obj:section()
+	
+	self.input:SetText("")
+	self.input:Enable(true)
+end
+
+function UIFindActivePDA:Update()
+	CUIScriptWnd.Update(self)
+end
+
+function UIFindActivePDA:OnAccept()
+	local txt = self.input:GetText()
+
+	if (txt == "" or txt == " ") then
+		actor_menu.set_msg(1, game.translate_string("stalker_search_empty_string"), 4)
+		self.input:SetText("")
+		return
+	end
+
+	if (found == true) then
+		if (db.actor:money() < self.price) then
+			actor_menu.set_msg(1, strformat(game.translate_string("stalker_search_payment_not_enough"), self.price - db.actor:money(), self.price), 4)
+			SnitchMessage("stalker_search_snitch_low_money", nil, nil, nil, nil, message_decay)
+			found = false
+			self:Close()
+			return
+		end
+
+		local se_target = alife_object(self.target_id)
+		if not (se_target and IsStalker(nil, se_target:clsid()) and se_target:alive()) then
+			actor_menu.set_msg(1, game.translate_string("stalker_search_target_lost_before_accepted"), 4)
+			found = false
+			self:Close()
+			return
+		end
+
+		-- deduct money
+		db.actor:give_money(-self.price)
+		actor_menu.set_msg(1, strformat(game.translate_string("stalker_search_transferring"), self.price), 4)
+
+		ss_dispatch_tip(self.target_id, self.archetype, self.is_lying, self.witness_icon or sender_icon, message_decay, message_sound, self.price)
+
+		ss_set_cooldown(self.target_name)
+		found = false
+		self:Close()
+		return
+	end
+
+	-- russian E workaround
+	if txt:find(string.char(197)) or txt:find(string.char(229)) then
+		containsRussianE = true
+	else
+		containsRussianE = false
+	end
+	player_name = db.actor:character_name()
+	if containsRussianE then
+		player_name = player_name:gsub(string.char(168), string.char(197))
+		player_name = player_name:gsub(string.char(184), string.char(229))
+	end
+
+	if (txt == player_name) then
+		SnitchMessage("stalker_search_snitch_found_player", nil, nil, "random_default", 5, message_decay)
+		self:Close()
+		return
+	end
+
+	-- cooldown
+	local cd_left = ss_check_cooldown(txt)
+	if cd_left > 0 then
+		actor_menu.set_msg(1, strformat(game.translate_string("ss_on_cooldown"), cd_left), 4)
+		return
+	end
+
+	-- find target by name
+	local se_target
+	for i = 1, 65534 do
+		local se = alife_object(i)
+		if se and IsStalker(nil, se:clsid()) then
+			local nm = se:character_name()
+			if containsRussianE and nm then
+				nm = nm:gsub(string.char(168), string.char(197))
+				nm = nm:gsub(string.char(184), string.char(229))
+			end
+			if nm == txt then
+				se_target = se
+				break
+			end
+		end
+	end
+
+	if not se_target then
+		actor_menu.set_msg(1, game.translate_string("stalker_search_cant_find_pda"), 4)
+		return
+	end
+
+	if not se_target:alive() then
+		SnitchMessage("stalker_search_snitch_dead_target", nil, nil, "random_default", 5, message_decay)
+		self:Close()
+		return
+	end
+
+	local rank = ranks.get_se_obj_rank_name(se_target)
+	local pda_item = db.actor:item_in_slot(8)
+	local pda_section = pda_item and tostring(pda_item:section()) or ""
+	if ((pda_section == "device_pda_1") and (rank_to_index[rank] > pda_1_max_rank))
+		or ((pda_section == "device_pda_2") and (rank_to_index[rank] > pda_2_max_rank))
+		or ((pda_section == "device_pda_3") and (rank_to_index[rank] > pda_3_max_rank))
+	then
+		SnitchMessage("stalker_search_snitch_low_pda", nil, nil, nil, nil, message_decay)
+		self:Close()
+		return
+	end
+
+	-- witness scan
+	local witness = ss_find_witness(se_target, witness_radius)
+	if not witness then
+		actor_menu.set_msg(1, game.translate_string("ss_no_witness"), 5)
+		ss_set_cooldown(txt)  -- prevent name spam
+		self:Close()
+		return
+	end
+
+	-- relation (for price)
+	local npc_r = level.object_by_id(se_target.id)
+	local rel
+	if npc_r then
+		rel = CheckRelation(npc_r)
+	else
+		rel = CheckFactionRelation(se_target)
+	end
+
+	local base_price = base_cost * (relation_multipliers[rel] or 1) * (rank_multipliers[rank] or 1)
+	local rng = math.random(85, 120) / 100
+	local price = math.floor(base_price * rng)
+
+	-- roll archetype + lie chance
+	local archetype = ss_pick_archetype()
+	local lie_p = ss_get_lie_chance(witness:community())
+	local lying = math.random() < lie_p
+
+	self.target_id = se_target.id
+	self.target_name = txt
+	self.price = price
+	self.archetype = archetype
+	self.is_lying = lying
+	self.witness_icon = witness:character_icon()
+
+	-- feedback
+	self.input:SetText(strformat(game.translate_string("stalker_search_payment_query"), price))
+	self.input:Enable(false)
+	found = true
+
+	if (db.actor:money() < price) then
+		self.input:SetText(strformat(game.translate_string("stalker_search_payment_not_enough"), price - db.actor:money(), price))
+		SnitchMessage("stalker_search_snitch_low_money", nil, nil, nil, nil, message_decay)
+	end
+end
+
+
+
+function UIFindActivePDA:OnKeyboard(dik, keyboard_action)
+	local res = CUIScriptWnd.OnKeyboard(self,dik,keyboard_action)
+	if (res == false) then
+		local bind = dik_to_bind(dik)					
+		if keyboard_action == ui_events.WINDOW_KEY_PRESSED then
+			if dik == DIK_keys.DIK_ESCAPE then
+				self:Close()
+			end
+		end
+	end
+	return res
+end
+
+function UIFindActivePDA:Close()
+	found = false
+
+	self:HideDialog()
+
+	Unregister_UI("UIFindActivePDA")
+end
+	
+
+
+--------------------------------------------------------
+
+local function is_smart_valid(squad_id)
+	local squad = alife_object(squad_id)
+	if squad then
+		local smart_id = squad.assigned_ss_target_id
+		if smart_id then
+			local smrt = SIMBOARD.smarts[smart_id]
+			local smart = smrt and smrt.smrt
+			if smart and (simulation_objects.base_smarts[smart:name()] == true) then
+				--printf("setup_tracking_stalker_task | squad (%s) is targeting a base smart [%s]", squad_id, smart:name())
+				return false
+			end
+		end
+	end
+	return true
+end
+	
+---------------------------< Effects >---------------------------
+xr_effects.setup_tracking_stalker_task = function(actor,npc,p)
+-- p[1]: task_id
+-- p[2]: true = scan all factions except for p[4], false = scan listed factions (p[4]+)
+-- p[3]: true = scan npcs in current and connected levels only, false = scan all
+-- p[4]+: factions that can be targetted; can be list
+
+	local sim = alife()
+
+	
+	if (ss_target_id == nil or ss_target_id == AC_ID) then
+		printf("! %s - no target found for task",p[1])
+		return
+	end
+	
+	local se_target = alife_object(ss_target_id)
+	if not (se_target) then
+		printe("! %s - no server object could be retrieved for (%s)",p[1],ss_target_id)
+		return
+	end
+	
+	local target_squad = se_target and se_target.group_id and se_target.group_id ~= 65535 and alife_object(se_target.group_id)
+	if target_squad then
+		sim_offline_combat.task_squads[target_squad.id] = true
+	end
+	
+	-- Save var
+	local target_comm = alife_character_community(se_target)
+	local level_target = sim:level_name(game_graph():vertex(se_target.m_game_vertex_id):level_id())
+	local level_task = level.name()
+	local tbl = {
+		lvl_task = level_task,
+		lvl_target = level_target,
+		ss_target_id = ss_target_id,
+		target_comm = target_comm,
+	}
+	--save_var(db.actor, p[1], tbl)
+	printdbg("- %s | setup_tracking_stalker_task | ss_target_id: %s - target_comm: %s - lvl_task: %s - lvl_target: %s", p[1], ss_target_id, target_comm, level_task, level_target)
+
+	local function postpone_for_next_frame(ss_target_id)
+		local news_caption = game.translate_string(task_manager.task_ini:r_string_ex(p[1], "title")) or "error"
+		local news_text = game.translate_string("st_mm_new_game_name") .. " " .. se_target:character_name() .. "\\n " .. game.translate_string("st_mm_new_game_faction_2") .. " " .. game.translate_string(se_target:community()) .. "\\n " .. game.translate_string("st_location") .. " " .. game.translate_string(level_target)
+		db.actor:give_talk_message2(news_caption, news_text, se_target:character_icon(), "iconed_answer_item")
+		return true
+	end
+	CreateTimeEvent(0,"setup_tracking_stalker_task",0,postpone_for_next_frame,ss_target_id)
+end 
+
+
+---------------------------< Task functor >---------------------------
+task_functor.tracking_stalker_task_target_functor = function(task_id,field,p,tsk)
+	if (field == "target") then
+		if (tsk) then
+			return ss_target_id
+		end
+	end
+end
+
+
+---------------------------< Task Status functor >---------------------------
+task_status_functor.tracking_stalker_task_status_functor = function(tsk,task_id)
+
+	if (tsk.stage == 0) then
+		
+		local id = ss_target_id
+		
+		if not (id) then
+			actor_menu.set_msg(1,"ERROR: id not found",4)
+			printdbg("ERROR: id not found")
+			tracking_task_active = false
+			return "fail"
+		end
+		
+		local se_obj = id and alife_object(id)
+		if not (se_obj) then
+			actor_menu.set_msg(1,"ERROR: id is not alife_object",4)
+			printdbg("ERROR: id is not alife_object")
+			tracking_task_active = false
+			return "fail"
+		end
+		
+		if not (IsStalker(nil,se_obj:clsid())) then
+			actor_menu.set_msg(1,"ERROR: id is not a stalker?!",4)
+			printdbg("ERROR: id is not a stalker?")
+			tracking_task_active = false
+			return "fail"
+		end
+		
+		if not (se_obj:alive()) then
+			actor_menu.set_msg(1,game.translate_string("stalker_search_signal_lost"),4)
+			tracking_task_active = false
+			tm:set_task_cancelled("tracking_stalker_task") --cancel task
+			SnitchMessage("stalker_search_snitch_target_signal_lost",nil,nil,"random_default",3,message_decay)
+		end
+		
+	elseif (tsk.stage == 254) then
+		actor_menu.set_msg(1,"ERROR: the hell's 254??",4)
+		printdbg("ERROR: the hell's 254??")
+		tracking_task_active = false
+		return "fail"
+	end
+end
+
+
+local function save_state(m_data)
+	m_data.ss_target_id = ss_target_id
+	m_data.reached_rank = reached_rank
+	m_data.tracking_task_active = tracking_task_active
+end
+
+local function load_state(m_data)
+	if (m_data.ss_target_id) then
+		ss_target_id = m_data.ss_target_id
+	end
+	if (m_data.reached_rank) then
+		reached_rank = m_data.reached_rank
+	end
+	if (m_data.tracking_task_active ~= nil) then
+		tracking_task_active = m_data.tracking_task_active
+	end
+end
+
+function on_game_start()
+	RegisterScriptCallback("on_key_release",onkey_release)
+	--RegisterScriptCallback("on_key_press", onKeyPress)
+	RegisterScriptCallback("actor_on_info_callback",process_pda_info)
+	RegisterScriptCallback("save_state",save_state)
+	RegisterScriptCallback("load_state",load_state)
+	RegisterScriptCallback("actor_on_first_update", actor_on_first_update)
+	RegisterScriptCallback("on_option_change", loadsettings)  --MCM sends the same callback as ui_options
+	loadsettings()
+end

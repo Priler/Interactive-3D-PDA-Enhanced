@@ -840,6 +840,14 @@
 		<text>Подтвердить</text>
 	</string>
 
+	<string id="pda_banter_track_header">
+		<text>Track Stalker</text>
+	</string>
+
+	<string id="pda_banter_track_confirm">
+		<text>Search</text>
+	</string>
+
 	<string id="pda_task_main_menu">
 		<text>Задания</text>
 	</string>

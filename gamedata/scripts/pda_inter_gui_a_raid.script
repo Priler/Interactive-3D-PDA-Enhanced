@@ -108,39 +108,38 @@ function CustomPDAX:OnClickSendRaid()
 end
 
 function CustomPDAX:OnClickExecRaid(num)
-	-- check if squad is viable and actor has enough money, else dont do anything and wait till upd_squad() updates squad or removes from the table
 	local squad_id, squad_commander = pda_inter_x_raid.get_available_squad_id_and_commander_by_idx(num)
-
-	local price = pda_inter_x_raid.Raid_available_squads[num].price
-	local has_enough_money = db.actor:money() > price
-	local can_join = squad_commander and (size_table(axr_companions.non_task_companions) + utils_obj.get_squad_count(squad_commander) <= axr_companions.max_actor_squad_size) or false
-
-	-- also check if actor has enough space for squad
-	if squad_id and can_join and has_enough_money then
-
-		-- hide bottom containers
-		self:ResetLowerMenus()
-
-		-- set state to 10
-		pmain.pda_msg_states[1].state = 10
-
-		-- take actor money
-		db.actor:give_money(-price)
-
-		-- update money text
-		self:UpdMoneyText()
-
-		-- reset active message
-		self.active_text:SetText(gt("pda_cur_active") .. "    " .. gt("pda_cur_active_none"))
-
-		-- add as companion
-		pda_inter_x_raid.add_companion_raid_squad(squad_id, squad_commander, num)
-
-		-- clear tables
-		pda_inter_x_raid.clear_raid_tables()
-
+	if not (squad_id and squad_commander) then
+		actor_menu.set_msg(1, gt("pda_raid_squad_gone"), 4)
+		return
 	end
 
+	local price = pda_inter_x_raid.Raid_available_squads[num].price
+	if db.actor:money() < price then
+		actor_menu.set_msg(1, gt("pda_raid_not_enough_money"), 4)
+		return
+	end
+
+	-- hide bottom containers
+	self:ResetLowerMenus()
+
+	-- set state to 10
+	pmain.pda_msg_states[1].state = 10
+
+	-- take actor money
+	db.actor:give_money(-price)
+
+	-- update money text
+	self:UpdMoneyText()
+
+	-- reset active message
+	self.active_text:SetText(gt("pda_cur_active") .. "    " .. gt("pda_cur_active_none"))
+
+	-- add as companion
+	pda_inter_x_raid.add_companion_raid_squad(squad_id, squad_commander, num)
+
+	-- clear tables
+	pda_inter_x_raid.clear_raid_tables()
 end
 
 function CustomPDAX:OnSelectRaidMap()

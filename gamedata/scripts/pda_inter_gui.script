@@ -88,6 +88,15 @@ function is_tab_enabled(tab_num)
 	return tab_enabled_defaults[tab_num]
 end
 
+function is_market_category_enabled(group)
+	if not group then return true end
+	if ui_mcm then
+		local val = pda_inter_mcm.get_config("mkt_cat_" .. group)
+		if val ~= nil then return val end
+	end
+	return true
+end
+
 pda_msg_states = {
 	{ state = 0, big_menu = true },
 	{ state = 0, big_menu = true },
@@ -402,6 +411,7 @@ function start_PDAX()
 	end
 	last_3d_state = get_console_cmd(1,"g_3d_pda")
 	if (GUI) and (not GUI:IsShown()) then
+		GUI:RefreshTabVisibility()
 		GUI:ResetUpperMenus()
 		--GUI:ShowDialog(true)
 		return GUI
@@ -460,6 +470,11 @@ function CustomPDAX:InitControls()
 	self.close_btn = xml:Init3tButton("close_btn", self.background)
 	self:Register(self.close_btn, "close_btn")
 
+	--------------------------- Notes lock button (global, used by games to lock input) ---------------------------
+	self.notes_lock_btn = xml:Init3tButton("notes_lock_btn", self.background)
+	self:Register(self.notes_lock_btn, "notes_lock_btn")
+	self.notes_lock_btn:Show(get_console_cmd(1, "g_3d_pda"))
+
 
 	-------------------------- Bottom menu --------------------------
 	self:BuildBottomMenu(xml)
@@ -488,6 +503,7 @@ function CustomPDAX:InitCallBacks()
 	self:AddCallback("send_btn", ui_events.BUTTON_CLICKED, self.OnClickSend, self)
 	self:AddCallback("close_btn", ui_events.BUTTON_CLICKED, self.OnClickClose, self)
 	self:AddCallback("cancel_btn", ui_events.BUTTON_CLICKED, self.OnClickCancel, self)
+	self:AddCallback("notes_lock_btn", ui_events.BUTTON_CLICKED, self.OnClickNotesLock, self)
 
 end
 
@@ -529,6 +545,35 @@ function CustomPDAX:BuildMainMenu(xml)
 	self.main_arrow = xml:InitStatic("left_container:arrow_r", self.left_cont)
 	self.main_arrow:Show(false)
 
+end
+
+function CustomPDAX:RefreshTabVisibility()
+	local visual_slot = 0
+	self.tab_visual_positions = self.tab_visual_positions or {}
+	for i = 1, main_menu_btns do
+		local t = self.pda_t[i]
+		if not (t and t.btn) then break end
+		if is_tab_enabled(i) then
+			t.btn:SetWndPos(vector2():set(0, visual_slot * 40))
+			t.btn:Show(true)
+			t.enabled = true
+			self.tab_visual_positions[i] = visual_slot
+			visual_slot = visual_slot + 1
+		else
+			t.btn:Show(false)
+			t.enabled = false
+			self.tab_visual_positions[i] = -1
+			if self.cur_tree == i then
+				if t.mid_cont then t.mid_cont:Show(false) end
+				self.cur_tree = 0
+				if self.main_arrow then self.main_arrow:Show(false) end
+			end
+		end
+	end
+
+	if self.tabs_initialized and self.tabs_initialized[4] and self.RefreshMarketCategories then
+		self:RefreshMarketCategories()
+	end
 end
 
 function CustomPDAX:BuildSubMenus()
@@ -727,13 +772,11 @@ function CustomPDAX:OnClickMainMenu(num)
 		-- set current tree to pressed menu (num)
 		self.cur_tree = num
 
-		-- show and repos arrow to clicked menu
+		-- show and repos arrow to clicked menu (visual_pos accounts for disabled tabs)
 		self.main_arrow:Show(true)
 		local arrow_pos = self.main_arrow:GetWndPos()
-		-- use visual position for arrow (accounts for disabled tabs)
 		local visual_pos = self.tab_visual_positions[num] or 0
-		local arrow_pos_y = (visual_pos + 1) * 40 - 30
-		self.main_arrow:SetWndPos(vector2():set(arrow_pos.x, arrow_pos_y))
+		self.main_arrow:SetWndPos(vector2():set(arrow_pos.x, visual_pos * 40))
 
 		-- show middle container for clicked menu
 		self.pda_t[num].mid_cont:Show(true)

@@ -647,9 +647,14 @@ function add_giver()
 	local giver_group = all_potential_givers[rnd_giver_id]
 	local chance = giver_group and task_chance[giver_group][cur_task_type] * respond_mult
 	pr("task giver group: %s || respond chance: %s%", giver_group, chance and math.floor(chance * 100))
-	if not chance then return end
 
-	if chance < math.random() then return end
+	local debug_always_task = pda_inter_mcm and pda_inter_mcm.get_config and pda_inter_mcm.get_config("task_debug_always_offer")
+	if not chance then
+		if not debug_always_task then return end
+		chance = 1
+	end
+
+	if (not debug_always_task) and chance < math.random() then return end
 
 	-- If giver already has this task
 	local set_new_cd
@@ -675,6 +680,11 @@ function add_giver()
 
 			-- if target and giver exist and fine then add previous info
 			if task_targets_check(giver_active_t.target_id, giver_active_t.giver_id, cur_task_type, giver_active_t.target_sec) then
+				-- skip if target already displayed by another giver
+				if target_in_available_givers(giver_active_t.target_id) then
+					pr("- target already shown by another giver, skip")
+					return
+				end
 				pr("- adding previous info")
 				add_existing_giver(giver_active_t)
 			end
@@ -698,13 +708,38 @@ function add_giver()
 		stealth_stash_id = targets_a[2]
 		stealth_task_comm = targets_a[3]
 	else
-		target_id = targets_a[math.random(1, #targets_a)]
+		-- shuffle candidate indices, pick a target not already displayed by another giver or in an active task
+		local indices = {}
+		for i = 1, #targets_a do indices[i] = i end
+		for i = #indices, 2, -1 do
+			local j = math.random(1, i)
+			indices[i], indices[j] = indices[j], indices[i]
+		end
+		for i = 1, #indices do
+			local candidate = targets_a[indices[i]]
+			if candidate and (not target_in_available_givers(candidate)) and (not target_in_active_task(candidate)) then
+					if cur_task_type == 1 then
+					local species = get_squad_mutant_species(candidate)
+					local lvl = get_target_level_name(candidate)
+					if not mutant_species_already_offered(species, lvl) then
+						target_id = candidate
+						break
+					end
+				else
+					target_id = candidate
+					break
+				end
+			end
+		end
 	end
 	if not target_id then return end
 
 	-- check if target is already in active task (for 7 its npcs smart terrain id)
 	local target_is_active = target_in_active_task(target_id)
 	if target_is_active then return end
+
+	-- check if target is already shown by another giver
+	if target_in_available_givers(target_id) then return end
 
 	-- check for giver and target again
 	local giver_obj = alife_object(rnd_giver_id)
@@ -2195,7 +2230,7 @@ end
 
 -- Build/refresh stash cache (call once, reuse many times)
 -- Cache expires after 60 seconds to pick up new stashes
-local function get_or_build_stash_cache()
+function get_or_build_stash_cache()
 	local tg = time_global()
 	
 	-- Rebuild cache if expired (60 second lifetime)
@@ -2494,6 +2529,57 @@ function target_in_active_task(id)
 		end
 	end
 
+	return false
+end
+
+function target_in_available_givers(id)
+	for i = 1, #Tasks_available_givers do
+		if Tasks_available_givers[i].target_id == id then
+			return true
+		end
+	end
+
+	return false
+end
+
+function get_squad_mutant_species(target_id)
+	local sq = alife_object(target_id)
+	if not (sq and sq.commander_id) then return nil end
+	for member in sq:squad_members() do
+		local npc = alife_object(member.id)
+		if npc then
+			local sec = npc:section_name()
+			local kind = ini_sys:r_string_ex(sec, "kind") or ini_sys:r_string_ex(sec, "species")
+			if kind and kind ~= "" then return kind end
+		end
+	end
+	return nil
+end
+
+function get_target_level_name(target_id)
+	local t = alife_object(target_id)
+	if not t then return nil end
+	local lid = game_graph():vertex(t.m_game_vertex_id):level_id()
+	return lid and alife():level_name(lid) or nil
+end
+
+function mutant_species_already_offered(species, level_name)
+	if not (species and level_name) then return false end
+	for idx, t in pairs(Active_pda_tasks) do
+		if t.task_type == 1 then
+			local s = get_squad_mutant_species(t.target_id)
+			local l = get_target_level_name(t.target_id)
+			if s == species and l == level_name then return true end
+		end
+	end
+	for i = 1, #Tasks_available_givers do
+		local t = Tasks_available_givers[i]
+		if t.task_type == 1 then
+			local s = get_squad_mutant_species(t.target_id)
+			local l = get_target_level_name(t.target_id)
+			if s == species and l == level_name then return true end
+		end
+	end
 	return false
 end
 

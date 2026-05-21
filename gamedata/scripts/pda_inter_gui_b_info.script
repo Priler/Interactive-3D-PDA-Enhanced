@@ -29,10 +29,8 @@ function CustomPDAX:BuildFindUpperMenu()
 	self.find_arrow:Show(false)
 
 
-	-- Build childs
 	self:BuildFindUpperChildArtefact(xml)
 	self:BuildFindUpperChildMutant(xml)
-	self:BuildFindUpperChildStalker(xml)
 
 end
 
@@ -68,19 +66,6 @@ function CustomPDAX:BuildFindUpperChildMutant(xml)
 
 end
 
-function CustomPDAX:BuildFindUpperChildStalker(xml)
-	-- input box
-	self.stalker_box_find = xml:InitEditBox("mid_container_2:right_panel_3:stalker_input", self.find_menu[3].child_menu)
-	self:Register(self.stalker_box_find, "stalker_input")
-	pmain.align_element(self, self.stalker_box_find, self.find_menu[3].child_menu, "c")
-
-	-- confirm button
-	self.stalker_btn_find = xml:Init3tButton("mid_container_2:right_panel_3:stalker_btn", self.find_menu[3].child_menu)
-	self:Register(self.stalker_btn_find, "stalker_btn")
-	pmain.align_element(self, self.stalker_btn_find, self.find_menu[3].child_menu, "c")
-
-end
-
 function CustomPDAX:InitFindCallbacks()
 	for i = 1, 3 do
 		CustomPDAX["OnClickFindMenu_".. i] = function(self)
@@ -91,7 +76,6 @@ function CustomPDAX:InitFindCallbacks()
 
 	self:AddCallback("artefact_list", ui_events.LIST_ITEM_CLICKED, self.OnSelectFindArtefact, self)
 	self:AddCallback("mutant_list", ui_events.LIST_ITEM_SELECT, self.OnSelectFindMutant, self)
-	self:AddCallback("stalker_btn", ui_events.BUTTON_CLICKED, self.OnInputStalker, self)
 end
 
 class "list_item" (CUIListBoxItem)
@@ -155,9 +139,6 @@ function CustomPDAX:ResetFindMenu()
 	-- update str and hide img
 	self.mutant_img_find:Show(false)
 
-	------------ 3 ------------
-	self.stalker_box_find:SetText("")
-
 end
 
 --leftovers from 2D
@@ -206,7 +187,17 @@ end
 
 end]]
 
-function CustomPDAX:OnClickFindMenu(num)		-- (art, mutant, stalker)
+function CustomPDAX:OnClickFindMenu(num)		-- (art, mutant, track stalker)
+
+	if num == 3 then
+		CreateTimeEvent("open_stalker_track_e", "open_stalker_track_a", 0, function()
+			if pda_inter_x_search and pda_inter_x_search.try_open_search then
+				pda_inter_x_search.try_open_search(db.actor)
+			end
+			return true
+		end)
+		return
+	end
 
 	if self.cur_left_btn_find ~= num then
 
@@ -315,24 +306,6 @@ function CustomPDAX:OnSelectFindMutant()
 
 	-- enable send button when mutant has been chosen
 	self.send_btn:Enable(true)
-
-end
-
-function CustomPDAX:OnInputStalker()
-	local cur_str = self.stalker_box_find:GetText()
-
-	-- if input string isnt empty
-	if cur_str ~= "" then
-
-		-- set selected_find_item to current input box string
-		self.selected_find_item = cur_str
-
-		-- enable send button when mutant has been chosen
-		self.send_btn:Enable(true)
-
-	else
-		self.send_btn:Enable(false)
-	end
 
 end
 

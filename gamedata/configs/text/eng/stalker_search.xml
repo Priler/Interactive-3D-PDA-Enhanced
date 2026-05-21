@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<string_table>
+	
+    <string id="stalker_search_cant_find_pda">
+		<text>Cannot find any active PDA registered under selected name</text>
+	</string>
+	<string id="stalker_search_signal_lost">
+		<text>PDA signal lost</text>
+	</string>
+	<string id="stalker_search_signal_found">
+		<text>found with id </text>
+	</string>
+	<string id="stalker_search_title">
+		<text>PDA Signal</text>
+	</string>
+	<string id="stalker_search_description">
+		<text>Tracking active signal of a PDA registered under selected name.</text>
+	</string>
+	
+	<string id="stalker_search_payment_query">
+		<text>Pay %s RUB?</text>
+	</string>
+	
+	<string id="stalker_search_payment_not_enough">
+		<text>Can't afford (%s / %s)</text>
+	</string>
+		
+	<string id="stalker_search_snitch_header">
+		<text>Private message:</text>
+	</string>
+	
+	<string id="stalker_search_snitch_meeting_pre">
+		<text>Anonymous:\nLooks like a new face finally found its way inside our Infopreneur Target Tracking System. Well, as long as you have enough money, you are always welcome to use it for your profits.\n \nHowever, you should know: if you mess with our business,\nwe will use the same system to track you down.\n \nYou can't hide from us.\nSo stay at our good side and we will be able to help each other.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_meeting_1">
+		<text>Anonymous:\nHey. You might be wondering who i am and how i managed to get into your closed private messages.\nThe answer is: none of your business.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_2">
+		<text>Anonymous:\nI and my "colleagues" from the infopreneur network have been watching you for some time, and we find your methods... interesting.\nI have a proposal for you.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_3">
+		<text>Anonymous:\nYour PDA has just been upgraded with one of our special tools, designed for tracking our targets. If you have enough money and a strong desire to find someone, all we need is their name.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_4">
+		<text>Anonymous:\nThe catch? By running this program, you are automatically agreeing on giving some of your PDA's processing power towards assisting us in tracking other stalkers around you.\n \nSome people might not enjoy having a snitch by their side.</text>
+	</string>
+	<string id="stalker_search_snitch_meeting_5">
+		<text>Anonymous:\nOnce you are ready, just launch the new app on your PDA and enter your target's name.</text>
+	</string>
+	
+	
+	
+	<string id="stalker_search_empty_string">
+		<text>Request denied: Target's name is missing.</text>
+	</string>
+	
+	<string id="stalker_search_target_lost_before_accepted">
+		<text>Request denied: Target signal lost.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_target_lost_before_accepted">
+		<text>Huh, whoever that was, their PDA went offline right before you clicked "Accept."</text>
+	</string>
+	
+	<string id="stalker_search_transferring">
+		<text>Transferring %s RUB</text>
+	</string>
+	
+	<string id="stalker_search_low_rank">
+		<text>Request denied: insufficient access level</text>
+	</string>
+	
+	<string id="stalker_search_snitch_low_pda">
+		<text>This guy's tech got some advanced encryption protocols. We don't have enough agents with such devices inside the Zone to properly track him. If you upgrade your PDA, it might make finding the signal easier for us.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_low_money">
+		<text>Sorry, bud, we can't serve you without a decent payment from your side. The servers and other equipment won't pay for themselves.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_novice_1">
+		<text>That's weird, this guy's PDA is registered under two different accounts. He might have stolen it from someone else.</text>
+	</string>
+	<string id="stalker_search_snitch_found_enemy_novice_2">
+		<text>A recently registered account. Are you planning to rob a novice?</text>
+	</string>
+	<string id="stalker_search_snitch_found_enemy_novice_3">
+		<text>That person's PDA did not even have any protection. Easy job.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_novice_1">
+		<text>That might be a new guy, but don't get too cocky. Even a rusty shotgun hurts like a bitch, if you load it with slugs.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_novice_2">
+		<text>Judging by his equipment, he might die even before you get close to him.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_enemy_novice_3">
+		<text>I don't think he has any armor, so you probably only need just a couple of shots.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_trainee_1">
+		<text>His password is "12345". Do some people just never change built-in settings?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_trainee_2">
+		<text>That guy forgot to change his location sharing privacy settings. You might not even need our help to keep track of him.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_trainee_3">
+		<text>Low level encryption. Easy to crack.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_trainee_1">
+		<text>Just another notch on your gun, isn't it?</text>                            
+	</string>                                    
+	<string id="stalker_search_snitch_accept_enemy_trainee_2">
+		<text>Bonus points if you get him with a knife. Just kidding, don't be stupid.</text>                            
+	</string>                                    
+	<string id="stalker_search_snitch_accept_enemy_trainee_3">
+		<text>Are you sure he's worth your effort?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_experienced_1">
+		<text>This PDA must be some kind of an old model, there's no protection.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_experienced_2">
+		<text>This guy keeps sending some kind of a signal to an unknown contact. Weird, but makes it easy to track him.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_experienced_3">
+		<text>Cheap equipment, shouldn't be too difficult to deal with him.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_experienced_1">
+		<text>Don't forget, most stalkers don't travel alone.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_experienced_2">
+		<text>Another potential client about to be taken out. I guess he should've paid us first.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_experienced_3">
+		<text>Remember, even though throwing bolts at an anomaly might discharge it and let you run through, it's always safer to go around. Most novice stalkers die from getting too cocky with their knowledge.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_professional_1">
+		<text>This guy knows a lot, but is too cocky for his own good. Keep testing his patience and he will make a mistake.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_professional_2">
+		<text>This PDA is registered under a different name, but its changes history shows a match with the name you entered. Stolen identity?</text>
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_professional_3">
+		<text>Huh, there are two different PDA's under this name. Another attempt at hiding from us?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_professional_1">
+		<text>Watch out for mutants. With all the stalker-on-stalker combat, these guys keep getting a lot more free space to breed.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_professional_2">
+		<text>I'd say "Don't tell anyone!", but most stalkers here already know about this system. They just value their lives too much to attempt messing with our business.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_professional_3">
+		<text>Another day, another pile of bodies.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_veteran_1">
+		<text>That man has seen his fair share of battles. Make sure you don't become just another piece of his experience.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_veteran_2">
+		<text>That one got really good at dealing with mutants, but we both know who's the real monster here.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_veteran_3">
+		<text>Our database tells us this guy might've been an actual war veteran before entering the Zone. Stolen valor, or a real thing? Up to you to find out.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_veteran_1">
+		<text>Remember to sell any PDA's you find to your local infopreneur, we highly value any information they might contain.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_veteran_2">
+		<text>Feel free to dump an entire mag into his knees. That will teach him and his friends to pay us next time.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_veteran_3">
+		<text>Don't forget to load your weapons.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_expert_1">
+		<text>That guy is known for his leadership skills. Better approach him while he's not around his squad.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_expert_2">
+		<text>This guy describes himself as an expert every time he posts something in his social media. Will you put that to the test?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_expert_3">
+		<text>That guy knows what he's doing, but you're not new here either, ain't that right?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_expert_1">
+		<text>Aim for the head.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_expert_2">
+		<text>Have fun.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_expert_3">
+		<text>Better watch your back, someone just paid us a ton of money for tracking you. Nothing personal.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_master_1">
+		<text>This one's a tough target, are you sure you want to deal with him?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_master_2">
+		<text>Strong encryption. That guy must be rich.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_master_3">
+		<text>A tough nut to crack. Approach carefully.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_master_1">
+		<text>Don't die, we need your money.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_master_2">
+		<text>Better bring AP ammunition.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_master_3">
+		<text>Don't engage him in close quarters.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_enemy_legend_1">
+		<text>That man sent us a ton of money to make sure we won't track him. Pay us double and we will reconsider his contract.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_legend_2">
+		<text>That's a well known stalker, he's killed over a couple hundred men. Better check your equipment before approaching him.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_enemy_legend_3">
+		<text>High tech armor and equipment. Don't fight that beast at close range.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_enemy_legend_1">
+		<text>Try not to kill all of my clients. It's not cheap to maintain our servers in these conditions.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_legend_2">
+		<text>Good luck, you will need it.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_enemy_legend_3">
+		<text>Remember, running away is always an option.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_novice_1">
+		<text>Another one of the new guys. Nothing worth mentioning yet.</text>
+	</string>
+	<string id="stalker_search_snitch_found_neutral_novice_2">
+		<text>Just a new stalker. The profile picture is just a photo of their cat. They have no clue what they've gotten themselves into.</text>
+	</string>
+	<string id="stalker_search_snitch_found_neutral_novice_3">
+		<text>I don't know that one, must be new here.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_novice_1">
+		<text>Making new friends, or..?</text>
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_novice_2">
+		<text>Got it. Tracking.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_neutral_novice_3">
+		<text>So, what's your plan? Assist them, or end their misery?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_trainee_1">
+		<text>Just a random guy. Nobody's going to miss him.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_trainee_2">
+		<text>That PDA is such an old model, it's surprising that it's still capable of sending any signal at all.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_trainee_3">
+		<text>That guy owes a lot of money to Sid. Looks like that fat bastard got another person with his bullshit pricing.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_trainee_1">
+		<text>Don't forget, if you can get your hands on their PDA's, we will pay a decent sum for any useful information stored in them.</text>                            
+	</string>                                    
+	<string id="stalker_search_snitch_accept_neutral_trainee_2">
+		<text>Alright, hope finding him is worth your money.</text>                            
+	</string>                                    
+	<string id="stalker_search_snitch_accept_neutral_trainee_3">
+		<text>Not sure why you would need to find him, but hey, if you are paying, we are tracking.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_experienced_1">
+		<text>Just a guy, nothing special about him.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_experienced_2">
+		<text>This man once claimed he's been at the Oasis, but he never provided any proof. If he happens to die, check his pockets for some information.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_experienced_3">
+		<text>That man's got a long criminal record outside. No wonder he's in the Zone right now.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_experienced_1">
+		<text>Remember to keep your movement smooth. The Zone takes those who rush.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_experienced_2">
+		<text>Target acquired, activating movement trackers.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_experienced_3">
+		<text>Money received, pleasure doing business with you.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_professional_1">
+		<text>"A professional stalker", says his profile. Too many of these "professionals" die nowadays.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_professional_2">
+		<text>Some kind of anomaly keeps distorting his signal, but our movement prediction system is prepared for that.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_professional_3">
+		<text>This man used to be one of our agents, but then decided it's too immoral to track people. I won't be too upset if you put a bullet in his head.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_professional_1">
+		<text>Make sure you bring enough meds for your work.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_professional_2">
+		<text>Good luck.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_professional_3">
+		<text>There he is. Check your map.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_veteran_1">
+		<text>Got the signal, but no more info. You're on your own here.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_veteran_2">
+		<text>That guy has a ton of money on his account, but his tech is of such a low quality. Is he trying to save up for his family, or something?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_veteran_3">
+		<text>Last time i watched this one, a lot of friendly signals around him disappeared from the map. That guy left some people to die.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_veteran_1">
+		<text>Watch your equipment, you don't want to be slowed down by useless trash during combat.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_veteran_2">
+		<text>Found coordinates that supposedly lead to one of his stashes, but i'm not sharing that with you. Nothing personal, just business.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_veteran_3">
+		<text>Detecting a lot of mutant activity in your area. Don't roam around without a shotgun.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_expert_1">
+		<text>Huh, that man's missing from our database. Where did he come from?</text>
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_expert_2">
+		<text>That man has a bounty on his head. Who did he mess with?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_expert_3">
+		<text>Location history shows this guy has been using some weird unknown routes to move around the Zone. We might need to update our maps.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_expert_1">
+		<text>If you're planning to take him out, better bring something to get through his armor.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_expert_2">
+		<text>There's a bit of interference, but it shouldn't be a problem.</text>
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_expert_3">
+		<text>Also, a couple of stalkers nearby reported seeing some kind of a.. flying dark cloud.. spitting boiling blood at people? That's some really weird shit.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_master_1">
+		<text>The system says that guy's using a cellphone instead of a PDA. I thought those couldn't catch a proper signal in the Zone. Did he get some new model?</text>
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_master_2">
+		<text>That man's location history is all over the place, like if he was trying to hide the last position he's been in.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_master_3">
+		<text>This one has a ton of contracts with the mercs, what is he up to?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_master_1">
+		<text>Man, there's some really weird shit in his private messages. I don't think i will be able to fall asleep today.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_master_2">
+		<text>You might want to have some explosives on you. Never know when they could come in handy.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_master_3">
+		<text>Hey, i know this system is mostly designed to help us kill people, but try to avoid committing unnecessary murder. Our statistics show that we've been losing more and more stalkers recently. If this keeps up, we might lose control of the Zone.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_neutral_legend_1">
+		<text>Apparently that guy is a well known stalker among his people. I wonder what he's done to deserve all of that attention.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_legend_2">
+		<text>There's a ton of interference around this guy's signal. Might be an electra or some kind of an artifact.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_neutral_legend_3">
+		<text>Woah, his location history shows sudden changes, like if he was instantly traveling very long distances. Has somebody learned how to use space anomalies for their benefit?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_neutral_legend_1">
+		<text>You're not planning to kill another potential client of ours, are you?</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_legend_2">
+		<text>I hope you know what you're doing.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_neutral_legend_3">
+		<text>Whatever you are planning, good luck.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_novice_1">
+		<text>That person's pretty new. Also, for some reason they have your account in their friend list.</text>
+	</string>
+	<string id="stalker_search_snitch_found_friend_novice_2">
+		<text>This one has set their location data as public info. Very naive.</text>
+	</string>
+	<string id="stalker_search_snitch_found_friend_novice_3">
+		<text>That one's willingly showing their location to you. Are you friends or something?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_novice_1">
+		<text>You are just coming to help out a new guy, right?</text>
+	</string>
+	<string id="stalker_search_snitch_accept_friend_novice_2">
+		<text>Okay, let's see where this goes.</text>
+	</string>
+	<string id="stalker_search_snitch_accept_friend_novice_3">
+		<text>Let me guess, you're planning to relieve this one of their problems... whatever that means.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_trainee_1">
+		<text>That one's new in the Zone. Seems to approve whatever you do.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_trainee_2">
+		<text>This guy seems to trust you enough to let you view his location.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_trainee_3">
+		<text>That one has been saying good things about you in some of his private messages.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_trainee_1">
+		<text>You're not planning to rob a friendly new guy, are you?</text>                            
+	</string>                                    
+	<string id="stalker_search_snitch_accept_friend_trainee_2">
+		<text>Interesting to see you move to help out new stalkers. Or do you have different plans for this one?</text>                            
+	</string>                                    
+	<string id="stalker_search_snitch_accept_friend_trainee_3">
+		<text>Not sure what business you could have with a new guy, most can't even pay for an extra medkit.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_experienced_1">
+		<text>The text on this guy's PDA doesn't look like any kind of encryption we know. Wait, did he just fill it with random letters?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_experienced_2">
+		<text>Location history shows this guy has been traveling between multiple different hostile faction bases. Might be a contract worker or some kind of a spy.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_experienced_3">
+		<text>Target acquired. Wait, no, that's the wrong one.. uhh... Target acquired!</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_experienced_1">
+		<text>Hey, i got reports of stalkers hearing some weird voices from their radios, so be careful when traveling around your area. It might be a powerful controller or some kind of a new mutant messing with our devices.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_experienced_2">
+		<text>He doesn't seem hostile to you, so i suggest holding fire until you're sure you want him dead.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_experienced_3">
+		<text>Request received, tracking the target.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_professional_1">
+		<text>This one's map shows some underground facility network under... huh... We will need to investigate that one.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_professional_2">
+		<text>This guy's online balance is -4294967295RUB. What the hell was he doing on his account?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_professional_3">
+		<text>This one apparently has an enormous artifact collection stored somewhere. It's a shame i can't find any more info on his PDA.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_professional_1">
+		<text>Hey, if he ever speaks about whatever he's messing with, you know who's always ready to buy this info from you.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_professional_2">
+		<text>If he ever happens to have an unfortunate accident and lose his PDA, we'd like to get our hands on that.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_professional_3">
+		<text>If you can avoid killing him, that would be nice for us. We'd like to question him at some point.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_veteran_1">
+		<text>This guy's PDA has DOOM installed on it. Classic.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_veteran_2">
+		<text>I've read this one survived getting shot in his torso about 30 times. Must've had some kind of a protective or a healing artifact.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_veteran_3">
+		<text>Another one of those old-school stalkers. These guys never bother to use bolts or any sort of special tech to avoid danger because they learned to feel presence of anomalies and mutants on their own.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_veteran_1">
+		<text>Don't forget about dangers of the Zone. Being around "friendly" people doesn't equal safety.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_veteran_2">
+		<text>Planning to assist with their work, or to take their profits?</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_veteran_3">
+		<text>Before you commit any murder, try talking to some of these guys. Who knows what new information they might be holding.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_expert_1">
+		<text>Judging by his social media, he seems to be okay with your presence in the Zone. Could be a good companion.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_expert_2">
+		<text>That one's a real expert. Could be a good pick for a squad, unless somebody else snatched him already.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_expert_3">
+		<text>That one has over a hundred of different jobs listed on his PDA. Not sure how he's planning to fulfill all the promises he made.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_expert_1">
+		<text>You know the drill, just check your map.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_expert_2">
+		<text>Another day, another job.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_expert_3">
+		<text>By the way, i know it's none of my business, but why does your location history show that you were... nevermind.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_master_1">
+		<text>That man has been in the Zone for a very long time. Looking at the amount of places he's been in, it's surprising he's still alive.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_master_2">
+		<text>This one used to be a bounty hunter. Must've gotten enough profit to have some decent equipment.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_master_3">
+		<text>That guy seems to actually know what he's doing. Might be good to have as an ally.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_master_1">
+		<text>Payment accepted, placing markers on the map.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_master_2">
+		<text>I'm getting really curious about what business you have with these people. Remember, if you get any useful information, you can always sell it to us.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_master_3">
+		<text>Hey, i just got information that we once again lost contact with at least three of our agents at same time. It could be some kind of a well coordinated attack. If i were you, i would watch your back.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_friend_legend_1">
+		<text>That guy's one of my best clients, it's going to cost you a bit more to make me consider giving away his position.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_legend_2">
+		<text>That one's an actual legend in these lands. Would make a powerful ally, if you can persuade him to work with you.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_friend_legend_3">
+		<text>That one has achieved a lot in the short time he spent in the Zone. Might be useful to have him as your companion.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_friend_legend_1">
+		<text>Going after legends, huh? This is getting interesting.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_legend_2">
+		<text>Think twice before trying to stab that one in the back.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_friend_legend_3">
+		<text>I must say, you are interacting with some really interesting people these days.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_target_signal_cancel_1">
+		<text>Got it, waiting for the next target.</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_cancel_2">
+		<text>No refunds.</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_cancel_3">
+		<text>Hope you got what you paid for.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_target_signal_lost_1">
+		<text>Signal lost. Was that your work?</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_lost_2">
+		<text>He's gone, good job. Or bad job? Depends on what you were planning.</text>
+	</string>
+	<string id="stalker_search_snitch_target_signal_lost_3">
+		<text>He's gone from our maps, you're on your own now.</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_zombie_1">
+		<text>Huh, i thought this guy died a long time ago. Why is his PDA still active?</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_zombie_2">
+		<text>Hey, this guy is listed as one of the stalkers that went missing a month ago! Perhaps you could go and ask him how he survived.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_zombie_3">
+		<text>Oh, that's the guy that promised to deliver me some controller brain tissue! Could you go and ask if he managed to get it?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_accept_zombie_1">
+		<text>Wait a second... oh... i see... nevermind...</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_zombie_2">
+		<text>Hold on, actually, at this point you might be going after a group of zombies.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_accept_zombie_3">
+		<text>Hmm, weird, at some point his message history just turned into a bunch of gibberish... what happened?</text>
+	</string>
+	
+	<string id="stalker_search_snitch_found_player_1">
+		<text>Yeah, we have that guy in our database. He's a real gullible idio... *cough* i mean, a very experienced stalker, and our highly valued client!</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_player_2">
+		<text>Holy shit, that man's right on top of you, get out of there!.. Wait... it's just you.</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_player_3">
+		<text>Hey, what the hell are you doing? Why are you looking up your name? What are you trying to find out? All i can help you with is recovering your deleted browser history, we have all of that stored in our database.</text>
+	</string>
+	<string id="stalker_search_snitch_found_player_4">
+		<text>I know we don't take payment for simply checking if a person exists, but it doesn't mean that we don't spend resources on that! Quit wasting our time and looking up random names!</text>                                 
+	</string>                                         
+	<string id="stalker_search_snitch_found_player_5">
+		<text>Yeah, i'm familiar with that asshole. At this very moment he's wasting limited resources of our precious target tracking system just to look up his own fucking name!</text>
+	</string>
+
+	
+	<string id="stalker_search_snitch_dead_target_1">
+		<text>This one exists in our database, but the PDA is either offline or deep underground. He might be dead or hiding.</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_dead_target_2">
+		<text>I know that person, but can't get their signal. Perhaps someone else got to them before you?</text>                                  
+	</string>                                          
+	<string id="stalker_search_snitch_dead_target_3">
+		<text>We had his signal some time ago, but it might be too late to go after him now. I'll notify you if he gets back online.</text>
+	</string>
+	<string id="stalker_search_snitch_dead_target_4">
+		<text>That man exists, but is nowhere on our maps. I think the Zone might've taken this one.</text>
+	</string>
+	<string id="stalker_search_snitch_dead_target_5">
+		<text>Haven't seen any info about him in while. He might be dead.</text>
+	</string>
+	
+	
+	<string id="ui_mcm_menu_stalker_tracking">
+		<text>Track Stalkers By Name</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_rank_to_reach">
+		<text>Required player rank to unlock the tracking tool</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_rank_to_reach_desc">
+		<text>Player must reach this rank to use the tracking tool.\nIf you already have unlocked the tool in your save, changing this value does nothing.\n1 = novice\n2 = trainee(1999)\n3 = experienced(3999)\n4 = professional(6999)\n5 = veteran(9999)\n6 = expert(14999)\n7 = master(20999)\n8 = legend(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_decay">
+		<text>Message display time(in seconds)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_decay_desc">
+		<text>How long messages from infopreneur network stay on the screen before disappearing. Setting this to 0 disables these messages.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_sound">
+		<text>Infopreneur messages sound</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_message_sound_desc">
+		<text>Sound of messages that appear when you're using the tracking tool. Doesn't apply to messages that appear when you reach the correct rank for the first time.</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_1_max_rank">
+		<text>Maximum trackable rank (PDA 1.0)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_2_max_rank">
+		<text>Maximum trackable rank (PDA 2.0)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_3_max_rank">
+		<text>Maximum trackable rank (PDA 3.0)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_1_max_rank_desc">
+		<text>Ranks above selected can't be tracked by this PDA\n1 = novice\n2 = trainee(1999)\n3 = experienced(3999)\n4 = professional(6999)\n5 = veteran(9999)\n6 = expert(14999)\n7 = master(20999)\n8 = legend(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_2_max_rank_desc">
+		<text>Ranks above selected can't be tracked by this PDA\n1 = novice\n2 = trainee(1999)\n3 = experienced(3999)\n4 = professional(6999)\n5 = veteran(9999)\n6 = expert(14999)\n7 = master(20999)\n8 = legend(27999)</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_pda_3_max_rank_desc">
+		<text>Ranks above selected can't be tracked by this PDA\n1 = novice\n2 = trainee(1999)\n3 = experienced(3999)\n4 = professional(6999)\n5 = veteran(9999)\n6 = expert(14999)\n7 = master(20999)\n8 = legend(27999)</text>
+	</string>
+		<string id="ui_mcm_stalker_tracking_base_cost">
+		<text>Base cost of using the tool</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_base_cost_desc">
+		<text>Used to dynamically set final cost, depending on the target relation and rank multipliers set below</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_friend_multiplier">
+		<text>Friend cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_neutral_multiplier">
+		<text>Neutral cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_enemy_multiplier">
+		<text>Enemy cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_friend_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on if the stalker is a friend/neutral/enemy</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_neutral_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on if the stalker is a friend/neutral/enemy</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_enemy_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on if the stalker is a friend/neutral/enemy</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_novice_multiplier">
+		<text>Novice cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_trainee_multiplier">
+		<text>Trainee cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_experienced_multiplier">
+		<text>Experienced cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_professional_multiplier">
+		<text>Professional cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_veteran_multiplier">
+		<text>Veteran cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_expert_multiplier">
+		<text>Expert cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_master_multiplier">
+		<text>Master cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_legend_multiplier">
+		<text>Legend cost multiplier</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_novice_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_trainee_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_experienced_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_professional_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_veteran_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_expert_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_master_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+	<string id="ui_mcm_stalker_tracking_legend_multiplier_desc">
+		<text>Base cost gets multiplied by this value depending on the stalker's rank</text>
+	</string>
+
+	<!-- Bounty-snitch flavor strings -->
+	<string id="ss_enter_name"><text>Enter the name:</text></string>
+	<string id="ss_anonymous_sender"><text>Unknown frequency</text></string>
+	<string id="ss_no_witness"><text>No one's seen them recently. Snitch can't help.</text></string>
+	<string id="ss_on_cooldown"><text>Snitch is laying low. Try again in %d seconds.</text></string>
+	<string id="ss_unknown_location"><text>somewhere in the Zone</text></string>
+	<string id="ss_target_lost_refund"><text>Lost the trail. Your money's back.</text></string>
+
+	<!-- Location templates (%s = smart name) -->
+	<string id="ss_loc_1"><text>He's at %s right now</text></string>
+	<string id="ss_loc_2"><text>Spotted near %s</text></string>
+	<string id="ss_loc_3"><text>Last seen at %s</text></string>
+	<string id="ss_loc_4"><text>He's in %s</text></string>
+
+	<!-- Direction clauses -->
+	<string id="ss_dir_n"><text>heading north</text></string>
+	<string id="ss_dir_ne"><text>heading north-east</text></string>
+	<string id="ss_dir_e"><text>heading east</text></string>
+	<string id="ss_dir_se"><text>heading south-east</text></string>
+	<string id="ss_dir_s"><text>heading south</text></string>
+	<string id="ss_dir_sw"><text>heading south-west</text></string>
+	<string id="ss_dir_w"><text>heading west</text></string>
+	<string id="ss_dir_nw"><text>heading north-west</text></string>
+	<string id="ss_dir_holding"><text>holding position</text></string>
+
+	<!-- Archetype flavor tails -->
+	<string id="ss_tail_mercenary_1"><text>This isn't personal... I just need the money.</text></string>
+	<string id="ss_tail_mercenary_2"><text>Nothing personal.</text></string>
+	<string id="ss_tail_mercenary_3"><text>Money's money. Don't ask again.</text></string>
+
+	<string id="ss_tail_vengeful_1"><text>He's a bastard. I'd have done it for free.</text></string>
+	<string id="ss_tail_vengeful_2"><text>Burn him.</text></string>
+	<string id="ss_tail_vengeful_3"><text>Hope you make it hurt.</text></string>
+
+	<string id="ss_tail_cautious_1"><text>This never happened.</text></string>
+	<string id="ss_tail_cautious_2"><text>You didn't hear it from me.</text></string>
+	<string id="ss_tail_cautious_3"><text>Forget my voice.</text></string>
+
+	<string id="ss_tail_cocky_1"><text>Easy money.</text></string>
+	<string id="ss_tail_cocky_2"><text>Pleasure doing business.</text></string>
+
+	<!-- MCM labels for new options -->
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_witness_radius"><text>Witness search radius (m)</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_witness_radius_desc"><text>How far around the target the snitch will look for someone who saw them. Larger = easier to find tips.</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_lie_chance_base"><text>Base lie chance</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_lie_chance_base_desc"><text>Chance the snitch lies about location and direction.</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_lie_chance_bandit"><text>Bandit/renegade lie chance</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_lie_chance_bandit_desc"><text>Chance the snitch lies when the witness is a bandit or renegade.</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_query_cooldown"><text>Per-name cooldown (sec)</text></string>
+	<string id="ui_mcm_pda_inter_pda_stalker_search_ss_query_cooldown_desc"><text>How long to wait before asking the snitch about the same name again.</text></string>
+
+</string_table>

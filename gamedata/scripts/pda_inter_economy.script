@@ -57,7 +57,9 @@ local function on_update()
     if diff ~= 0 then
         today_net = today_net + diff
         week_net = week_net + diff
-        total_net = total_net + diff
+        if diff > 0 then
+            total_net = total_net + diff
+        end
         prev_money = money
     end
 end
@@ -90,7 +92,8 @@ function get_economy_report()
     local diff = money - prev_money
     local display_today = today_net + diff
     local display_week = week_net + diff
-    local display_total = total_net + diff
+    local display_total = total_net + (diff > 0 and diff or 0)
+    if display_total < money then display_total = money end
     
     -- colors
     local cg = strformat("%c[%s,%s,%s,%s]", 255, 100, 255, 100)
@@ -124,10 +127,12 @@ local function save_state(m_data)
     if diff ~= 0 then
         today_net = today_net + diff
         week_net = week_net + diff
-        total_net = total_net + diff
+        if diff > 0 then
+            total_net = total_net + diff
+        end
         prev_money = money
     end
-    
+
     m_data.econ3 = {
         pm = prev_money,
         td = today_net,
