@@ -210,20 +210,6 @@
 		<text>If a trader scams you, send a news message taunting you, so you know it was a scam. Off = silent failure.</text>
 	</string>
 
-	<string id="ui_mcm_pda_inter_pda_trade_trade_use_engine_pricing">
-		<text>Use trader pricing exponent (GAMMA Economy compatibility)</text>
-	</string>
-	<string id="ui_mcm_pda_inter_pda_trade_trade_use_engine_pricing_desc">
-		<text>If a trader profile defines sell_item_exponent (used by GAMMA Economy and similar mods), apply it to PDA Market prices so quotes match the in-person trader. Off = always use linear cost * discount (vanilla formula).</text>
-	</string>
-
-	<string id="ui_mcm_pda_inter_pda_trade_trade_fallback_exponent">
-		<text>Fallback price exponent</text>
-	</string>
-	<string id="ui_mcm_pda_inter_pda_trade_trade_fallback_exponent_desc">
-		<text>Used when the trader profile has no sell_item_exponent. Lower = high-cost items closer to in-person price. 0.85 keeps PDA quotes within ~10-20% of vanilla trader. 1.0 = pure linear.</text>
-	</string>
-
 	<string id="ui_mcm_pda_inter_pda_trade_trade_price_mult">
 		<text>PDA price multiplier</text>
 	</string>

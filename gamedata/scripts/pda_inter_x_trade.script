@@ -4,6 +4,9 @@ Ordered_items = {}
 delivered_stashes = {}
 Scammers_to_kill = {}
 local potential_traders = {}
+local traders_cache_level
+local traders_cache_built_gt
+local TRADERS_CACHE_TTL_MS = 5 * 60 * 1000
 
 local item_groups = {}
 categorized_items = {}
@@ -47,7 +50,26 @@ local sell_chance = {
 	["stalker"] = { others = 0.25, trash = 1, delivery_percent = 0.1 },
 }
 
+function invalidate_traders_cache()
+	empty_table(potential_traders)
+	traders_cache_level = nil
+	traders_cache_built_gt = nil
+end
+
 function find_traders()
+	-- cache: skip 65534 scan if pool still fresh for current level
+	local cur_level = level.name()
+	if traders_cache_level == cur_level
+		and traders_cache_built_gt
+		and (time_global() - traders_cache_built_gt) < TRADERS_CACHE_TTL_MS
+		and next(potential_traders) then
+		return
+	end
+
+	empty_table(potential_traders)
+	traders_cache_level = cur_level
+	traders_cache_built_gt = time_global()
+
 	local actor_comm = get_actor_true_community()
 	local stalker_chance = stalkers_pool / 100
 
@@ -280,10 +302,8 @@ end
 
 function clear_trade_tables()
 	iempty_table(Trade_available_messages)
-	empty_table(potential_traders)
 	invalidate_stash_cache()
 	invalidate_trader_cat_cache()
-
 end
 
 function send_delivery_msg(seller)
@@ -355,6 +375,13 @@ function register_scammer(seller, cur_time)
 		icon = seller.icon,
 		scammed_at = ctime_to_t(cur_time),
 	}
+end
+
+function on_trader_npc_death(squad, se_obj, killer)
+	if not (se_obj and se_obj.id) then return end
+	if potential_traders[se_obj.id] ~= nil then
+		potential_traders[se_obj.id] = nil
+	end
 end
 
 function on_scammer_killed(squad, se_obj, killer)
@@ -1000,6 +1027,7 @@ function on_game_start()
 	RegisterScriptCallback("actor_on_update", combined_trade_on_update)
 	RegisterScriptCallback("ActorMenu_on_item_after_move", ActorMenu_on_item_after_move)
 	RegisterScriptCallback("squad_on_npc_death", on_scammer_killed)
+	RegisterScriptCallback("squad_on_npc_death", on_trader_npc_death)
 	RegisterScriptCallback("save_state", save_state)
 	RegisterScriptCallback("load_state", load_state)
 	RegisterScriptCallback("on_option_change", on_option_change)

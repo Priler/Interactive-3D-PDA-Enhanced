@@ -49,10 +49,6 @@
 		<text>Not enough RU to hire this squad.</text>
 	</string>
 
-	<string id="pda_raid_party_full">
-		<text>Your party is full (%d/%d). Dismiss companions first.</text>
-	</string>
-
 	<string id="pda_relation_friend">
 		<text>friend</text>
 	</string>
@@ -203,14 +199,6 @@
 
 	<string id="pda_trade_order_1">
 		<text>Sending a man right away. I will give you coordinates when it's ready.</text>
-	</string>
-
-	<string id="pda_trade_scam_header">
-		<text>[SCAMMED]</text>
-	</string>
-
-	<string id="pda_trade_scam_revenge_header">
-		<text>[REVENGE]</text>
 	</string>
 
 	<string id="pda_trade_scam_revenge_recovered">
