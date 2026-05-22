@@ -21,31 +21,39 @@ local raid_time = pda_inter_mcm.get_config("raid_max_time")
 local gt = game.translate_string
 
 -- [ State 5 ]--
+local function squad_matches_raid_criteria(squad, ac_pos, ac_true_comm)
+	local squad_sec = squad:section_name()
+	if not string_find(squad_sec, "_sim_squad_") then return false end
+	if axr_companions.companion_squads[squad.id] ~= nil then return false end
+	if not squad.online then return false end
+	local squad_pos = squad.position
+	if not (squad_pos and ac_pos:distance_to_sqr(squad_pos) <= 22500) then return false end
+	local squad_comm = squad.get_squad_community and squad:get_squad_community()
+	if not squad_comm then return false end
+	local is_neutral = game_relations.is_factions_neutrals(squad_comm, ac_true_comm)
+	local is_friend = game_relations.is_factions_friends(squad_comm, ac_true_comm)
+	return is_neutral or is_friend
+end
+
 function launch_squad_search()
 	-- get all non-enemy squads in the radius of 150 meters from actor and store them as potential mercs
 	local ac_pos = db.actor:position()
 	local ac_true_comm = get_actor_true_community()
-	
-	for i = 1, 65534 do
-		local squad = alife_object(i)
-		if squad then
-			local squad_sec = squad:section_name()
-			local is_squad = string_find(squad_sec, "_sim_squad_")
-			if is_squad then
-				local squad_not_comp = axr_companions.companion_squads[squad.id] == nil
-				if squad.online and squad_not_comp then
-					local squad_pos = squad.position
-					if squad_pos and ac_pos:distance_to_sqr(squad_pos) <= 22500 then
-						local squad_comm = squad.get_squad_community and squad:get_squad_community()
-						if squad_comm then
-							local is_neutral = game_relations.is_factions_neutrals(squad_comm, ac_true_comm)
-							local is_friend = game_relations.is_factions_friends(squad_comm, ac_true_comm)
-							if is_neutral or is_friend then
-								viable_squads_list[#viable_squads_list+1] = squad.id
-							end
-						end
-					end
-				end
+
+	-- prefer simulation_objects registry (squads + smarts only); fall back to full alife scan
+	local sim_objects = simulation_objects.get_sim_obj_registry and simulation_objects.get_sim_obj_registry()
+	if sim_objects then
+		for _, sim_squad in pairs(sim_objects) do
+			-- registry contains squads AND smart terrains; squad_members signals a squad
+			if sim_squad and sim_squad.squad_members and squad_matches_raid_criteria(sim_squad, ac_pos, ac_true_comm) then
+				viable_squads_list[#viable_squads_list+1] = sim_squad.id
+			end
+		end
+	else
+		for i = 1, 65534 do
+			local squad = alife_object(i)
+			if squad and squad_matches_raid_criteria(squad, ac_pos, ac_true_comm) then
+				viable_squads_list[#viable_squads_list+1] = squad.id
 			end
 		end
 	end

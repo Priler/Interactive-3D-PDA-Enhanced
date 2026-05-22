@@ -639,7 +639,7 @@ function is_valid_item(sec)
 
 	-- allow only cost > 10
 	local cost = ini_sys:r_float_ex(sec, "cost")
-	if cost < 11 then
+	if (not cost) or cost < 11 then
 		return
 	end
 

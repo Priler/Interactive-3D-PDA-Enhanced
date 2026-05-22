@@ -220,6 +220,7 @@ function reset_vars()
 	vic_squad = nil
 	en_squad = nil
 	actor_helped = false
+	return true
 end
 
 function give_stash_reward()

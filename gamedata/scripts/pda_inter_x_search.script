@@ -596,7 +596,7 @@ function UIFindActivePDA:OnAccept()
 	-- relation (for price)
 	local npc_r = level.object_by_id(se_target.id)
 	local rel
-	if npc_r then
+	if npc_r and npc_r:alive() then
 		rel = CheckRelation(npc_r)
 	else
 		rel = CheckFactionRelation(se_target)
@@ -713,11 +713,14 @@ xr_effects.setup_tracking_stalker_task = function(actor,npc,p)
 
 	local function postpone_for_next_frame(ss_target_id)
 		local news_caption = game.translate_string(task_manager.task_ini:r_string_ex(p[1], "title")) or "error"
-		local news_text = game.translate_string("st_mm_new_game_name") .. " " .. se_target:character_name() .. "\\n " .. game.translate_string("st_mm_new_game_faction_2") .. " " .. game.translate_string(se_target:community()) .. "\\n " .. game.translate_string("st_location") .. " " .. game.translate_string(level_target)
+		local news_text = game.translate_string("st_mm_new_game_name") .. " " .. se_target:character_name() .. "\n " .. game.translate_string("st_mm_new_game_faction_2") .. " " .. game.translate_string(se_target:community()) .. "\n " .. game.translate_string("st_location") .. " " .. game.translate_string(level_target)
 		db.actor:give_talk_message2(news_caption, news_text, se_target:character_icon(), "iconed_answer_item")
 		return true
 	end
-	CreateTimeEvent(0,"setup_tracking_stalker_task",0,postpone_for_next_frame,ss_target_id)
+	local setup_tg = time_global()
+	local setup_ev_id = "ss_setup_track_e_" .. ss_target_id .. "_" .. setup_tg
+	local setup_ac_id = "ss_setup_track_a_" .. ss_target_id .. "_" .. setup_tg
+	CreateTimeEvent(setup_ev_id, setup_ac_id, 0, postpone_for_next_frame, ss_target_id)
 end 
 
 
