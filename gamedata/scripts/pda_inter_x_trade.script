@@ -304,6 +304,7 @@ function clear_trade_tables()
 	iempty_table(Trade_available_messages)
 	invalidate_stash_cache()
 	invalidate_trader_cat_cache()
+	invalidate_npc_item_list_cache()
 end
 
 function send_delivery_msg(seller)
@@ -706,6 +707,16 @@ function is_trader_already_responded(t, trader_id)
 	return already_responded
 end
 
+-- Parsing a trader's supply LTX (ini_file_ex + collect_section) is expensive.
+-- add_trader() picks a random trader every second, so without a cache each new
+-- trader triggers a fresh parse -> periodic frame hitch while searching. Memoize
+-- the resolved sell table per trader + supply tier. Cleared on level change /
+-- trade reset / option change (see clear_trade_tables / on_option_change).
+local npc_item_list_cache = {}
+function invalidate_npc_item_list_cache()
+	npc_item_list_cache = {}
+end
+
 function get_npc_item_list(npc_id)
 	local profile_path = trade_manager.get_trade_profile(npc_id, "cfg_ltx")
 	if not profile_path then return end
@@ -713,17 +724,25 @@ function get_npc_item_list(npc_id)
 	-- prefer trade_manager's already-resolved current supply tier when available
 	local supply_sec = trade_manager.get_trade_profile(npc_id, "current_buy_supplies")
 
-	local config = ini_file(profile_path)
-	if not config then return end
-
 	if not supply_sec then
+		-- only touch the ltx when we must resolve the supply tier ourselves
+		local config = ini_file(profile_path)
+		if not config then return end
 		local supply_condlist = config:r_string_to_condlist("trader", "buy_supplies")
 		supply_sec = supply_condlist and xr_logic.pick_section_from_condlist(db.actor, nil, supply_condlist)
 	end
 	if not supply_sec or supply_sec == "" then return end
 
+	local key = tostring(npc_id) .. "|" .. tostring(supply_sec)
+	local cached = npc_item_list_cache[key]
+	if cached ~= nil then
+		if cached == false then return nil end
+		return cached
+	end
+
 	local ini_ex = ini_file_ex(profile_path)
 	local sell_table = ini_ex and ini_ex:collect_section(supply_sec)
+	npc_item_list_cache[key] = sell_table or false
 	return sell_table
 end
 
