@@ -47,7 +47,7 @@ local defaults = {
 	["trade_scam_revenge"] = true,
 	["trade_price_mult"] = 1.0,
 	["trade_strict_stock"] = true,
-	["trade_exclude_items"] = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant",
+	["trade_exclude_items"] = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, helmet_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant",
 	["trade_debug_always_offer"] = false,
 	["trade_debug_traders_only"] = false,
 
@@ -367,7 +367,7 @@ function on_mcm_load()
 				{id = "trade_scam_revenge", type = "check", val = 1, def = true},
 				{id = "trade_price_mult", type = "track", val = 2, min=0.25, max=2, step=0.05, def = 1.0},
 				{id = "trade_strict_stock", type = "check", val = 1, def = true},
-				{id = "trade_exclude_items", type = "input", val = 0, def = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant"},
+				{id = "trade_exclude_items", type = "input", val = 0, def = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, helmet_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant"},
 				{id = "trade_debug_always_offer", type = "check", val = 1, def = false},
 				{id = "trade_debug_traders_only", type = "check", val = 1, def = false},
 			}},

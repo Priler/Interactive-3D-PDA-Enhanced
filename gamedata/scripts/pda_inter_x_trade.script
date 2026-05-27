@@ -29,6 +29,41 @@ local ctime_to_t = utils_data.CTime_to_table
 local t_to_ctime = utils_data.CTime_from_table
 local gt = game.translate_string
 
+-- bandit/renegade-flavored message id; falls back to base when no variant authored.
+-- kept file-local so it has no cross-script load dependency.
+local function comm_msg(base_id, comm)
+	if comm == "bandit" or comm == "renegade" then
+		local v = base_id .. "_bandit"
+		if game.translate_string(v) ~= v then return v end
+	end
+	return base_id
+end
+
+-- garble a trader's display name so it looks like they're hiding their identity.
+-- keeps the first letter of each word + spaces; ~half the other letters become symbols.
+-- e.g. "Yuras Beaten" -> "Y_r@ Bea__n"
+local OBF_SYMBOLS = { "_", "@", "#", "*" }
+local function obfuscate_name(name)
+	if not name or name == "" then return name end
+	local res = ""
+	local new_word = true
+	for i = 1, #name do
+		local ch = string.sub(name, i, i)
+		if ch == " " then
+			res = res .. " "
+			new_word = true
+		elseif new_word then
+			res = res .. ch                 -- keep first letter of each word
+			new_word = false
+		elseif math.random() < 0.5 then
+			res = res .. OBF_SYMBOLS[math.random(#OBF_SYMBOLS)]
+		else
+			res = res .. ch
+		end
+	end
+	return res
+end
+
 -- ### LOCALIZED FUNCTIONS
 local pairs = pairs
 local ipairs = ipairs
@@ -55,6 +90,7 @@ local sell_chance = {
 	["mechanic"] = { weapons = 0.25, outfits = 0.25, repair = 1, delivery_percent = 0.05 },
 	["medic"] = { medicine = 1, delivery_percent = 0.05 },
 	["sci"] = { artefacts = 1, medicine = 0.75, delivery_percent = 0.075 },
+	["merc"] = { pistols = 0.7, rifles = 0.7, melee = 0.4, explosives = 0.5, ammo = 0.8, w_addons = 0.6, outfits = 0.6, headgear = 0.5, mutant_parts = 0.4, delivery_percent = 0.04 },
 	["stalker"] = { others = 0.25, trash = 1, delivery_percent = 0.1 },
 }
 
@@ -105,6 +141,9 @@ function find_traders()
 					-- (trader_allowed_groups.sci) only allows artefacts/medicine/devices/mutant_parts.
 					if comm == "ecolog" or string_find(sec, "yan_stalker_sakharov") or string_find(sec, "jup_b6_scientist_nuclear_physicist") then
 						potential_traders[se_obj.id] = "sci"
+					-- mercenaries (community "killer") deal only in war goods: weapons, mods, ammo, armor, mutant parts
+					elseif comm == "killer" or comm == "merc" then
+						potential_traders[se_obj.id] = "merc"
 					elseif (comm == "trader" and not string_find(sec, "warlab")) or string_find(sec, "_trader_") then
 						potential_traders[se_obj.id] = "trader"
 					elseif string_find(sec, "_barman") then
@@ -258,7 +297,13 @@ function add_trader()
 	local force_discount = discount_debug_always
 	if force_discount or (discount_price_threshold and item_price < discount_price_threshold
 		and quantity >= (discount_min_quantity or 1)) then
-		if force_discount or math.random() * 100 < (discount_batch_chance or 0) then
+		-- Sidorovich (tight-fisted) offers the bulk discount half as often
+		local batch_chance = discount_batch_chance or 0
+		local cfg_ltx = trade_manager.get_trade_profile(rnd_trader_id, "cfg_ltx")
+		if cfg_ltx and string_find(cfg_ltx, "sidorovich") then
+			batch_chance = batch_chance * 0.5
+		end
+		if force_discount or math.random() * 100 < batch_chance then
 			local lo = math_floor(math.min(discount_min_pct or 0, discount_max_pct or 0))
 			local hi = math_floor(math.max(discount_min_pct or 0, discount_max_pct or 0))
 			local pct = (hi > lo) and math.random(lo, hi) or lo
@@ -311,13 +356,26 @@ function add_trader()
 
 	-- Save trader info
 	local se_obj = alife_object(rnd_trader_id)
+
+	-- high scam-chance stalkers (shady rep) may hide their real name: 25% chance to garble it.
+	-- the garbled name is stored on the offer, so it shows identically in the listing,
+	-- the order confirmation and the scam-reveal message.
+	local display_name = se_obj.character_name and se_obj:character_name() or se_obj:name()
+	if trader_group == "stalker" then
+		local se_rep = se_obj:reputation()
+		local rep_norm = se_rep and normalize(se_rep, 2000, -2000)
+		if rep_norm and rep_norm >= 0.70 and math.random() < 0.25 then
+			display_name = obfuscate_name(display_name)
+		end
+	end
+
 	Trade_available_messages[#Trade_available_messages+1] = {}
 	Trade_available_messages[#Trade_available_messages].id = rnd_trader_id
 	Trade_available_messages[#Trade_available_messages].section = item_sec
 	Trade_available_messages[#Trade_available_messages].stash_id = stash.id
 	Trade_available_messages[#Trade_available_messages].quantity = quantity
 
-	Trade_available_messages[#Trade_available_messages].name = se_obj.character_name and se_obj:character_name() or se_obj:name()
+	Trade_available_messages[#Trade_available_messages].name = display_name
 	Trade_available_messages[#Trade_available_messages].icon = se_obj:character_icon()
 	Trade_available_messages[#Trade_available_messages].comm = se_obj:community()
 	Trade_available_messages[#Trade_available_messages].reputation = se_obj:reputation()
@@ -334,12 +392,12 @@ function add_trader()
 	-- send news offer message
 	local def_clr = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
 	local inc_clr = strformat("%c[%s,%s,%s,%s]", 255, 0, 140, 180)
-	local se_obj_name = se_obj.character_name and se_obj:character_name() or se_obj:name()
+	local se_obj_name = display_name		-- use the (possibly garbled) name so the popup matches the offer
 	-- bandits/renegades get their own rougher lines (comm_msg falls back if none authored)
 	local offer_comm = se_obj:community()
-	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt(pda_inter_utils.comm_msg("pda_trade_offer_" .. math.random(1, 3), offer_comm))
+	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt(comm_msg("pda_trade_offer_" .. math.random(1, 3), offer_comm))
 	if bulk_discount then
-		msg = msg .. " " .. gt(pda_inter_utils.comm_msg("pda_trade_bulk_note", offer_comm))
+		msg = msg .. " " .. gt(comm_msg("pda_trade_bulk_note", offer_comm))
 	end
 	dynamic_news_helper.send_tip(msg, se_obj_name, nil, 5, se_obj:character_icon(), "news", "npc")
 
@@ -360,16 +418,16 @@ function send_delivery_msg(seller)
 	local inc_clr = strformat("%c[%s,%s,%s,%s]", 255, 0, 140, 180)
 	-- bandits/renegades confirm the order in their own rougher voice
 	local comm = seller.comm or ""
-	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt(pda_inter_utils.comm_msg("pda_trade_order_" .. math.random(1, 2), comm))
+	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt(comm_msg("pda_trade_order_" .. math.random(1, 2), comm))
 
 	-- approximate delivery ETA (delivery_time is in game-seconds)
 	local eta = seller.delivery_time
 	if eta then
 		local hours = math_floor(eta / 3600 + 0.5)
 		if hours <= 1 then
-			msg = msg .. " " .. gt(pda_inter_utils.comm_msg("pda_trade_order_eta_one", comm))
+			msg = msg .. " " .. gt(comm_msg("pda_trade_order_eta_one", comm))
 		else
-			msg = msg .. " " .. strformat(gt(pda_inter_utils.comm_msg("pda_trade_order_eta", comm)), hours)
+			msg = msg .. " " .. strformat(gt(comm_msg("pda_trade_order_eta", comm)), hours)
 		end
 	end
 
@@ -907,6 +965,8 @@ local trader_allowed_groups = {
 	mechanic = { melee=true, pistols=true, rifles=true, ammo=true, explosives=true, w_addons=true, outfits=true, headgear=true, backpacks=true, repair=true, devices=true },
 	medic    = { medicine=true, food=true },
 	sci      = { artefacts=true, medicine=true, devices=true, mutant_parts=true },
+	-- mercs: weapons, weapon mods, ammo, armor (outfits+helmets) and mutant parts only
+	merc     = { melee=true, pistols=true, rifles=true, explosives=true, ammo=true, w_addons=true, outfits=true, headgear=true, mutant_parts=true },
 	-- random stalkers: only stuff a lone wanderer plausibly carries. No upgrade kits, no high-end gear.
 	stalker  = { food=true, others=true, trash=true, mutant_parts=true, artefacts=true, ammo=true, medicine=true },
 }

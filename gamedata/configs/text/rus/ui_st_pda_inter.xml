@@ -210,7 +210,7 @@
 	</string>
 
 	<string id="pda_trade_bulk_discount">
-		<text>Оптовая скидка: -%s%%</text>
+		<text>Скидка: -%s%%</text>
 	</string>
 
 	<!-- bandit / renegade trade messages (gopnik style) -->
