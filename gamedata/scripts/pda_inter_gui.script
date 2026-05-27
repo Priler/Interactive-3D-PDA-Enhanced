@@ -418,6 +418,255 @@ function start_PDAX()
 	end
 end
 
+-- Detect Fatal Error (by Ncenka). It ships the "mac_mcm" launcher script and
+-- registers an "eptLauncher" subdialog. When present, the Network window shows
+-- a Launcher button that opens it. Cached after first lookup.
+local fe_installed = nil
+function is_fatal_error_installed()
+	if fe_installed == nil then
+		fe_installed = (mac_mcm ~= nil)
+	end
+	return fe_installed
+end
+
+-- Detect Player Group Command (PGC). It ships the "hvt_pgc_ui_team" script and
+-- registers an "eptHvtPgcTeam" subdialog. When present, the Network left menu
+-- gains a "Team" category that opens it. Cached after first lookup.
+local pgc_installed = nil
+function is_pgc_installed()
+	if pgc_installed == nil then
+		pgc_installed = (hvt_pgc_ui_team ~= nil)
+	end
+	return pgc_installed
+end
+
+-- Show the Fatal Error integration (Launcher / Apps category) only when FE is
+-- present AND the user left the MCM compatibility toggle on.
+function fe_compat_enabled()
+	if not is_fatal_error_installed() then return false end
+	if pda_inter_mcm and pda_inter_mcm.get_config then
+		return pda_inter_mcm.get_config("fe_compat_enabled")
+	end
+	return true
+end
+
+-- Same for the Player Group Command integration (Team category).
+function pgc_compat_enabled()
+	if not is_pgc_installed() then return false end
+	if pda_inter_mcm and pda_inter_mcm.get_config then
+		return pda_inter_mcm.get_config("pgc_compat_enabled")
+	end
+	return true
+end
+
+-- Map PDA item sections to a tier (1..3). Unknown PDAs default to tier 1.
+local pda_tier_map = {
+	["device_pda_0"] = 1,
+	["device_pda_getac"] = 1,
+	["device_pda_1"] = 1,
+	["device_pda_2"] = 2,
+	["device_pda_3"] = 3,
+	["device_pda_4"] = 3,
+	["device_pda_milspec"] = 3,
+	["device_pda_new"] = 3,
+}
+function get_pda_tier()
+	local item = db.actor and db.actor:item_in_slot(8)
+	local sec = item and item:section() or ""
+	return pda_tier_map[sec] or 1
+end
+
+-- Network category (main-menu tab num) -> MCM key suffix for its min-tier rule.
+local tab_tier_key = {
+	[1] = "raid", [2] = "info", [3] = "games", [4] = "trade",
+	[5] = "notes", [6] = "comms", [7] = "tasks",
+}
+
+-- ===================== Player Group Command (PGC) embed =====================
+-- Compact "Team" view rendered inside the Network frame. It uses ONLY PGC's data
+-- API and locale strings (never its UI window), so PGC UI/layout changes can't
+-- break us. Every PGC call is existence-checked and pcall-guarded; if PGC is
+-- absent or renames something, the view degrades to empty instead of crashing.
+
+local function pgc_tr(id)
+	if id and game and game.translate_string then return game.translate_string(id) end
+	return id or ""
+end
+
+-- Brief on-screen notice (mirrors PGC's own feedback so failures aren't silent).
+local function team_notify(text)
+	if actor_menu and actor_menu.set_msg then
+		actor_menu.set_msg(1, tostring(text), 5)
+	end
+end
+
+local function pgc_members()
+	if hvt_pgc_db and hvt_pgc_db.list_members then
+		local ok, res = pcall(hvt_pgc_db.list_members)
+		if ok and type(res) == "table" then return res end
+	end
+	return nil
+end
+
+local function pgc_base_text()
+	if hvt_pgc_ui_team and hvt_pgc_ui_team.describe_base then
+		local ok, res = pcall(hvt_pgc_ui_team.describe_base)
+		if ok and res then return tostring(res) end
+	end
+	return ""
+end
+
+local TEAM_STATUS_MAP = {
+	idle = "hvt_pgc_idle", companion = "hvt_pgc_companion",
+	hunt_mutants = "hvt_pgc_hunt_mutants", kill_stalker = "hvt_pgc_kill_stalker",
+	loot_stash = "hvt_pgc_loot_stash", return_to_base = "hvt_pgc_move_base",
+}
+local function team_status_label(member)
+	if member.is_companion then return pgc_tr("hvt_pgc_companion") end
+	local key = TEAM_STATUS_MAP[member.current_job or ""] or "hvt_pgc_ready"
+	return pgc_tr(key)
+end
+
+-- Portrait for a member: prefer the live object, fall back to the server object,
+-- then to a neutral placeholder. Guarded so a missing/offline NPC never errors.
+local function team_member_icon(member)
+	local npc = level and level.object_by_id and level.object_by_id(member.id)
+	if npc and npc.character_icon then
+		local ic = npc:character_icon()
+		if ic and ic ~= "" then return ic end
+	end
+	local se = alife_object and alife_object(member.id)
+	if se and se.character_icon then
+		local ic = se:character_icon()
+		if ic and ic ~= "" then return ic end
+	end
+	return "ui\\ui_noise"
+end
+
+-- One member row. Built from our own (narrow) templates; wired to PGC functions.
+class "pda_inter_team_row" (CUIWindow)
+function pda_inter_team_row:__init(owner, row_index, member) super(owner, row_index)
+	self.owner = owner
+	self.member_id = member.id
+	self:SetWndRect(Frect():set(0, 0, 556, 56))
+
+	local x = owner.xml
+	self.frame     = x:InitFrame("team_row_frame", self)
+	self.icon      = x:InitStatic("team_row_icon", self)
+	self.name_txt  = x:InitTextWnd("team_row_name", self)
+	self.meta_txt  = x:InitTextWnd("team_row_meta", self)
+	self.btn_group = x:Init3tButton("team_row_btn_group", self)
+	self.btn_comp  = x:Init3tButton("team_row_btn_comp", self)
+	self.btn_base  = x:Init3tButton("team_row_btn_base", self)
+	self.btn_stash = x:Init3tButton("team_row_btn_stash", self)
+	self.btn_kick  = x:Init3tButton("team_row_btn_kick", self)
+
+	local id = self.member_id
+	local sfx = tostring(id)
+	owner:Register(self.btn_group, "team_g_" .. sfx)
+	owner:Register(self.btn_comp,  "team_c_" .. sfx)
+	owner:Register(self.btn_base,  "team_b_" .. sfx)
+	owner:Register(self.btn_stash, "team_s_" .. sfx)
+	owner:Register(self.btn_kick,  "team_k_" .. sfx)
+
+	owner:AddCallback("team_g_" .. sfx, ui_events.BUTTON_CLICKED, function()
+		if hvt_pgc_db and hvt_pgc_db.get_member and hvt_pgc_db.move_member_to_group then
+			local m = hvt_pgc_db.get_member(id); if not m then return end
+			local g = (m.group_id or 0) + 1; if g > 10 then g = 1 end
+			pcall(hvt_pgc_db.move_member_to_group, id, g)
+			if hvt_pgc_db.set_selected_member then pcall(hvt_pgc_db.set_selected_member, id) end
+		end
+		owner:RefreshTeamList()
+	end, owner)
+	owner:AddCallback("team_c_" .. sfx, ui_events.BUTTON_CLICKED, function()
+		if hvt_pgc_db and hvt_pgc_db.get_member and hvt_pgc_companion and hvt_pgc_companion.set_as_companion then
+			local m = hvt_pgc_db.get_member(id); if not m then return end
+			local new_state = not m.is_companion
+			local s, ok = pcall(hvt_pgc_companion.set_as_companion, id, new_state)
+			if not s then ok = false end
+			if not ok then
+				-- Surface why it failed (PGC does the same), otherwise it looks dead.
+				local reason = m.meta and m.meta.last_companion_error
+				if reason == "no_room" then
+					team_notify("No room for another companion")
+				elseif reason == "hostage" then
+					team_notify("NPC cannot become companion right now")
+				else
+					team_notify(pgc_tr("hvt_pgc_msg_companion_failed"))
+				end
+			elseif new_state then
+				if m.meta and m.meta.pending_companion then
+					team_notify("Companion request sent")
+				else
+					team_notify(pgc_tr("hvt_pgc_msg_companion_added"))
+				end
+			else
+				team_notify(pgc_tr("hvt_pgc_msg_companion_removed"))
+			end
+			if hvt_pgc_db.set_selected_member then pcall(hvt_pgc_db.set_selected_member, id) end
+		end
+		owner:RefreshTeamList()
+	end, owner)
+	owner:AddCallback("team_b_" .. sfx, ui_events.BUTTON_CLICKED, function()
+		if hvt_pgc_db and hvt_pgc_db.get_member and hvt_pgc_jobs and hvt_pgc_jobs.mark_group_return then
+			local m = hvt_pgc_db.get_member(id); if not m then return end
+			pcall(hvt_pgc_jobs.mark_group_return, m.group_id)
+		end
+		owner:RefreshTeamList()
+	end, owner)
+	owner:AddCallback("team_s_" .. sfx, ui_events.BUTTON_CLICKED, function()
+		if hvt_pgc_db and hvt_pgc_db.get_member and hvt_pgc_jobs and hvt_pgc_jobs.assign_known_stash_to_group then
+			local m = hvt_pgc_db.get_member(id); if not m then return end
+			pcall(hvt_pgc_jobs.assign_known_stash_to_group, m.group_id)
+			if hvt_pgc_db.set_selected_member then pcall(hvt_pgc_db.set_selected_member, id) end
+		end
+		owner:RefreshTeamList()
+	end, owner)
+	owner:AddCallback("team_k_" .. sfx, ui_events.BUTTON_CLICKED, function()
+		owner:OpenTeamKickConfirm(id)
+	end, owner)
+
+	self:Bind(member)
+	owner.team_rows[row_index] = self
+end
+
+function pda_inter_team_row:Bind(member)
+	-- Refresh live name / companion flag from the object when available (mirrors
+	-- PGC's own BindMember), guarded so a missing object never errors.
+	local npc = level and level.object_by_id and level.object_by_id(member.id)
+	if npc then
+		if npc.character_name then member.name = npc:character_name() end
+		if npc.has_info then
+			local pending = member.meta and member.meta.pending_companion
+			member.is_companion = (npc:has_info("npcx_is_companion") or pending) and true or false
+		end
+	end
+
+	if self.icon then self.icon:InitTexture(team_member_icon(member)) end
+	self.name_txt:SetText(tostring(member.name or "unknown"))
+	self.meta_txt:SetText(string.format("%s: %s | %s | %s | ID: %s",
+		pgc_tr("hvt_pgc_group"), tostring(member.group_id or "-"),
+		team_status_label(member),
+		tostring(member.community or "?"),
+		tostring(member.id)))
+	self.btn_group:TextControl():SetText("G" .. tostring(member.group_id or "?"))
+	self.btn_comp:TextControl():SetText(member.is_companion
+		and pgc_tr("hvt_pgc_btn_release_short") or pgc_tr("hvt_pgc_btn_companion_short"))
+	self.btn_base:TextControl():SetText(pgc_tr("hvt_pgc_btn_base_short"))
+	self.btn_stash:TextControl():SetText(pgc_tr("hvt_pgc_btn_stash_short"))
+	self.btn_kick:TextControl():SetText(pgc_tr("hvt_pgc_btn_kick_short"))
+end
+
+-- Left-rail vertical layout. Buttons normally 40px apart, but the rail must
+-- stay within the 300px divider; with the optional Team entry added the count
+-- can reach 8, so shrink the step to fit when needed. Declared before the class
+-- so every method (incl. OnClickTeam, defined earlier than ComputeSlotStep) sees
+-- these as upvalues rather than nil globals.
+local LEFT_RAIL_H = 300
+local SLOT_BTN_H = 35
+local SLOT_STEP_MAX = 40
+local SLOT_TOP = 10   -- small gap above the first (top) category button
+
 class "CustomPDAX" (CUIScriptWnd)
 
 function CustomPDAX:__init() super()
@@ -452,6 +701,10 @@ function CustomPDAX:InitControls()
 
 	-------------------------- Sub Menus --------------------------
 	self:BuildSubMenus()
+
+	--------------------------- Tier-restricted notice ---------------------------
+	self.restricted_text = xml:InitTextWnd("restricted_text", self.background)
+	self.restricted_text:Show(false)
 
 	--------------------------- Send button ---------------------------
 	self.send_btn = xml:Init3tButton("send_btn", self.background)
@@ -504,7 +757,212 @@ function CustomPDAX:InitCallBacks()
 	self:AddCallback("close_btn", ui_events.BUTTON_CLICKED, self.OnClickClose, self)
 	self:AddCallback("cancel_btn", ui_events.BUTTON_CLICKED, self.OnClickCancel, self)
 	self:AddCallback("notes_lock_btn", ui_events.BUTTON_CLICKED, self.OnClickNotesLock, self)
+	self:AddCallback("fe_launcher_btn", ui_events.BUTTON_CLICKED, self.OnClickFeLauncher, self)
+	self:AddCallback("team_btn", ui_events.BUTTON_CLICKED, self.OnClickTeam, self)
 
+end
+
+-- Open the in-Network "Apps" category (Fatal Error launcher, embedded). Keeps
+-- the PDA tabs visible. The button is only shown when Fatal Error is installed.
+function CustomPDAX:OnClickFeLauncher()
+	if not fe_compat_enabled() then return end
+
+	-- lazy build the apps grid on first use
+	if not self.apps_initialized then
+		self:BuildAppsCategory()
+		self.apps_initialized = true
+	end
+
+	if self.cur_tree == "apps" then return end
+
+	self:ResetUpperMenus()
+	self.cur_tree = "apps"
+
+	if self.apps_mid_cont then self.apps_mid_cont:Show(true) end
+end
+
+-- Build the apps grid from Fatal Error's registered apps (mac_mcm.PDA_APPS).
+-- Each app opens its own full-screen subdialog when clicked (those apps are not
+-- embeddable). Apps we already expose as PDA tabs are skipped: our own Network
+-- (app_interactive) and the Taskboard (app_taskboard).
+local APPS_SKIP = {
+	["app_interactive"] = true,
+	["app_taskboard"] = true,
+}
+function CustomPDAX:BuildAppsCategory()
+	self.apps_mid_cont = xml:InitStatic("mid_container_apps", self.background)
+	self.apps_mid_cont:Show(false)
+	self.apps_tabs = {}
+
+	if not (mac_mcm and mac_mcm.PDA_APPS) then return end
+
+	local cols = 5
+	local idx = 0
+	for app_id, app_data in pairs(mac_mcm.PDA_APPS) do
+		if not APPS_SKIP[app_id] and app_data and app_data.tab then
+			idx = idx + 1
+			self.apps_tabs[idx] = app_data.tab
+
+			local col = (idx - 1) % cols
+			local row = math_floor((idx - 1) / cols)
+			local px = 20 + col * 110
+			local py = 20 + row * 90
+
+			local btn = xml:Init3tButton("mid_container_apps:apps_btn", self.apps_mid_cont)
+			if app_data.texture then btn:InitTexture(app_data.texture) end
+			btn:SetWndPos(vector2():set(px, py))
+			self:Register(btn, "apps_btn_" .. idx)
+
+			local txt = xml:InitTextWnd("mid_container_apps:apps_btn_text", self.apps_mid_cont)
+			txt:SetText(game.translate_string(app_data.name or app_id))
+			txt:SetWndPos(vector2():set(px - 12, py + 66))
+
+			local this_idx = idx
+			self:AddCallback("apps_btn_" .. idx, ui_events.BUTTON_CLICKED, function() self:OnClickApp(this_idx) end, self)
+		end
+	end
+end
+
+-- Open the full-screen subdialog for the clicked app.
+function CustomPDAX:OnClickApp(idx)
+	local tab = self.apps_tabs and self.apps_tabs[idx]
+	if not tab then return end
+	local pda_menu = ActorMenu and ActorMenu.get_pda_menu and ActorMenu.get_pda_menu()
+	if pda_menu and pda_menu.SetActiveSubdialog then
+		pda_menu:SetActiveSubdialog(tab)
+	end
+end
+
+-- Open the embedded "Team" category (Player Group Command) inside the Network
+-- frame, just like our other categories. Button is only shown when PGC is
+-- installed and the MCM toggle is on; the call is guarded anyway.
+function CustomPDAX:OnClickTeam()
+	if not pgc_compat_enabled() then return end
+
+	if not self.team_initialized then
+		self:BuildTeamCategory()
+		self.team_initialized = true
+	end
+
+	if self.cur_tree == "team" then return end
+
+	self:ResetUpperMenus()
+	self.cur_tree = "team"
+
+	self.main_arrow:Show(true)
+	local arrow_pos = self.main_arrow:GetWndPos()
+	self.main_arrow:SetWndPos(vector2():set(arrow_pos.x, SLOT_TOP + (self._team_visual_slot or 0) * self.slot_step))
+
+	self:RefreshTeamList()
+	if self.team_mid_cont then self.team_mid_cont:Show(true) end
+end
+
+-- Lazily build the Team container, scrollview, top buttons and kick message box.
+function CustomPDAX:BuildTeamCategory()
+	self.team_mid_cont = xml:InitStatic("mid_container_team", self.background)
+	self.team_mid_cont:Show(false)
+	self.team_rows = {}
+
+	self.team_base_value = xml:InitTextWnd("mid_container_team:team_base_value", self.team_mid_cont)
+	self.team_hint = xml:InitTextWnd("mid_container_team:team_hint", self.team_mid_cont) -- always shown (recruit tip)
+	self.team_list = xml:InitScrollView("mid_container_team:team_list", self.team_mid_cont)
+
+	self.team_set_base_btn = xml:Init3tButton("mid_container_team:team_set_base_btn", self.team_mid_cont)
+	self:Register(self.team_set_base_btn, "team_set_base_btn")
+	self.team_refresh_btn = xml:Init3tButton("mid_container_team:team_refresh_btn", self.team_mid_cont)
+	self:Register(self.team_refresh_btn, "team_refresh_btn")
+
+	self:AddCallback("team_set_base_btn", ui_events.BUTTON_CLICKED, function()
+		if hvt_pgc_base and hvt_pgc_base.set_current_position_as_base then
+			pcall(hvt_pgc_base.set_current_position_as_base)
+		end
+		self:RefreshTeamList()
+	end, self)
+	self:AddCallback("team_refresh_btn", ui_events.BUTTON_CLICKED, function()
+		self:RefreshTeamList()
+	end, self)
+
+	self.team_msgbox = CUIMessageBoxEx()
+	self:Register(self.team_msgbox, "team_kick_box")
+	self.team_msgbox:InitMessageBox("message_box_yes_no")
+	self:AddCallback("team_kick_box", ui_events.MESSAGE_BOX_YES_CLICKED, self.OnTeamKickYes, self)
+	self:AddCallback("team_kick_box", ui_events.MESSAGE_BOX_OK_CLICKED, self.OnTeamKickYes, self)
+	self:AddCallback("team_kick_box", ui_events.MESSAGE_BOX_NO_CLICKED, self.OnTeamKickNo, self)
+	self:AddCallback("team_kick_box", ui_events.MESSAGE_BOX_CANCEL_CLICKED, self.OnTeamKickNo, self)
+end
+
+-- Rebuild the member list from PGC data. Degrades to empty if PGC is gone.
+function CustomPDAX:RefreshTeamList()
+	if not self.team_list then return end
+	self.team_rows = {}
+	self.team_list:Clear()
+
+	if self.team_base_value then
+		self.team_base_value:SetText(pgc_base_text())
+	end
+
+	local members = pgc_members()
+	if not members or #members == 0 then return end
+
+	for index, member in ipairs(members) do
+		local ok, row = pcall(pda_inter_team_row, self, index, member)
+		if ok and row then
+			self.team_list:AddWindow(row)
+		end
+	end
+end
+
+function CustomPDAX:OpenTeamKickConfirm(member_id)
+	self._team_kick_id = member_id
+	if not self.team_msgbox then return end
+	local name = member_id
+	if hvt_pgc_db and hvt_pgc_db.get_member then
+		local m = hvt_pgc_db.get_member(member_id)
+		if m then name = m.name or member_id end
+	end
+	self.team_msgbox:SetText(string.format(pgc_tr("hvt_pgc_msg_kick_confirm"), tostring(name)))
+	self.team_msgbox:ShowDialog(true)
+end
+
+function CustomPDAX:OnTeamKickNo()
+	self._team_kick_id = nil
+end
+
+function CustomPDAX:OnTeamKickYes()
+	local id = self._team_kick_id
+	self._team_kick_id = nil
+	if not id then return end
+
+	if hvt_pgc_db and hvt_pgc_db.get_member then
+		local m = hvt_pgc_db.get_member(id)
+		if m then
+			if m.is_companion and hvt_pgc_companion and hvt_pgc_companion.set_as_companion then
+				pcall(hvt_pgc_companion.set_as_companion, id, false)
+			end
+			if hvt_pgc_jobs and hvt_pgc_jobs.clear_member_runtime_order then
+				pcall(hvt_pgc_jobs.clear_member_runtime_order, m)
+			end
+		end
+	end
+	if hvt_pgc_db and hvt_pgc_db.remove_member then pcall(hvt_pgc_db.remove_member, id) end
+	if hvt_pgc_markers and hvt_pgc_markers.sync_member_spots then pcall(hvt_pgc_markers.sync_member_spots) end
+	self:RefreshTeamList()
+end
+
+function CustomPDAX:ComputeSlotStep()
+	local total = 0
+	for i = 1, main_menu_btns do
+		if is_tab_enabled(i) then total = total + 1 end
+	end
+	if pgc_compat_enabled() then total = total + 1 end
+	local step = SLOT_STEP_MAX
+	if total > 1 then
+		local fit = math_floor((LEFT_RAIL_H - SLOT_TOP - SLOT_BTN_H) / (total - 1))
+		if fit < step then step = fit end
+	end
+	if step < 1 then step = 1 end
+	self.slot_step = step
+	return step
 end
 
 -- ### BUILD MENUS
@@ -514,6 +972,7 @@ function CustomPDAX:BuildMainMenu(xml)
 	-- reposition enabled tabs to close gaps
 	local visual_slot = 0
 	self.tab_visual_positions = {}
+	self:ComputeSlotStep()
 
 	for i = 1, main_menu_btns do
 		-- Main menu buttons - create at XML-defined positions first
@@ -528,7 +987,7 @@ function CustomPDAX:BuildMainMenu(xml)
 		-- Check if this tab is enabled
 		if is_tab_enabled(i) then
 			-- Reposition button to close gaps (40 pixels per slot)
-			self.pda_t[i].btn:SetWndPos(vector2():set(0, visual_slot * 40))
+			self.pda_t[i].btn:SetWndPos(vector2():set(0, SLOT_TOP + visual_slot * self.slot_step))
 			self.pda_t[i].btn:Show(true)
 			self.pda_t[i].enabled = true
 			self.tab_visual_positions[i] = visual_slot
@@ -541,6 +1000,21 @@ function CustomPDAX:BuildMainMenu(xml)
 		end
 	end
 
+	-- External-mod entries placed below the last enabled tab (auto-detect).
+	-- Each opens another mod's subdialog instead of a Network sub-tab.
+	-- Player Group Command "Team":
+	self.team_btn = xml:Init3tButton("left_container:team_btn", self.left_cont)
+	self:Register(self.team_btn, "team_btn")
+	self._team_visual_slot = visual_slot
+	self.team_btn:SetWndPos(vector2():set(0, SLOT_TOP + visual_slot * self.slot_step))
+	self.team_btn:Show(pgc_compat_enabled())
+	if pgc_compat_enabled() then visual_slot = visual_slot + 1 end
+
+	-- Fatal Error "Launcher" (bottom row, next to the PDA-control lock button):
+	self.fe_launcher_btn = xml:Init3tButton("fe_launcher_btn", self.background)
+	self:Register(self.fe_launcher_btn, "fe_launcher_btn")
+	self.fe_launcher_btn:Show(fe_compat_enabled())
+
 	-- Arrow
 	self.main_arrow = xml:InitStatic("left_container:arrow_r", self.left_cont)
 	self.main_arrow:Show(false)
@@ -550,11 +1024,12 @@ end
 function CustomPDAX:RefreshTabVisibility()
 	local visual_slot = 0
 	self.tab_visual_positions = self.tab_visual_positions or {}
+	self:ComputeSlotStep()
 	for i = 1, main_menu_btns do
 		local t = self.pda_t[i]
 		if not (t and t.btn) then break end
 		if is_tab_enabled(i) then
-			t.btn:SetWndPos(vector2():set(0, visual_slot * 40))
+			t.btn:SetWndPos(vector2():set(0, SLOT_TOP + visual_slot * self.slot_step))
 			t.btn:Show(true)
 			t.enabled = true
 			self.tab_visual_positions[i] = visual_slot
@@ -569,6 +1044,16 @@ function CustomPDAX:RefreshTabVisibility()
 				if self.main_arrow then self.main_arrow:Show(false) end
 			end
 		end
+	end
+
+	if self.team_btn then
+		self._team_visual_slot = visual_slot
+		self.team_btn:SetWndPos(vector2():set(0, SLOT_TOP + visual_slot * self.slot_step))
+		self.team_btn:Show(pgc_compat_enabled())
+		if pgc_compat_enabled() then visual_slot = visual_slot + 1 end
+	end
+	if self.fe_launcher_btn then
+		self.fe_launcher_btn:Show(fe_compat_enabled())
 	end
 
 	if self.tabs_initialized and self.tabs_initialized[4] and self.RefreshMarketCategories then
@@ -711,6 +1196,21 @@ function CustomPDAX:ResetUpperMenus()
 
 	end
 
+	-- hide the Apps category container too
+	if self.apps_mid_cont then
+		self.apps_mid_cont:Show(false)
+	end
+
+	-- hide the Team category container too
+	if self.team_mid_cont then
+		self.team_mid_cont:Show(false)
+	end
+
+	-- hide the tier-restricted notice
+	if self.restricted_text then
+		self.restricted_text:Show(false)
+	end
+
 	-- hide arrow
 	self.main_arrow:Show(false)
 
@@ -756,13 +1256,39 @@ function CustomPDAX:ResetLowerMenus()
 
 end
 
+-- Minimum PDA tier required to access a Network category. Reads MCM; default 1.
+function CustomPDAX:is_category_allowed(num)
+	local key = tab_tier_key[num]
+	if not key then return true end
+	local min_tier = 1
+	if pda_inter_mcm and pda_inter_mcm.get_config then
+		min_tier = pda_inter_mcm.get_config("tier_min_" .. key) or 1
+	end
+	return get_pda_tier() >= min_tier
+end
+
 -- ### ON CLICK EVENTS
 function CustomPDAX:OnClickMainMenu(num)
+	-- PDA tier gate: show a notice instead of the content when locked
+	if not self:is_category_allowed(num) then
+		self:ResetUpperMenus()
+		self.cur_tree = "restricted"
+		self.main_arrow:Show(true)
+		local arrow_pos = self.main_arrow:GetWndPos()
+		local visual_pos = self.tab_visual_positions[num] or 0
+		self.main_arrow:SetWndPos(vector2():set(arrow_pos.x, SLOT_TOP + visual_pos * self.slot_step))
+		if self.restricted_text then
+			self.restricted_text:SetText(gt("pda_inter_tier_restricted"))
+			self.restricted_text:Show(true)
+		end
+		return
+	end
+
 	-- ensure tab is initialized before showing
 	if not self:EnsureTabInitialized(num) then
 		return
 	end
-	
+
 	-- do nothing if we click on currently opened menu
 	if self.cur_tree ~= num then
 
@@ -776,7 +1302,7 @@ function CustomPDAX:OnClickMainMenu(num)
 		self.main_arrow:Show(true)
 		local arrow_pos = self.main_arrow:GetWndPos()
 		local visual_pos = self.tab_visual_positions[num] or 0
-		self.main_arrow:SetWndPos(vector2():set(arrow_pos.x, visual_pos * 40))
+		self.main_arrow:SetWndPos(vector2():set(arrow_pos.x, SLOT_TOP + visual_pos * self.slot_step))
 
 		-- show middle container for clicked menu
 		self.pda_t[num].mid_cont:Show(true)

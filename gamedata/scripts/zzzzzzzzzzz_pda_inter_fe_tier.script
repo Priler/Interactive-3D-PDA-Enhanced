@@ -1,0 +1,29 @@
+-- Fatal Error compatibility: force the Network tab to open on ANY PDA tier.
+--
+-- Fatal Error gates the "eptInteractive" subdialog behind the PDA item's
+-- "tab_interactive" flag (false on low-tier PDAs) and shows a dead-end error
+-- ("THIS FEATURE IS NOT AVAILABLE ON THIS PDA MODEL"). We unconditionally
+-- bypass that: eptInteractive always opens our Network window.
+--
+-- Fatal Error installs its own pda.set_active_subdialog override on
+-- "on_game_load". We install ours on "actor_on_first_update", which always
+-- fires after on_game_load, so our wrapper is guaranteed to be the outermost
+-- one (it runs first and can short-circuit FE's gate). We re-install on every
+-- load because FE rebuilds its chain each load.
+
+local function install_override()
+	-- Only relevant when Fatal Error is present (it owns set_active_subdialog).
+	if not (mac_mcm and pda and pda.set_active_subdialog) then return end
+
+	local prev = pda.set_active_subdialog
+	pda.set_active_subdialog = function(section)
+		if section == "eptInteractive" then
+			return pda_inter_gui.start_PDAX()
+		end
+		return prev(section)
+	end
+end
+
+function on_game_start()
+	RegisterScriptCallback("actor_on_first_update", install_override)
+end

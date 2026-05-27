@@ -1,0 +1,25 @@
+;; Interactive 3D PDA Enhanced - Fatal Error compatibility.
+;;
+;; FE marks several PDA models with tab_interactive = false. On those it shows a
+;; red "Interactive: unavailable" line in the PDA inventory tooltip and routes
+;; the Network tab to its "not available" page. We force Network on every PDA
+;; (see zzzzzzzzzzz_pda_inter_fe_tier.script), so flip tab_interactive = true on
+;; those models to suppress the misleading tooltip and align FE's own gate.
+;;
+;; Loads after FE's mod_system_items_devices_fe.ltx (alphabetical, "zzz" > "i").
+;; Sections only exist when FE is installed; harmless otherwise.
+
+![device_pda_0]
+tab_interactive = true
+
+![device_pda_getac]
+tab_interactive = true
+
+![device_pda_1]
+tab_interactive = true
+
+![device_pda_milspec]
+tab_interactive = true
+
+![device_pda_new]
+tab_interactive = true

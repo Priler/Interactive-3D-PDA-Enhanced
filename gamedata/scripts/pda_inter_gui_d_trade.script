@@ -346,8 +346,15 @@ end
 function CustomPDAX:OnClickExecTrade(num)
 	local traders_t = pda_inter_x_trade.Trade_available_messages
 
+	-- guard: offer may be gone (double-click, refresh, cleared tables)
+	local entry = traders_t and traders_t[num]
+	if not entry then
+		self:ResetLowerMenus()
+		return
+	end
+
 	-- check if actor has enough money
-	local price = pda_inter_x_trade.Trade_available_messages[num].price
+	local price = entry.price
 	local has_enough_money = db.actor:money() > price
 
 	if has_enough_money then

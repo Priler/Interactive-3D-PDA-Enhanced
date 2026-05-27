@@ -495,4 +495,39 @@
 	</string>
 
 
+	<!-- Compatibility -->
+	<string id="ui_mcm_menu_pda_compat">
+		<text>Совместимость</text>
+	</string>
+	<string id="ui_mcm_pda_inter_compattitle">
+		<text>Совместимость модов</text>
+	</string>
+<string id="ui_mcm_pda_inter_pda_compat_fe_compat_enabled">
+		<text>Совместимость с Fatal Error</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_fe_compat_enabled_desc">
+		<text>Когда включено, в окне «Сеть» появляется пункт «Launcher» (категория приложений) для Fatal Error. Выключите, чтобы убрать его. Не действует, если Fatal Error не установлен.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_pgc_compat_enabled">
+		<text>Совместимость с Player Group Command</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_pgc_compat_enabled_desc">
+		<text>Когда включено, в окне «Сеть» появляется категория «Команда» для Player Group Command. Выключите, чтобы убрать её. Не действует, если Player Group Command не установлен.</text>
+	</string>
+
+	<!-- PDA Tier Limits -->
+	<string id="ui_mcm_menu_pda_tier_access">
+		<text>Ограничения по тиру КПК</text>
+	</string>
+	<string id="ui_mcm_pda_inter_tieraccesstitle">
+		<text>Минимальный уровень КПК для категории (1 = любой КПК)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_raid"><text>Рейд - мин. уровень КПК</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_info"><text>Купить инфо - мин. уровень КПК</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_games"><text>Игры - мин. уровень КПК</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_trade"><text>Рынок - мин. уровень КПК</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_notes"><text>Заметки - мин. уровень КПК</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_comms"><text>Связь - мин. уровень КПК</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_tasks"><text>Задания - мин. уровень КПК</text></string>
+
 </string_table>

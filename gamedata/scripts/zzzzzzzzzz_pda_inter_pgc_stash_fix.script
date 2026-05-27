@@ -1,0 +1,88 @@
+-- =====================================================================
+-- Interactive 3D PDA Enhanced - Player Group Command (PGC) stash-move fix.
+--
+-- Bug in PGC: assigning a "loot_stash" job sets a one-shot walk order toward
+-- the nearest smart terrain, but the member's companion/combat AI interrupts
+-- it and they never get within 45m of the box -> PGC's own loot tick
+-- (try_loot_stash, gated on dist <= 45) never completes. So the member "is
+-- heading to the stash" but just stands there.
+--
+-- Fix: hook PGC's public per-tick driver hvt_pgc_jobs.update_groups and, for
+-- every member with an active loot_stash job that is rendered (online):
+--   * re-issue the walk toward the EXACT stash position each tick (PGC issues
+--     it only once), and
+--   * as a guaranteed fallback, after a short grace period, teleport the member
+--     close to the box so the loot completes.
+--
+-- Offline members are handled implicitly: once the player nears the stash they
+-- spawn online and the same logic walks/teleports them in.
+--
+-- Everything is gated on PGC being installed and fully pcall-guarded, so a
+-- missing/renamed PGC API degrades to "no fix" instead of crashing. No PGC
+-- files are edited; we only wrap a public function on actor_on_first_update
+-- (after PGC has installed its own callbacks).
+-- =====================================================================
+
+local TELEPORT_DIST = 40   -- metres; PGC loots at <= 45, so 40 leaves margin
+local GRACE_TICKS   = 5    -- update_groups ticks to allow real walking first
+
+-- member_id -> ticks spent still far from the box (resets on arrival / job end)
+local progress = {}
+
+local function loot_assist()
+	if not (hvt_pgc_db and hvt_pgc_db.state and hvt_pgc_db.state.members) then return end
+	if not (level and level.object_by_id) then return end
+
+	for id, m in pairs(hvt_pgc_db.state.members) do
+		local pl = m and m.job_payload
+		local active = m and m.current_job == "loot_stash" and pl and pl.stash_id and not pl.completed
+
+		if active then
+			local box = level.object_by_id(pl.stash_id)
+			local npc = level.object_by_id(id)
+			if box and npc then
+				local bpos = box:position()
+				local d = npc:position():distance_to(bpos)
+
+				if d <= TELEPORT_DIST then
+					progress[id] = nil          -- close enough; let PGC loot
+				else
+					progress[id] = (progress[id] or 0) + 1
+
+					-- keep walking them to the exact box (PGC only does this once)
+					if hvt_pgc_companion and hvt_pgc_companion.send_member_to_position and level.vertex_id then
+						local lvid = level.vertex_id(bpos)
+						if lvid then
+							pcall(hvt_pgc_companion.send_member_to_position, id, lvid, bpos)
+						end
+					end
+
+					-- guaranteed completion: snap close after the grace period
+					if progress[id] >= GRACE_TICKS and npc.set_npc_position then
+						pcall(function() npc:set_npc_position(bpos) end)
+						progress[id] = nil
+					end
+				end
+			end
+		else
+			progress[id] = nil
+		end
+	end
+end
+
+local function install()
+	if not (hvt_pgc_jobs and hvt_pgc_jobs.update_groups) then return end
+	if hvt_pgc_jobs.__pdax_stash_fix then return end
+	hvt_pgc_jobs.__pdax_stash_fix = true
+
+	local orig = hvt_pgc_jobs.update_groups
+	hvt_pgc_jobs.update_groups = function(...)
+		local r = { orig(...) }
+		pcall(loot_assist)
+		return unpack(r)
+	end
+end
+
+function on_game_start()
+	RegisterScriptCallback("actor_on_first_update", install)
+end

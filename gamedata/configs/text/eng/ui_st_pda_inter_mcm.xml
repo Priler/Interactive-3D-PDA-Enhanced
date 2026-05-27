@@ -53,7 +53,7 @@
 	</string>
 
 	<string id="ui_mcm_pda_inter_pda_tabs_tab_trade_enabled">
-		<text>Show Trade Tab</text>
+		<text>Show Market Tab</text>
 	</string>
 	<string id="ui_mcm_pda_inter_pda_tabs_tab_trade_enabled_desc">
 		<text>Enable or disable the Trade (Buy Item) tab in the PDA interface.</text>
@@ -194,13 +194,13 @@
 	</string>
 
 
-		<!-- TRADE -->
+		<!-- MARKET -->
 	<string id="ui_mcm_menu_pda_trade">
-		<text>Trade</text>
+		<text>Market</text>
 	</string>
 
 	<string id="ui_mcm_pda_inter_tradetitle">
-		<text>Trade</text>
+		<text>Market</text>
 	</string>
 
 	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_reveal">
@@ -816,6 +816,41 @@
 	<string id="ui_mcm_pda_inter_pda_debug_cancel_tasks_desc">
 		<text>Canceling all active tasks from this addon.</text>
 	</string>
+
+	<!-- Compatibility -->
+	<string id="ui_mcm_menu_pda_compat">
+		<text>Compatibility</text>
+	</string>
+	<string id="ui_mcm_pda_inter_compattitle">
+		<text>Mod Compatibility</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_fe_compat_enabled">
+		<text>Compatibility with Fatal Error</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_fe_compat_enabled_desc">
+		<text>When on, the Network window shows a "Launcher" entry (Apps category) for Fatal Error. Turn off to remove it. Has no effect if Fatal Error is not installed.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_pgc_compat_enabled">
+		<text>Compatibility with Player Group Command</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_compat_pgc_compat_enabled_desc">
+		<text>When on, the Network window shows a "Team" category for Player Group Command. Turn off to remove it. Has no effect if Player Group Command is not installed.</text>
+	</string>
+
+	<!-- PDA Tier Limits -->
+	<string id="ui_mcm_menu_pda_tier_access">
+		<text>PDA Tier Limits</text>
+	</string>
+	<string id="ui_mcm_pda_inter_tieraccesstitle">
+		<text>Minimum PDA tier required per category (1 = any PDA)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_raid"><text>Raid - minimum PDA tier</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_info"><text>Buy Info - minimum PDA tier</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_games"><text>Games - minimum PDA tier</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_trade"><text>Market - minimum PDA tier</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_notes"><text>Notes - minimum PDA tier</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_comms"><text>Comms - minimum PDA tier</text></string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_tasks"><text>Tasks - minimum PDA tier</text></string>
 
 
 </string_table>

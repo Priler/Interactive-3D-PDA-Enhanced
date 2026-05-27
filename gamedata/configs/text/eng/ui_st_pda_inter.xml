@@ -1029,4 +1029,9 @@
 		<text>Total earned:</text>
 	</string>
 
+	<string id="pda_inter_tier_restricted">
+		<text>This function is not available on your current PDA.</text>
+	</string>
+
+
 </string_table>

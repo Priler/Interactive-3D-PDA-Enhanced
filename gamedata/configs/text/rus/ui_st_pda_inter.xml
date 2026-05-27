@@ -932,4 +932,8 @@
 		<text>Счёт:</text>
 	</string>
 
+	<string id="pda_inter_tier_restricted">
+		<text>Эта функция недоступна на вашем текущем КПК.</text>
+	</string>
+
 </string_table>

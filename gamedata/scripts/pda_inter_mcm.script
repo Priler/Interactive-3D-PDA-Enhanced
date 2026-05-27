@@ -11,6 +11,19 @@ local defaults = {
 	["tab_comms_enabled"] = true,
 	["tab_tasks_enabled"] = true,
 
+	-- Compatibility
+	["fe_compat_enabled"] = true,
+	["pgc_compat_enabled"] = true,
+
+	-- Minimum PDA tier required per Network category (1 = any PDA)
+	["tier_min_raid"] = 1,
+	["tier_min_info"] = 1,
+	["tier_min_games"] = 1,
+	["tier_min_trade"] = 1,
+	["tier_min_notes"] = 1,
+	["tier_min_comms"] = 1,
+	["tier_min_tasks"] = 1,
+
 	["raid_offer_mult"] = 0.1,
 	["raid_base_price"] = 25000,
 	["raid_price_power"] = 0.95,
@@ -136,6 +149,17 @@ local def_map = {
 	["tab_notes_enabled"] = "pda_tabs",
 	["tab_comms_enabled"] = "pda_tabs",
 	["tab_tasks_enabled"] = "pda_tabs",
+
+	["fe_compat_enabled"] = "pda_compat",
+	["pgc_compat_enabled"] = "pda_compat",
+
+	["tier_min_raid"] = "pda_tier_access",
+	["tier_min_info"] = "pda_tier_access",
+	["tier_min_games"] = "pda_tier_access",
+	["tier_min_trade"] = "pda_tier_access",
+	["tier_min_notes"] = "pda_tier_access",
+	["tier_min_comms"] = "pda_tier_access",
+	["tier_min_tasks"] = "pda_tier_access",
 
 	["raid_offer_mult"] = "pda_raid",
 	["raid_base_price"] = "pda_raid",
@@ -273,6 +297,23 @@ function on_mcm_load()
 				{id = "tab_notes_enabled", type = "check", val = 1, def = true},
 				{id = "tab_comms_enabled", type = "check", val = 1, def = true},
 				{id = "tab_tasks_enabled", type = "check", val = 1, def = true},
+			}},
+
+			{id = "pda_compat",sh=true,gr={
+				{ id= "compattitle",type= "slide",link= "ui_options_slider_player",text="ui_mcm_pda_inter_compattitle",size= {512,50},spacing= 20 },
+				{id = "fe_compat_enabled", type = "check", val = 1, def = true},
+				{id = "pgc_compat_enabled", type = "check", val = 1, def = true},
+			}},
+
+			{id = "pda_tier_access",sh=true,gr={
+				{ id= "tieraccesstitle",type= "slide",link= "ui_options_slider_player",text="ui_mcm_pda_inter_tieraccesstitle",size= {512,50},spacing= 20 },
+				{id = "tier_min_raid", type = "track", val = 2, min=1, max=3, step=1, def = 1},
+				{id = "tier_min_info", type = "track", val = 2, min=1, max=3, step=1, def = 1},
+				{id = "tier_min_games", type = "track", val = 2, min=1, max=3, step=1, def = 1},
+				{id = "tier_min_trade", type = "track", val = 2, min=1, max=3, step=1, def = 1},
+				{id = "tier_min_notes", type = "track", val = 2, min=1, max=3, step=1, def = 1},
+				{id = "tier_min_comms", type = "track", val = 2, min=1, max=3, step=1, def = 1},
+				{id = "tier_min_tasks", type = "track", val = 2, min=1, max=3, step=1, def = 1},
 			}},
 
 			{id = "pda_raid",sh=true,gr={
