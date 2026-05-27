@@ -47,8 +47,17 @@ local defaults = {
 	["trade_scam_revenge"] = true,
 	["trade_price_mult"] = 1.0,
 	["trade_strict_stock"] = true,
+	["trade_exclude_items"] = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant",
 	["trade_debug_always_offer"] = false,
 	["trade_debug_traders_only"] = false,
+
+	-- Bulk / batch-order discounts
+	["discount_batch_chance"] = 20,
+	["discount_min_pct"] = 10,
+	["discount_max_pct"] = 50,
+	["discount_price_threshold"] = 3000,
+	["discount_min_quantity"] = 10,
+	["discount_debug_always"] = false,
 
 	-- Market category visibility
 	["mkt_cat_melee"] = false,
@@ -184,8 +193,16 @@ local def_map = {
 	["trade_scam_revenge"] = "pda_trade",
 	["trade_price_mult"] = "pda_trade",
 	["trade_strict_stock"] = "pda_trade",
+	["trade_exclude_items"] = "pda_trade",
 	["trade_debug_always_offer"] = "pda_trade",
 	["trade_debug_traders_only"] = "pda_trade",
+
+	["discount_batch_chance"] = "pda_discounts",
+	["discount_min_pct"] = "pda_discounts",
+	["discount_max_pct"] = "pda_discounts",
+	["discount_price_threshold"] = "pda_discounts",
+	["discount_min_quantity"] = "pda_discounts",
+	["discount_debug_always"] = "pda_discounts",
 
 	["mkt_cat_melee"] = "pda_market_cats",
 	["mkt_cat_pistols"] = "pda_market_cats",
@@ -350,8 +367,19 @@ function on_mcm_load()
 				{id = "trade_scam_revenge", type = "check", val = 1, def = true},
 				{id = "trade_price_mult", type = "track", val = 2, min=0.25, max=2, step=0.05, def = 1.0},
 				{id = "trade_strict_stock", type = "check", val = 1, def = true},
+				{id = "trade_exclude_items", type = "input", val = 0, def = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant"},
 				{id = "trade_debug_always_offer", type = "check", val = 1, def = false},
 				{id = "trade_debug_traders_only", type = "check", val = 1, def = false},
+			}},
+
+			{id = "pda_discounts",sh=true,gr={
+				{ id= "disctitle",type= "slide",link= "ui_options_slider_player",text="ui_mcm_pda_inter_disctitle",size= {512,50},spacing= 20 },
+				{id = "discount_batch_chance", type = "track", val = 2, min=0, max=100, step=1, def = 20},
+				{id = "discount_min_pct", type = "track", val = 2, min=0, max=90, step=1, def = 10},
+				{id = "discount_max_pct", type = "track", val = 2, min=0, max=90, step=1, def = 50},
+				{id = "discount_price_threshold", type = "track", val = 2, min=100, max=20000, step=100, def = 3000},
+				{id = "discount_min_quantity", type = "track", val = 2, min=1, max=200, step=1, def = 10},
+				{id = "discount_debug_always", type = "check", val = 1, def = false},
 			}},
 
 			{id = "pda_market_cats",sh=true,gr={

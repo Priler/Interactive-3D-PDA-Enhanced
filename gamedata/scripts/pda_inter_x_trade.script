@@ -15,6 +15,14 @@ local delivery_price_mult = pda_inter_mcm.get_config("trade_delivery_price_mult"
 local delivery_time_mult = pda_inter_mcm.get_config("trade_delivery_time_mult")
 local stalkers_pool = pda_inter_mcm.get_config("trade_stalker_pool")
 
+-- bulk / batch-order discount (cheap items only)
+local discount_batch_chance     = pda_inter_mcm.get_config("discount_batch_chance")
+local discount_min_pct          = pda_inter_mcm.get_config("discount_min_pct")
+local discount_max_pct          = pda_inter_mcm.get_config("discount_max_pct")
+local discount_price_threshold  = pda_inter_mcm.get_config("discount_price_threshold")
+local discount_min_quantity     = pda_inter_mcm.get_config("discount_min_quantity")
+local discount_debug_always     = pda_inter_mcm.get_config("discount_debug_always")
+
 local tmr
 local tmr_order
 local ctime_to_t = utils_data.CTime_to_table
@@ -48,6 +56,14 @@ local sell_chance = {
 	["medic"] = { medicine = 1, delivery_percent = 0.05 },
 	["sci"] = { artefacts = 1, medicine = 0.75, delivery_percent = 0.075 },
 	["stalker"] = { others = 0.25, trash = 1, delivery_percent = 0.1 },
+}
+
+-- relation-based multiplier on respond chance: trusted (same/friendly faction) traders
+-- are far more willing to deal; enemies handled separately (excluded for non-stalkers).
+local relation_respond_mult = {
+	["friend"]  = 3.0,
+	["neutral"] = 1.0,
+	["enemy"]   = 0.5,
 }
 
 function invalidate_traders_cache()
@@ -84,7 +100,12 @@ function find_traders()
 				local comm = se_obj:community()
 				if (not traders_blacklist[comm]) or (actor_comm == comm) then
 					local sec = se_obj:section_name()
-					if (comm == "trader" and not string_find(sec, "warlab")) or string_find(sec, "_trader_") then
+					-- scientists/professors (ecolog faction + named lab scientists) never sell
+					-- ammo/weapons/attachments: force them into the "sci" group, whose whitelist
+					-- (trader_allowed_groups.sci) only allows artefacts/medicine/devices/mutant_parts.
+					if comm == "ecolog" or string_find(sec, "yan_stalker_sakharov") or string_find(sec, "jup_b6_scientist_nuclear_physicist") then
+						potential_traders[se_obj.id] = "sci"
+					elseif (comm == "trader" and not string_find(sec, "warlab")) or string_find(sec, "_trader_") then
 						potential_traders[se_obj.id] = "trader"
 					elseif string_find(sec, "_barman") then
 						potential_traders[se_obj.id] = "barman"
@@ -92,8 +113,6 @@ function find_traders()
 						potential_traders[se_obj.id] = "mechanic"
 					elseif string_find(sec, "_medic") then
 						potential_traders[se_obj.id] = "medic"
-					elseif string_find(sec, "yan_stalker_sakharov") or string_find(sec, "jup_b6_scientist_nuclear_physicist") then
-						potential_traders[se_obj.id] = "sci"
 					-- save only small portion of stalkers
 					elseif stalker_chance > math_random() and not string_find(sec, "warlab") then
 						potential_traders[se_obj.id] = "stalker"
@@ -211,6 +230,11 @@ function add_trader()
 	local chance_to_answer = get_respond_chance(item_sec, trader_group) or (debug_always and 1)
 	if not chance_to_answer then return end
 
+	-- trusted (friendly-faction) traders are much more likely to offer; neutrals unchanged
+	if relations then
+		chance_to_answer = chance_to_answer * (relation_respond_mult[relations] or 1.0)
+	end
+
 	local print_npc = alife_object(rnd_trader_id)
 	pr("chance: %s%", math.floor(chance_to_answer * 100))
 
@@ -226,6 +250,24 @@ function add_trader()
 	local quantity = pda_inter_gui.pda_msg_states[4].quantity
 	local item_price = get_item_price(rnd_trader_id, item_sec, trader_group)
 	if (not item_price) or (not quantity) then return end
+
+	-- batch / bulk-order discount: only for items below the price threshold (per piece).
+	-- random chance to trigger, random magnitude; flagged so the offer shows a note.
+	local bulk_discount
+	-- [DEBUG] force-always bypasses the chance, threshold and quantity gates
+	local force_discount = discount_debug_always
+	if force_discount or (discount_price_threshold and item_price < discount_price_threshold
+		and quantity >= (discount_min_quantity or 1)) then
+		if force_discount or math.random() * 100 < (discount_batch_chance or 0) then
+			local lo = math_floor(math.min(discount_min_pct or 0, discount_max_pct or 0))
+			local hi = math_floor(math.max(discount_min_pct or 0, discount_max_pct or 0))
+			local pct = (hi > lo) and math.random(lo, hi) or lo
+			if pct and pct > 0 then
+				bulk_discount = pct
+				item_price = item_price * (1 - pct / 100)
+			end
+		end
+	end
 
 	-- bait pricing: scammer-like stalkers drop price to attract player
 	-- >=90% scam chance: 85% bait roll (very common)
@@ -283,6 +325,7 @@ function add_trader()
 	Trade_available_messages[#Trade_available_messages].price = total_price
 	Trade_available_messages[#Trade_available_messages].delivery_price = mceil(delivery_price)
 	Trade_available_messages[#Trade_available_messages].delivery_time = delivery_time
+	Trade_available_messages[#Trade_available_messages].bulk_discount = bulk_discount
 
 	if trader_group ~= "stalker" then		-- for scam
 		Trade_available_messages[#Trade_available_messages].name_color = true
@@ -292,7 +335,12 @@ function add_trader()
 	local def_clr = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
 	local inc_clr = strformat("%c[%s,%s,%s,%s]", 255, 0, 140, 180)
 	local se_obj_name = se_obj.character_name and se_obj:character_name() or se_obj:name()
-	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt("pda_trade_offer_" .. math.random(1, 3))
+	-- bandits/renegades get their own rougher lines (comm_msg falls back if none authored)
+	local offer_comm = se_obj:community()
+	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt(pda_inter_utils.comm_msg("pda_trade_offer_" .. math.random(1, 3), offer_comm))
+	if bulk_discount then
+		msg = msg .. " " .. gt(pda_inter_utils.comm_msg("pda_trade_bulk_note", offer_comm))
+	end
 	dynamic_news_helper.send_tip(msg, se_obj_name, nil, 5, se_obj:character_icon(), "news", "npc")
 
 	-- update GUI
@@ -310,7 +358,21 @@ end
 function send_delivery_msg(seller)
 	local def_clr = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
 	local inc_clr = strformat("%c[%s,%s,%s,%s]", 255, 0, 140, 180)
-	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt("pda_trade_order_" .. math.random(1, 2))
+	-- bandits/renegades confirm the order in their own rougher voice
+	local comm = seller.comm or ""
+	local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt(pda_inter_utils.comm_msg("pda_trade_order_" .. math.random(1, 2), comm))
+
+	-- approximate delivery ETA (delivery_time is in game-seconds)
+	local eta = seller.delivery_time
+	if eta then
+		local hours = math_floor(eta / 3600 + 0.5)
+		if hours <= 1 then
+			msg = msg .. " " .. gt(pda_inter_utils.comm_msg("pda_trade_order_eta_one", comm))
+		else
+			msg = msg .. " " .. strformat(gt(pda_inter_utils.comm_msg("pda_trade_order_eta", comm)), hours)
+		end
+	end
+
 	dynamic_news_helper.send_tip(msg, seller.name, nil, 10, seller.icon, "danger", "npc")
 end
 
@@ -550,6 +612,28 @@ local to_group = {
 	["trash"] = { "trash" },
 }
 
+-- user-defined market exclusion list (MCM): comma-separated SECTION IDs.
+-- matched by section id (not display name) so it is language-independent.
+local market_excluded = nil       -- set: lowercased section id -> true
+local market_exclude_raw = nil    -- last raw MCM string, to detect real changes
+
+function build_market_excluded()
+	market_excluded = {}
+	local raw = pda_inter_mcm.get_config("trade_exclude_items")
+	market_exclude_raw = raw
+	if not raw or raw == "" then return end
+	for entry in string.gmatch(raw, "[^,]+") do
+		local id = entry:gsub("%s+", ""):lower()   -- strip all whitespace; ids have none
+		if id ~= "" then market_excluded[id] = true end
+	end
+end
+
+function is_item_excluded(sec)
+	if not market_excluded then build_market_excluded() end
+	if not next(market_excluded) then return false end
+	return market_excluded[tostring(sec):lower()] == true
+end
+
 function collect_all_items()
 	-- check if Mags Redux is installed and add magazines to trade
 	if magazine_binder then
@@ -571,7 +655,7 @@ function collect_all_items()
 			if ini_sys:section_exist(id) then
 				-- collect into all_items (for search)
 				local name = ini_sys:r_string_ex(id, "inv_name")
-				if name then
+				if name and not is_item_excluded(id) then
 					all_items[id] = name
 				end
 
@@ -613,6 +697,9 @@ end
 
 function is_valid_item(sec)
 	if sec == "ammo_box" then return end
+
+	-- user market exclusion (MCM section-id list)
+	if is_item_excluded(sec) then return end
 
 	local name = ini_sys:r_string_ex(sec, "inv_name")
 	if not name then return end
@@ -1034,6 +1121,27 @@ function on_option_change()
 	delivery_price_mult = pda_inter_mcm.get_config("trade_delivery_price_mult")
 	delivery_time_mult = pda_inter_mcm.get_config("trade_delivery_time_mult")
 	stalkers_pool = pda_inter_mcm.get_config("trade_stalker_pool")
+
+	discount_batch_chance     = pda_inter_mcm.get_config("discount_batch_chance")
+	discount_min_pct          = pda_inter_mcm.get_config("discount_min_pct")
+	discount_max_pct          = pda_inter_mcm.get_config("discount_max_pct")
+	discount_price_threshold  = pda_inter_mcm.get_config("discount_price_threshold")
+	discount_min_quantity     = pda_inter_mcm.get_config("discount_min_quantity")
+	discount_debug_always     = pda_inter_mcm.get_config("discount_debug_always")
+
+	-- rebuild market item tables only when the exclusion list actually changed.
+	-- on_option_change is a global MCM callback (fires for any mod's option save),
+	-- so this guard avoids a needless full re-parse on unrelated changes.
+	local raw = pda_inter_mcm.get_config("trade_exclude_items")
+	if raw ~= market_exclude_raw then
+		market_excluded = nil
+		empty_table(all_items)
+		empty_table(item_groups)
+		empty_table(categorized_items)
+		invalidate_npc_item_list_cache()
+		invalidate_trader_cat_cache()
+		collect_all_items()   -- rebuilds market_excluded + refreshes market_exclude_raw
+	end
 end
 
 function combined_trade_on_update()

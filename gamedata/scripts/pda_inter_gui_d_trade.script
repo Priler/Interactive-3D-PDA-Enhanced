@@ -508,7 +508,13 @@ function CustomPDAX:UpdTradeLowerMenu()
 		local reputation_str = def_clr .. reputation .. ": " .. rep_clr .. rep_to_name .. scam_flag .. "\\n"
 		local delivery_str = def_clr .. gt("pda_delivery_time") .. ": " .. math.ceil(trade_t[i].delivery_time / 3600) .. gt("pda_delivery_h") .. "\\n" .. "(" .. dist_clr .. dist .. def_clr .. gt("pda_delivery_km") .. ")"
 
-		self.bottom[i].descr:SetText(name_str .. reputation_str .. delivery_str)
+		-- bulk / batch-order discount note
+		local bulk_str = ""
+		if trade_t[i].bulk_discount then
+			bulk_str = "\\n" .. green_clr .. string.format(gt("pda_trade_bulk_discount"), trade_t[i].bulk_discount) .. def_clr
+		end
+
+		self.bottom[i].descr:SetText(name_str .. reputation_str .. delivery_str .. bulk_str)
 
 		-- update button
 		self.bottom[i].btn:TextControl():SetText(gt("pda_order_btn_text") .. " " .. trade_t[i].price .. "  RU")

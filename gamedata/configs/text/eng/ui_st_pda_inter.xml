@@ -291,6 +291,146 @@
 		<text>Alright, will hit you up and mark the place when it's done, don't miss it!</text>
 	</string>
 
+	<string id="pda_trade_order_eta">
+		<text>Should be ready in about %s hours.</text>
+	</string>
+
+	<string id="pda_trade_order_eta_one">
+		<text>Should be ready within the hour.</text>
+	</string>
+
+	<string id="pda_trade_bulk_note">
+		<text>By the way, I've got a whole pile of those. Buy a batch and I'll knock the price down for you.</text>
+	</string>
+
+	<string id="pda_trade_bulk_discount">
+		<text>Bulk discount: -%s%%</text>
+	</string>
+
+	<!-- bandit / renegade flavored trade messages (rough talk, deliberate typos) -->
+	<string id="pda_trade_offer_1_bandit">
+		<text>Yeah yeah, I can getcha that. Sit tite, I'll send word where to grab it, no funny biznes.</text>
+	</string>
+	<string id="pda_trade_offer_2_bandit">
+		<text>Heh, lucky you - I got connekshuns. Gimme a bit an' I'll mark da spot for ya frayer</text>
+	</string>
+	<string id="pda_trade_offer_3_bandit">
+		<text>Sure ting, friend. My boyz'll stash it somewhere safe, you'll get da coords. Don't make me regret it wudja</text>
+	</string>
+
+	<string id="pda_trade_order_1_bandit">
+		<text>Deal's a deal. Sendin' a runner now, I'll ping ya da coords when it's redy, capiche?</text>
+	</string>
+	<string id="pda_trade_order_2_bandit">
+		<text>Cheeki Breeki i v damki, bratok! We'll drop it off an' mark da place, don't go losin' it now.</text>
+	</string>
+
+	<string id="pda_trade_order_eta_bandit">
+		<text>Gimme 'bout %s hours, gimme or take.</text>
+	</string>
+	<string id="pda_trade_order_eta_one_bandit">
+		<text>Be redy in an hour or so, hang tite.</text>
+	</string>
+
+	<string id="pda_trade_bulk_note_bandit">
+		<text>An' listen - I got a whole stack of 'em layin' round. Buy a buncha an' I'll cut ya a deal, eh?</text>
+	</string>
+
+	<!-- bandit / renegade flavored task & find-info messages -->
+	<string id="pda_task_respond_1_bandit">
+		<text>Yeah, got a lil' job like that, sure.</text>
+	</string>
+	<string id="pda_task_respond_2_bandit">
+		<text>Was just lookin' for some sucker to do dis for me.</text>
+	</string>
+	<string id="pda_task_respond_3_bandit">
+		<text>I got somethin' for ya, mebbe.</text>
+	</string>
+	<string id="pda_task_accept_1_bandit">
+		<text>Aight, here's da coords. Some o' them muties only crawl out at night, mind.</text>
+	</string>
+	<string id="pda_task_accept_2_bandit">
+		<text>Aight, takin' down da coords for ya.</text>
+	</string>
+	<string id="pda_task_accept_3_bandit">
+		<text>Aight, let's git movin'.</text>
+	</string>
+	<string id="pda_task_accept_4_bandit">
+		<text>Good, I'll be waitin' round.</text>
+	</string>
+	<string id="pda_task_accept_5_bandit">
+		<text>Aight, here's da coords. Don't get yerself killed bratok</text>
+	</string>
+	<string id="pda_task_accept_6_bandit">
+		<text>Good, I'll be waitin'. Don't ya chicken out frayer</text>
+	</string>
+	<string id="pda_task_accept_7_bandit">
+		<text>Aight, but make it quick or I find some other mug. Pay's double at night, 20 to 5, ya hear.</text>
+	</string>
+	<string id="pda_task_accept_8_bandit">
+		<text>Marked da spots. Try not to die, frayer</text>
+	</string>
+	<string id="pda_task_accept_9_bandit">
+		<text>Marked da places. Good luck, ya'll need it</text>
+	</string>
+	<string id="pda_task_accept_10_bandit">
+		<text>Marked da spots. An' don't go peekin' in da package, capiche</text>
+	</string>
+	<string id="pda_task_finish_bandit">
+		<text>Nice work. Here's yer cut,</text>
+	</string>
+	<string id="pda_task_finish_part_bandit">
+		<text>I know it weren't you who did da job, so here's only part o' yer coin</text>
+	</string>
+	<string id="pda_task_finish_none_bandit">
+		<text>Some other mug already did dis job, frayer</text>
+	</string>
+	<string id="pda_task_guide_timeout_bandit">
+		<text>Shoulda been there way earlier, yer cut's lighter now, tough luck.</text>
+	</string>
+	<string id="pda_task_fail_10_bandit">
+		<text>Told ya not to open it, frayer! Whole Zone's gonna hear 'bout dis, mark ma words.</text>
+	</string>
+	<string id="pda_task_guard_fail_bandit">
+		<text>Ya had to be there way sooner. I'll find some other mug.</text>
+	</string>
+	<string id="pda_task_guard_finish_bandit">
+		<text>Done already? Aight, here's yer coin,</text>
+	</string>
+	<string id="pda_task_scout_finish_bandit">
+		<text>Ta. Here's yer coin,</text>
+	</string>
+	<string id="pda_find_seen_1_bandit">
+		<text>Yeah, seen it not long ago.</text>
+	</string>
+	<string id="pda_find_seen_2_bandit">
+		<text>Spotted it round my turf, I did.</text>
+	</string>
+	<string id="pda_find_seen_3_bandit">
+		<text>For a bit o' coin, I'll tell ya where I clocked it.</text>
+	</string>
+	<string id="pda_find_seen_4_bandit">
+		<text>I kin share, but it ain't gonna be free, eh.</text>
+	</string>
+	<string id="pda_find_seen_5_bandit">
+		<text>I'm starin' right at it! Move it, move it!</text>
+	</string>
+	<string id="pda_find_info_see_1_bandit">
+		<text>Cheers. Yeah, I seen a</text>
+	</string>
+	<string id="pda_find_info_see_2_bandit">
+		<text>Last time I clocked a</text>
+	</string>
+	<string id="pda_find_info_see_3_bandit">
+		<text>Ya can find</text>
+	</string>
+	<string id="pda_find_info_at_1_bandit">
+		<text>loiterin' round</text>
+	</string>
+	<string id="pda_find_info_at_2_bandit">
+		<text>by da</text>
+	</string>
+
 	<string id="pda_trade_deliver_1">
 		<text>Your order is waiting for you, here are the coordinates.</text>
 	</string>

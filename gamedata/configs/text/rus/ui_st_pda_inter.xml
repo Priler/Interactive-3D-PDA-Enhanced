@@ -197,6 +197,146 @@
 		<text>Хорошо, напишу тебе и скину место когда доставим, не пропусти!</text>
 	</string>
 
+	<string id="pda_trade_order_eta">
+		<text>Будет готово примерно через %s ч.</text>
+	</string>
+
+	<string id="pda_trade_order_eta_one">
+		<text>Будет готово в течение часа.</text>
+	</string>
+
+	<string id="pda_trade_bulk_note">
+		<text>Кстати, у меня таких целая куча. Возьми партию - и я скину тебе цену.</text>
+	</string>
+
+	<string id="pda_trade_bulk_discount">
+		<text>Оптовая скидка: -%s%%</text>
+	</string>
+
+	<!-- bandit / renegade trade messages (gopnik style) -->
+	<string id="pda_trade_offer_1_bandit">
+		<text>Ну чё, есть такое дело, найду тебе. Сиди тихо, скину потом куда подгрести без фокусав.</text>
+	</string>
+	<string id="pda_trade_offer_2_bandit">
+		<text>Хех, повезло тибе - есть у меня связи. Дай времечка, отмечу местечко на карте.</text>
+	</string>
+	<string id="pda_trade_offer_3_bandit">
+		<text>Замётано, дружбан. Пацаны мои припрячут, скину кардинаты. Тока не подведи лады?</text>
+	</string>
+
+	<string id="pda_trade_order_1_bandit">
+		<text>Угавор есть угавор. Шлю гонца скину кардинаты как будит готово сечёшь?</text>
+	</string>
+	<string id="pda_trade_order_2_bandit">
+		<text>Бабки в порядке? в порядке. Закинем товар да отметим место гляди не проворонь.</text>
+	</string>
+
+	<string id="pda_trade_order_eta_bandit">
+		<text>Дай где-то %s часиков, плюс-минус.</text>
+	</string>
+	<string id="pda_trade_order_eta_one_bandit">
+		<text>За часок управимся, сиди жди.</text>
+	</string>
+
+	<string id="pda_trade_bulk_note_bandit">
+		<text>И слышь - таких у меня целая груда валяеца. Бери партию скину по-братски а?</text>
+	</string>
+
+	<!-- bandit / renegade task & find-info messages (гопник стайл) -->
+	<string id="pda_task_respond_1_bandit">
+		<text>Ага есть тут одно дельце как раз</text>
+	</string>
+	<string id="pda_task_respond_2_bandit">
+		<text>Да я как раз искал лоха на это дело</text>
+	</string>
+	<string id="pda_task_respond_3_bandit">
+		<text>Есть кой-чё для тебя можа</text>
+	</string>
+	<string id="pda_task_accept_1_bandit">
+		<text>Лады, держи кардинаты. Тока учти чё некоторые твари тока ночью вылазят</text>
+	</string>
+	<string id="pda_task_accept_2_bandit">
+		<text>Лады, записываю кардинаты для тебя</text>
+	</string>
+	<string id="pda_task_accept_3_bandit">
+		<text>Лады, погнали</text>
+	</string>
+	<string id="pda_task_accept_4_bandit">
+		<text>Добро, буду ждать поблизости</text>
+	</string>
+	<string id="pda_task_accept_5_bandit">
+		<text>Лады, держи кардинаты. Гляди не подохни там фраер</text>
+	</string>
+	<string id="pda_task_accept_6_bandit">
+		<text>Добро, обожду. Тока не сдрейфь</text>
+	</string>
+	<string id="pda_task_accept_7_bandit">
+		<text>Лады, но шевелись не то найду другова. Платеж двойной ночью, с 20 до 5, усек.</text>
+	</string>
+	<string id="pda_task_accept_8_bandit">
+		<text>Отметил местечки. Постарайся не сдохнуть там фраер</text>
+	</string>
+	<string id="pda_task_accept_9_bandit">
+		<text>Отметил места. Удачи она те понадобится</text>
+	</string>
+	<string id="pda_task_accept_10_bandit">
+		<text>Отметил местечки. И не вздумай лезть в пакет, ясно а то отвечать предетса</text>
+	</string>
+	<string id="pda_task_finish_bandit">
+		<text>Чистая работа. Вот твоя доля,</text>
+	</string>
+	<string id="pda_task_finish_part_bandit">
+		<text>Знаю, не ты обстряпал дельце, так что вот тока часть твоих бабок</text>
+	</string>
+	<string id="pda_task_finish_none_bandit">
+		<text>Какой-то другой ловкач уже обстряпал это дельце хыы</text>
+	</string>
+	<string id="pda_task_guide_timeout_bandit">
+		<text>Надо было быть там куда раньше,  доля теперь поменьше не обессуд</text>
+	</string>
+	<string id="pda_task_fail_10_bandit">
+		<text>Говорил же, не вскрывай сук! Вся Зона про это прознает помяни мое слово</text>
+	</string>
+	<string id="pda_task_guard_fail_bandit">
+		<text>Надо было прийти куда раньше. Найду другова</text>
+	</string>
+	<string id="pda_task_guard_finish_bandit">
+		<text>Уже все? Лады, вот твои бабки,</text>
+	</string>
+	<string id="pda_task_scout_finish_bandit">
+		<text>Благодарю. Вот твое бабло,</text>
+	</string>
+	<string id="pda_find_seen_1_bandit">
+		<text>Ага, видал недавно</text>
+	</string>
+	<string id="pda_find_seen_2_bandit">
+		<text>Видал тут, на моей землице</text>
+	</string>
+	<string id="pda_find_seen_3_bandit">
+		<text>За пару деревянных скажу, где видал</text>
+	</string>
+	<string id="pda_find_seen_4_bandit">
+		<text>Могу поделиться, но не задарма ясно дела</text>
+	</string>
+	<string id="pda_find_seen_5_bandit">
+		<text>Да я прям щас на него пялюсь! Шевелись браток!</text>
+	</string>
+	<string id="pda_find_info_see_1_bandit">
+		<text>Благодарю. Ага, видал я</text>
+	</string>
+	<string id="pda_find_info_see_2_bandit">
+		<text>В последний раз видал я</text>
+	</string>
+	<string id="pda_find_info_see_3_bandit">
+		<text>Сыскать можно</text>
+	</string>
+	<string id="pda_find_info_at_1_bandit">
+		<text>где-то возля</text>
+	</string>
+	<string id="pda_find_info_at_2_bandit">
+		<text>у</text>
+	</string>
+
 	<string id="pda_trade_deliver_1">
 		<text>Твой заказ ждет тебя, вот координаты.</text>
 	</string>

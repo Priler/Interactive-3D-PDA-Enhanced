@@ -224,6 +224,13 @@
 		<text>Off (default): traders may broker any item in a category they sell (sells AKs, can offer SR-25). On: traders only offer the exact items in their buy_supplies list. Realistic but very restrictive.</text>
 	</string>
 
+	<string id="ui_mcm_pda_inter_pda_trade_trade_exclude_items">
+		<text>Excluded items (section IDs)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_exclude_items_desc">
+		<text>Comma-separated list of item SECTION IDs that will never appear on the market (not display names, so it works in any language). Example: itm_basickit, hide_boar. Takes effect immediately on change.</text>
+	</string>
+
 	<string id="ui_mcm_pda_inter_pda_trade_trade_debug_traders_only">
 		<text>[DEBUG] Traders only (no random stalkers)</text>
 	</string>
@@ -250,6 +257,50 @@
 	</string>
 	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_revenge_desc">
 		<text>If you (or a companion) kill a scammer NPC within 5 days, partial RU refund. Day 1: 80%, day 2: 60%, day 3: 40%, days 4-5: 20%. After 5 days the entry expires.</text>
+	</string>
+
+	<!-- DISCOUNTS -->
+	<string id="ui_mcm_menu_pda_discounts">
+		<text>Discounts</text>
+	</string>
+	<string id="ui_mcm_pda_inter_disctitle">
+		<text>Bulk / Batch-Order Discounts</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_batch_chance">
+		<text>Batch discount chance (%)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_batch_chance_desc">
+		<text>Chance for an offer on a cheap item to include a bulk-order discount. Set to 0 to disable the mechanic.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_pct">
+		<text>Min discount (%)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_pct_desc">
+		<text>Lower bound of the random bulk discount applied to the price.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_max_pct">
+		<text>Max discount (%)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_max_pct_desc">
+		<text>Upper bound of the random bulk discount applied to the price.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_price_threshold">
+		<text>Price threshold (RU/piece)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_price_threshold_desc">
+		<text>Only items cheaper than this per-piece price can trigger a bulk discount. Default 3000.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_quantity">
+		<text>Minimum quantity</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_quantity_desc">
+		<text>The order must be for at least this many pieces to qualify for a bulk discount. Default 10.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_debug_always">
+		<text>[DEBUG] Force discount on every offer</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_debug_always_desc">
+		<text>Testing only: ignores the chance, price threshold and minimum quantity, so every offer carries a bulk discount. Leave off for normal play.</text>
 	</string>
 
 	<string id="ui_mcm_menu_pda_market_cats">

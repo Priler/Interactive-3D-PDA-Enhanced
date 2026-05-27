@@ -201,6 +201,57 @@
 		<text>Процент ото всех сталкеров, которые будут в пуле торговцев. Меньше сталкеров означает что торговцы будут отвечать чаще, значение 0 означает что отвечать будут только торговцы.</text>
 	</string>
 
+	<string id="ui_mcm_pda_inter_pda_trade_trade_exclude_items">
+		<text>Исключенные предметы (ID секций)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_exclude_items_desc">
+		<text>Список ID секций предметов через запятую, которые никогда не появятся на рынке (это не отображаемые имена, поэтому список работает на любом языке). Пример: itm_basickit, hide_boar. Изменения применяются сразу.</text>
+	</string>
+
+	<!-- DISCOUNTS -->
+	<string id="ui_mcm_menu_pda_discounts">
+		<text>Скидки</text>
+	</string>
+	<string id="ui_mcm_pda_inter_disctitle">
+		<text>Оптовые скидки</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_batch_chance">
+		<text>Шанс оптовой скидки (%)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_batch_chance_desc">
+		<text>Шанс того, что предложение по дешевому предмету будет содержать оптовую скидку. 0 - отключить механику.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_pct">
+		<text>Мин. скидка (%)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_pct_desc">
+		<text>Нижняя граница случайной оптовой скидки от цены.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_max_pct">
+		<text>Макс. скидка (%)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_max_pct_desc">
+		<text>Верхняя граница случайной оптовой скидки от цены.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_price_threshold">
+		<text>Порог цены (RU/шт)</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_price_threshold_desc">
+		<text>Оптовую скидку могут получить только предметы дешевле этой цены за штуку. По умолчанию 3000.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_quantity">
+		<text>Минимальное количество</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_min_quantity_desc">
+		<text>Заказ должен быть не менее чем на столько штук, чтобы получить оптовую скидку. По умолчанию 10.</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_debug_always">
+		<text>[ОТЛАДКА] Принудительная скидка на каждое предложение</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_discounts_discount_debug_always_desc">
+		<text>Только для тестирования: игнорирует шанс, порог цены и минимальное количество, поэтому каждое предложение содержит оптовую скидку. Для обычной игры выключите.</text>
+	</string>
+
 
 		<!-- Comms -->
 	<string id="ui_mcm_menu_pda_banter">

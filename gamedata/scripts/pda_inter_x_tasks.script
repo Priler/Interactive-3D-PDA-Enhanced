@@ -888,7 +888,7 @@ function add_giver()
 
 	-- send message
 	local tasks_t = Tasks_available_givers[#Tasks_available_givers]
-	local str = gt("pda_task_respond_" .. math.random(1, 3))
+	local str = gt(pda_inter_utils.comm_msg("pda_task_respond_" .. math.random(1, 3), tasks_t.giver_comm))
 	pda_dyn_msg(str, tasks_t.giver_name, tasks_t.giver_icon, 10, "beep_1")
 
 	-- update GUI lower menu
@@ -910,7 +910,7 @@ function add_existing_giver(t)
 
 	-- send message
 	local tasks_t = Tasks_available_givers[#Tasks_available_givers]
-	local str = gt("pda_task_respond_" .. math.random(1, 3))
+	local str = gt(pda_inter_utils.comm_msg("pda_task_respond_" .. math.random(1, 3), tasks_t.giver_comm))
 	pda_dyn_msg(str, tasks_t.giver_name, tasks_t.giver_icon, 10, "beep_1")
 
 	-- update GUI lower menu
@@ -934,7 +934,7 @@ function setup_task(idx)
 	pda_inter_gui.pda_msg_states[7].cd[cur_task_type] = ctime_to_t(cur_time)
 
 	-- send message
-	local str = gt("pda_task_accept_" .. cur_task_type)
+	local str = gt(pda_inter_utils.comm_msg("pda_task_accept_" .. cur_task_type, t[idx].giver_comm))
 	pda_dyn_msg(str, t[idx].giver_name, t[idx].giver_icon, 10, "beep_2")
 
 	-- pass info
@@ -1390,9 +1390,9 @@ function manage_mutant_hunt_task(idx, t, squad, killer)
 
 			-- if actor killed nobody
 			if Active_pda_tasks[idx].reward == 0 then
-				str = gt("pda_task_finish_none")
+				str = gt(pda_inter_utils.comm_msg("pda_task_finish_none", t.giver_comm))
 			else
-				str = gt("pda_task_finish") .. " " .. Active_pda_tasks[idx].reward .. "."
+				str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. Active_pda_tasks[idx].reward .. "."
 				-- reward player
 				give_task_reward(Active_pda_tasks[idx].reward)
 				-- increase reputation and goodwill and send reputation message
@@ -1419,7 +1419,7 @@ function manage_bounty_task(idx, t, se_obj, killer)
 		-- if killer was actor
 		if killer.id == 0 or IsAnomaly(killer) or killer.id == se_obj.id or (level.object_by_id(killer.id) and level.object_by_id(killer.id):has_info("npcx_is_companion")) then
 			-- send message 1
-			local str = gt("pda_task_finish") .. " " .. t.reward .. "."
+			local str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. t.reward .. "."
 			pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 			-- reward player
@@ -1432,7 +1432,7 @@ function manage_bounty_task(idx, t, se_obj, killer)
 		else
 			-- send message 2
 			local new_reward = math.floor(t.reward / 3)
-			local str = gt("pda_task_finish_part") .. " " .. new_reward .. "."
+			local str = gt(pda_inter_utils.comm_msg("pda_task_finish_part", t.giver_comm)) .. " " .. new_reward .. "."
 			pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 			-- reward player partially
@@ -1455,7 +1455,7 @@ function manage_guide_task(idx, t)
 		Active_pda_tasks[idx].reward = math.floor(Active_pda_tasks[idx].reward * 0.33)
 
 		-- send timeout message
-		local str = gt("pda_task_guide_timeout")
+		local str = gt(pda_inter_utils.comm_msg("pda_task_guide_timeout", t.giver_comm))
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "beep_2")
 
 		-- remove guide time
@@ -1484,7 +1484,7 @@ function manage_guide_task(idx, t)
 			pr("guide task complete")
 
 			-- send complete message
-			local str = gt("pda_task_finish") .. " " .. t.reward .. "."
+			local str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. t.reward .. "."
 			pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 			-- increase reputation and goodwill and send reputation message
@@ -1546,7 +1546,7 @@ function manage_fetch_items_task(idx, t, box, item, mode)
 			box:iterate_inventory_box(release_items, box)
 
 			-- send message
-			local str = gt("pda_task_finish") .. " " .. t.reward .. "."
+			local str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. t.reward .. "."
 			pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 			-- reward player
@@ -1582,9 +1582,9 @@ function manage_dangerous_squad_task(idx, t, squad, killer)
 
 			-- if actor killed nobody
 			if Active_pda_tasks[idx].reward == 0 then
-				str = gt("pda_task_finish_none")
+				str = gt(pda_inter_utils.comm_msg("pda_task_finish_none", t.giver_comm))
 			else
-				str = gt("pda_task_finish") .. " " .. Active_pda_tasks[idx].reward .. "."
+				str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. Active_pda_tasks[idx].reward .. "."
 				-- reward player
 				give_task_reward(Active_pda_tasks[idx].reward)
 				-- increase reputation and goodwill and send reputation message
@@ -1632,7 +1632,7 @@ function manage_stealth_item_task(idx, t, box, item, mode)
 		pda_change_goodwill(t.giver_comm, 25, 25, "pda_task_guide_completed")
 
 		-- send message
-		local str = gt("pda_task_finish") .. " " .. t.reward .. "."
+		local str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. t.reward .. "."
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 		-- clear stuff
@@ -1668,7 +1668,7 @@ function manage_artefact_item_task(idx, t, box, item, mode)
 		pda_change_goodwill(t.giver_comm, 25, 25, "pda_task_guide_completed")
 
 		-- send message
-		local str = gt("pda_task_finish") .. " " .. t.reward .. "."
+		local str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. t.reward .. "."
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 		-- clear stuff
@@ -1704,7 +1704,7 @@ function manage_delivery_item_task(idx, t, box, item, mode)
 		pda_change_goodwill(t.giver_comm, 25, 25, "pda_task_guide_completed")
 
 		-- send message
-		local str = gt("pda_task_finish") .. " " .. t.reward .. "."
+		local str = gt(pda_inter_utils.comm_msg("pda_task_finish", t.giver_comm)) .. " " .. t.reward .. "."
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 		-- clear stuff
@@ -1718,7 +1718,7 @@ function manage_delivery_item_task(idx, t, box, item, mode)
 		pda_change_goodwill(t.giver_comm, -100, -100, "pda_task_guide_failed", true)
 
 		-- send message
-		local str = gt("pda_task_fail_10")
+		local str = gt(pda_inter_utils.comm_msg("pda_task_fail_10", t.giver_comm))
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")
 
 		-- clear stuff
@@ -1769,7 +1769,7 @@ function manage_guard_task(idx, t)
 
 		-- finish task if time to get to the target expired
 		if Active_pda_tasks[idx].s1_time_start > 1200 then		-- 20 minutes to get to the target
-			local str = gt("pda_task_guard_fail")
+			local str = gt(pda_inter_utils.comm_msg("pda_task_guard_fail", t.giver_comm))
 			pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")		-- fail message
 			remove_tracker_note_idx(idx, t)
 			guard_task_active = false
@@ -1794,7 +1794,7 @@ function manage_guard_task(idx, t)
 	-- if actor went to sleep finish without reward
 	if hours_slept > 0 then
 		hours_slept = 0
-		local str = gt("pda_task_guard_fail")
+		local str = gt(pda_inter_utils.comm_msg("pda_task_guard_fail", t.giver_comm))
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "danger")		-- fail message
 		remove_tracker_note_idx(idx, t)
 		guard_task_active = false
@@ -1833,7 +1833,7 @@ function manage_guard_task(idx, t)
 			elseif Active_pda_tasks[idx].s2_time_hiding > 30 then
 				local reward = math.ceil(reward_per_sec * Active_pda_tasks[idx].s2_time_at_target)
 				give_task_reward(reward)
-				local str = gt("pda_task_guard_finish") .. " " .. reward .. "."
+				local str = gt(pda_inter_utils.comm_msg("pda_task_guard_finish", t.giver_comm)) .. " " .. reward .. "."
 				pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "beep_1")					-- finish message
 				remove_tracker_note_idx(idx, t)
 				guard_task_active = false
@@ -1855,7 +1855,7 @@ function manage_guard_task(idx, t)
 		elseif Active_pda_tasks[idx].s2_time_outside > 60 then
 			local reward = math.ceil(reward_per_sec * Active_pda_tasks[idx].s2_time_at_target)
 			give_task_reward(reward)
-			local str = gt("pda_task_guard_finish") .. " " .. reward .. "."
+			local str = gt(pda_inter_utils.comm_msg("pda_task_guard_finish", t.giver_comm)) .. " " .. reward .. "."
 			pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "beep_1")						-- finish message
 			remove_tracker_note_idx(idx, t)
 			guard_task_active = false
@@ -1874,7 +1874,7 @@ function manage_scout_task(idx, t)
 	-- reward player
 	if #t.route <= 0 then
 		give_task_reward(t.reward)
-		local str = gt("pda_task_scout_finish") .. " " .. t.reward .. "."
+		local str = gt(pda_inter_utils.comm_msg("pda_task_scout_finish", t.giver_comm)) .. " " .. t.reward .. "."
 		pda_dyn_msg(str, t.giver_name, t.giver_icon, 10, "beep_1")						-- finish message
 		remove_tracker_note_idx(idx, t)
 		return

@@ -449,3 +449,18 @@ end
 function on_game_start()
     RegisterScriptCallback("on_game_load", on_game_load)
 end
+
+-- ### COMMUNITY-FLAVORED MESSAGES
+-- Returns a community-specific message id when a variant exists, else the base id.
+-- Bandits/renegades get a "<base_id>_bandit" line (rough talk); any other faction,
+-- or a missing variant, falls back to base_id. Safe to wrap every NPC-spoken line:
+-- sites stay correct even before their _bandit strings are authored.
+function pda_inter_utils.comm_msg(base_id, comm)
+    if comm == "bandit" or comm == "renegade" then
+        local variant = base_id .. "_bandit"
+        if game.translate_string(variant) ~= variant then
+            return variant
+        end
+    end
+    return base_id
+end
