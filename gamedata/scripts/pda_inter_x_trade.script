@@ -94,9 +94,11 @@ Delivery_blacklisted_levels = { ["l03u_agr_underground"] = true, ["y04_pole"] = 
 -- chance for trader to sell certain item by its group
 -- chance is number, if group isnt in array then its default 0.05
 local sell_chance = {
-	["trader"] = { weapons = 0.75, outfits = 0.75, medicine = 0.25, food = 0.25, repair = 0.1, others = 0.1, delivery_percent = 0.015 },
+	-- weapons are categorized by kind (pistols/rifles/shotguns/snipers/smgs), so the old
+	-- generic "weapons" key never matched and guns fell through to the 0.05 default.
+	["trader"] = { pistols = 0.75, rifles = 0.75, shotguns = 0.75, snipers = 0.75, smgs = 0.75, outfits = 0.75, medicine = 0.25, food = 0.25, repair = 0.1, others = 0.1, delivery_percent = 0.015 },
 	["barman"] = { food = 1, others = 0.5, delivery_percent = 0.03 },
-	["mechanic"] = { weapons = 0.25, outfits = 0.25, repair = 1, delivery_percent = 0.05 },
+	["mechanic"] = { pistols = 0.25, rifles = 0.25, shotguns = 0.25, snipers = 0.25, smgs = 0.25, outfits = 0.25, repair = 1, delivery_percent = 0.05 },
 	["medic"] = { medicine = 1, delivery_percent = 0.05 },
 	["sci"] = { artefacts = 1, medicine = 0.75, delivery_percent = 0.075 },
 	["merc"] = { pistols = 0.7, rifles = 0.7, shotguns = 0.7, snipers = 0.7, smgs = 0.7, melee = 0.4, explosives = 0.5, ammo = 0.8, w_addons = 0.6, outfits = 0.6, headgear = 0.5, mutant_parts = 0.4, delivery_percent = 0.04 },

@@ -1664,15 +1664,26 @@ end
 -- is intentionally excluded (it coexists with notes_input_box on the Notes tab); the
 -- three below are each the sole text field of their tab, so "first shown" picks correctly.
 function CustomPDAX:DeleteFocusedChar()
-	local boxes = { self.notes_input_box, self.stalker_box_find, self.trade_quan_input }
+	-- delete from the input the cursor is over (that's the field being edited, since
+	-- control is auto-enabled on hover). Falls back to the first shown box if, somehow,
+	-- none is hovered. Includes notes_picker_input so holding Backspace in it works too.
+	local boxes = { self.notes_input_box, self.notes_picker_input, self.stalker_box_find, self.trade_quan_input }
+	local target, first_shown
 	for i = 1, #boxes do
 		local b = boxes[i]
 		if b and b:IsShown() then
-			local t = b:GetText()
-			if t and t ~= "" then
-				b:SetText(string.sub(t, 1, -2))
+			first_shown = first_shown or b
+			if b:IsCursorOverWindow() then
+				target = b
+				break
 			end
-			return
+		end
+	end
+	target = target or first_shown
+	if target then
+		local t = target:GetText()
+		if t and t ~= "" then
+			target:SetText(string.sub(t, 1, -2))
 		end
 	end
 end
