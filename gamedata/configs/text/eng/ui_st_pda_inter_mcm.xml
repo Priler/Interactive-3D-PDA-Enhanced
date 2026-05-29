@@ -203,6 +203,13 @@
 		<text>Market</text>
 	</string>
 
+	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_enable">
+		<text>Enable scam mechanic</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_enable_desc">
+		<text>If on, shady random stalkers may take your money and never deliver. Off = every trader always delivers (no scams).</text>
+	</string>
+
 	<string id="ui_mcm_pda_inter_pda_trade_trade_scam_reveal">
 		<text>Reveal scams via taunt message</text>
 	</string>
@@ -312,6 +319,9 @@
 	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_melee"><text>Show Melee</text></string>
 	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_pistols"><text>Show Pistols</text></string>
 	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_rifles"><text>Show Rifles</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_shotguns"><text>Show Shotguns</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_snipers"><text>Show Snipers</text></string>
+	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_smgs"><text>Show SMGs</text></string>
 	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_ammo"><text>Show Ammo</text></string>
 	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_explosives"><text>Show Explosives</text></string>
 	<string id="ui_mcm_pda_inter_pda_market_cats_mkt_cat_w_addons"><text>Show Weapon Addons</text></string>

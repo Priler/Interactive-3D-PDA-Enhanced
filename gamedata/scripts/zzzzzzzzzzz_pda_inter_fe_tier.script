@@ -15,6 +15,11 @@ local function install_override()
 	-- Only relevant when Fatal Error is present (it owns set_active_subdialog).
 	if not (mac_mcm and pda and pda.set_active_subdialog) then return end
 
+	-- actor_on_first_update fires on every load; without this guard each load would
+	-- wrap the previous wrapper, growing an unbounded closure chain across save-loads
+	if pda.__pdax_fe_tier then return end
+	pda.__pdax_fe_tier = true
+
 	local prev = pda.set_active_subdialog
 	pda.set_active_subdialog = function(section)
 		if section == "eptInteractive" then

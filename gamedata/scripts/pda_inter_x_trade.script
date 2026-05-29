@@ -90,7 +90,7 @@ local sell_chance = {
 	["mechanic"] = { weapons = 0.25, outfits = 0.25, repair = 1, delivery_percent = 0.05 },
 	["medic"] = { medicine = 1, delivery_percent = 0.05 },
 	["sci"] = { artefacts = 1, medicine = 0.75, delivery_percent = 0.075 },
-	["merc"] = { pistols = 0.7, rifles = 0.7, melee = 0.4, explosives = 0.5, ammo = 0.8, w_addons = 0.6, outfits = 0.6, headgear = 0.5, mutant_parts = 0.4, delivery_percent = 0.04 },
+	["merc"] = { pistols = 0.7, rifles = 0.7, shotguns = 0.7, snipers = 0.7, smgs = 0.7, melee = 0.4, explosives = 0.5, ammo = 0.8, w_addons = 0.6, outfits = 0.6, headgear = 0.5, mutant_parts = 0.4, delivery_percent = 0.04 },
 	["stalker"] = { others = 0.25, trash = 1, delivery_percent = 0.1 },
 }
 
@@ -451,8 +451,9 @@ function setup_order(idx)
 	}
 
 	local cant_scam = t[idx].name_color
+	local scams_on = pda_inter_mcm.get_config("trade_scam_enable")
 	local reputation = normalize(t[idx].reputation, 2000, -2000)
-	local will_deliver = cant_scam or (reputation < math.random())
+	local will_deliver = cant_scam or (not scams_on) or (reputation < math.random())
 	local scam_reveal_on = pda_inter_mcm.get_config("trade_scam_reveal")
 
 	if will_deliver then
@@ -604,26 +605,32 @@ function check_order_time_and_spawn()
 	for idx = #Ordered_items, 1, -1 do
 		local t = Ordered_items[idx]
 		if cur_time:diffSec(t_to_ctime(t.start_time)) > (t.duration) then
-			-- spawn item
+			-- spawn item. The stash server object can be released between order and
+			-- delivery (despawned/looted), and alife_create_item(section, nil) crashes;
+			-- guard the whole spawn + map-spot block on a live stash.
 			local stash = alife_object(t.stash_id)
-			for i = 1, t.amount do
-				alife_create_item(t.section, stash)
+			if stash then
+				for i = 1, t.amount do
+					alife_create_item(t.section, stash)
+				end
+
+				-- mark stash and pass stash id again (need to reset ordered_items here)
+				delivered_stashes[t.stash_id] = t.name
+
+				if level.map_has_object_spot(t.stash_id, "secondary_task_location") == 0 then
+					level.map_add_object_spot_ser(t.stash_id, "secondary_task_location", t.name .. " " .. gt("pda_delivery_stash"))
+				end
+
+				-- send message (only when the item actually spawned)
+				pr("- Stash created")
+				local def_clr = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
+				local inc_clr = strformat("%c[%s,%s,%s,%s]", 255, 0, 140, 180)
+				local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt("pda_trade_deliver_" .. math.random(1, 2))
+				dynamic_news_helper.send_tip(msg, t.name, nil, 15, t.icon, "danger", "npc")
 			end
 
-			-- mark stash and pass stash id again (need to reset ordered_items here)
-			delivered_stashes[t.stash_id] = t.name
-
-			if level.map_has_object_spot(t.stash_id, "secondary_task_location") == 0 then
-				level.map_add_object_spot_ser(t.stash_id, "secondary_task_location", t.name .. " " .. gt("pda_delivery_stash"))
-			end
-
-			-- send message
-			pr("- Stash created")
-			local def_clr = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
-			local inc_clr = strformat("%c[%s,%s,%s,%s]", 255, 0, 140, 180)
-			local msg = inc_clr .. gt("pda_private_msg") .. " " .. def_clr .. gt("pda_trade_deliver_" .. math.random(1, 2))
-			dynamic_news_helper.send_tip(msg, t.name, nil, 15, t.icon, "danger", "npc")
-
+			-- always drop the order from the queue (even if the stash was lost), else
+			-- it would be retried every frame forever.
 			table.remove(Ordered_items, idx)
 
 		end
@@ -668,7 +675,77 @@ local to_group = {
 	["repair"] = { "tools", "repair_kits", "upgrade_items", "parts", "toolkits_h" },
 	["others"] = { "fuels", "misc", "camping" },
 	["trash"] = { "trash" },
+	-- weapon sub-categories split out by engine "kind" (no direct ltx section feeds them;
+	-- populated via kind_to_group reclassification + npc_loadouts merge below)
+	["shotguns"] = {},
+	["snipers"] = {},
+	["smgs"] = {},
 }
+
+-- weapon categorization by engine "kind". Applies to BOTH ltx-listed weapons and
+-- loadout-derived ones, so shotguns/snipers/smgs split off from the rifles bucket
+local kind_to_group = {
+	["w_pistol"]    = "pistols",
+	["w_rifle"]     = "rifles",
+	["w_shotgun"]   = "shotguns",
+	["w_sniper"]    = "snipers",
+	["w_smg"]       = "smgs",
+	["w_explosive"] = "explosives",
+}
+
+-- merge: collect every weapon section NPCs can actually spawn with by combing
+-- npc_loadouts.ltx (mirrors the code from "Valid Weapons Spawner" mod). Keeps the market in sync
+-- with GAMMA updates and picks up modded guns added to loadouts. Returns sec -> kind.
+local function collect_loadout_weapons()
+	local found = {}
+	local ini = ini_file_ex("items\\settings\\npc_loadouts\\npc_loadouts.ltx")
+	if not ini then return found end
+
+	-- scripted/named loadouts -> disallowed (unique/quest carriers, not "valid" pool)
+	local disallowed = {}
+	local per_name = ini:collect_section("loadouts_per_name")
+	if per_name then
+		for _, v in pairs(per_name) do
+			disallowed[ini:r_string_ex(v, "primary") or ""] = true
+			disallowed[ini:r_string_ex(v, "secondary") or ""] = true
+			disallowed[ini:r_string_ex(v, "extra") or ""] = true
+		end
+	end
+
+	-- all section names (ini_file_ex wrapper has no section_for_each, use get_sections)
+	local sections = ini:get_sections()
+
+	-- allowed = any section referenced as primary/secondary/extra by another section.
+	-- prunes orphan sections that hold weapon fields but are never actually assigned.
+	local allowed = {}
+	for _, section in ipairs(sections) do
+		local p = ini:r_string_ex(section, "primary")
+		local s = ini:r_string_ex(section, "secondary")
+		local e = ini:r_string_ex(section, "extra")
+		if p then allowed[p] = true end
+		if s then allowed[s] = true end
+		if e then allowed[e] = true end
+	end
+
+	-- pull weapon sections from valid loadout sections
+	for _, section in ipairs(sections) do
+		if not disallowed[section] and allowed[section] then
+			local lines = ini:collect_section(section)
+			for key, _ in pairs(lines) do
+				local wpn = str_explode(key, ":")[1]
+				wpn = ini_sys:r_string_ex(wpn, "parent_section") or wpn
+				if ini_sys:section_exist(wpn) and not found[wpn] then
+					local kind = ini_sys:r_string_ex(wpn, "kind")
+					if kind and kind_to_group[kind] then
+						found[wpn] = kind
+					end
+				end
+			end
+		end
+	end
+
+	return found
+end
 
 -- user-defined market exclusion list (MCM): comma-separated SECTION IDs.
 -- matched by section id (not display name) so it is language-independent.
@@ -717,16 +794,39 @@ function collect_all_items()
 					all_items[id] = name
 				end
 
-				-- sort into item_groups (for traders)
-				for group, t in pairs(to_group) do
-					for g = 1, #t do
-						if to_collect[i] == t[g] then
-							-- save section to certain group
-							item_groups[id] = group
+				-- sort into item_groups (for traders).
+				-- weapons are grouped by engine "kind" (splits shotguns/snipers/smgs out of
+				-- the rifles ltx bucket); everything else falls back to its ltx section group
+				local kind = ini_sys:r_string_ex(id, "kind")
+				local kg = kind and kind_to_group[kind]
+				if kg then
+					item_groups[id] = kg
+				else
+					for group, t in pairs(to_group) do
+						for g = 1, #t do
+							if to_collect[i] == t[g] then
+								-- save section to certain group
+								item_groups[id] = group
+							end
 						end
 					end
 				end
 
+			end
+		end
+	end
+
+	-- union the static ltx weapon lists with every gun NPCs actually spawn with
+	-- (loadout-derived). Catches modded guns and keeps the list current across GAMMA updates.
+	-- is_valid_item still gates these in the categorized_items pass below.
+	local loadout_wpns = collect_loadout_weapons()
+	for sec, kind in pairs(loadout_wpns) do
+		local kg = kind_to_group[kind]
+		if kg and not is_item_excluded(sec) then
+			local name = ini_sys:r_string_ex(sec, "inv_name")
+			if name then
+				all_items[sec] = name        -- searchable
+				item_groups[sec] = kg        -- categorized
 			end
 		end
 	end
@@ -960,13 +1060,13 @@ end
 
 -- allowed item categories per trader group
 local trader_allowed_groups = {
-	trader   = { melee=true, pistols=true, rifles=true, ammo=true, explosives=true, w_addons=true, outfits=true, headgear=true, backpacks=true, devices=true, medicine=true, food=true, repair=true, others=true, mutant_parts=true, artefacts=true, trash=true },
+	trader   = { melee=true, pistols=true, rifles=true, shotguns=true, snipers=true, smgs=true, ammo=true, explosives=true, w_addons=true, outfits=true, headgear=true, backpacks=true, devices=true, medicine=true, food=true, repair=true, others=true, mutant_parts=true, artefacts=true, trash=true },
 	barman   = { food=true, others=true, trash=true, devices=true },
-	mechanic = { melee=true, pistols=true, rifles=true, ammo=true, explosives=true, w_addons=true, outfits=true, headgear=true, backpacks=true, repair=true, devices=true },
+	mechanic = { melee=true, pistols=true, rifles=true, shotguns=true, snipers=true, smgs=true, ammo=true, explosives=true, w_addons=true, outfits=true, headgear=true, backpacks=true, repair=true, devices=true },
 	medic    = { medicine=true, food=true },
 	sci      = { artefacts=true, medicine=true, devices=true, mutant_parts=true },
 	-- mercs: weapons, weapon mods, ammo, armor (outfits+helmets) and mutant parts only
-	merc     = { melee=true, pistols=true, rifles=true, explosives=true, ammo=true, w_addons=true, outfits=true, headgear=true, mutant_parts=true },
+	merc     = { melee=true, pistols=true, rifles=true, shotguns=true, snipers=true, smgs=true, explosives=true, ammo=true, w_addons=true, outfits=true, headgear=true, mutant_parts=true },
 	-- random stalkers: only stuff a lone wanderer plausibly carries. No upgrade kits, no high-end gear.
 	stalker  = { food=true, others=true, trash=true, mutant_parts=true, artefacts=true, ammo=true, medicine=true },
 }

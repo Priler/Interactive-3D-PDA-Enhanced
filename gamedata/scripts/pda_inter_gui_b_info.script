@@ -251,7 +251,7 @@ function CustomPDAX:OnClickExecFind(num)
 
 	-- check if actor has enough money
 	local price = pda_inter_x_buyinfo.Find_available_messages[num].price
-	local has_enough_money = db.actor:money() > price
+	local has_enough_money = db.actor:money() >= price		-- allow exact-cash purchase (matches raid path)
 
 	if has_enough_money then
 

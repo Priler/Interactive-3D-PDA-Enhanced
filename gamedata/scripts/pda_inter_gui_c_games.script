@@ -255,6 +255,12 @@ function CustomPDAX:ResetGamesSlots()
 	-- stop spinning
 	self.slots_spin = false
 
+	-- cancel any pending stop-spin callbacks so they can't fire after a reset/close
+	-- (they re-enable the button and re-run SlotsEnd on a torn-down board otherwise).
+	for i = 1, 3 do
+		RemoveTimeEvent("slot_stop_spin_e_" .. i, "slot_stop_spin_a_" .. i)
+	end
+
 	-- reset slots position
 	for i = 1, 3 do
 		self.slot_machine[i].spinning = 0
@@ -667,14 +673,31 @@ function CustomPDAX:OnClickGamesBlackjackLaunch()
 
 end
 
+-- Draw one random card from the current deck. Picks only from suits that still hold
+-- cards (keeping the original suit index 1-4 for the texture name), so it never calls
+-- math.random(1, 0) on an emptied suit ("interval is empty" crash). Returns suit_idx,
+-- card_value (or nil if the whole deck is exhausted).
+function CustomPDAX:DrawCard()
+	local deck = self.cards_current_deck
+	local avail = {}
+	for s = 1, #deck do
+		if #deck[s] > 0 then avail[#avail + 1] = s end
+	end
+	if #avail == 0 then return nil end
+
+	local suit_idx = avail[math.random(1, #avail)]
+	local suit = deck[suit_idx]
+	local card_idx = math.random(1, #suit)
+	local card_value = suit[card_idx]
+	table.remove(suit, card_idx)
+	return suit_idx, card_value
+end
+
 function CustomPDAX:OnClickGamesBlackjackTake()
 
 	-- pick a card for player and remove it from current deck
-	local rnd_suit_idx = math.random(1, #self.cards_current_deck)
-	local rnd_suit = self.cards_current_deck[rnd_suit_idx]
-	local rnd_card_idx = math.random(1, #rnd_suit)
-	local rnd_card_value = rnd_suit[rnd_card_idx]
-	table.remove(self.cards_current_deck[rnd_suit_idx], rnd_card_idx)
+	local rnd_suit_idx, rnd_card_value = self:DrawCard()
+	if not rnd_suit_idx then return end
 
 	-- give card to player and increase score
 	for i = 1, #self.cards_player do
@@ -688,13 +711,11 @@ function CustomPDAX:OnClickGamesBlackjackTake()
 	end
 
 	-- pick a card for enemy (if less than 14-16) and remove it from current deck
+	local rnd_suit_idx_e, rnd_card_value_e = nil, nil
 	if self.cards_enemy_score < (math.random(14, 16)) then
-
-		local rnd_suit_idx_e = math.random(1, #self.cards_current_deck)
-		local rnd_suit_e = self.cards_current_deck[rnd_suit_idx_e]
-		local rnd_card_idx_e = math.random(1, #rnd_suit_e)
-		local rnd_card_value_e = rnd_suit_e[rnd_card_idx_e]
-		table.remove(self.cards_current_deck[rnd_suit_idx_e], rnd_card_idx_e)
+		rnd_suit_idx_e, rnd_card_value_e = self:DrawCard()
+	end
+	if rnd_suit_idx_e then
 
 		-- give card to enemy and increase score
 		for i = 1, #self.cards_enemy do
@@ -738,11 +759,8 @@ function CustomPDAX:OnClickGamesBlackjackStop()
 	for idx = 1, 10 do
 		if self.cards_enemy_score < 14 then
 
-			local rnd_suit_idx_e = math.random(1, #self.cards_current_deck)
-			local rnd_suit_e = self.cards_current_deck[rnd_suit_idx_e]
-			local rnd_card_idx_e = math.random(1, #rnd_suit_e)
-			local rnd_card_value_e = rnd_suit_e[rnd_card_idx_e]
-			table.remove(self.cards_current_deck[rnd_suit_idx_e], rnd_card_idx_e)
+			local rnd_suit_idx_e, rnd_card_value_e = self:DrawCard()
+			if not rnd_suit_idx_e then break end		-- deck exhausted
 
 			-- give card to enemy and increase score
 			for i = 1, #self.cards_enemy do

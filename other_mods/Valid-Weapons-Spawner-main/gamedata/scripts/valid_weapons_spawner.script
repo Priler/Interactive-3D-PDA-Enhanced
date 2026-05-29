@@ -1,0 +1,92 @@
+-- the code is used with the permission from the mod author
+-- by Verdatim 23/5/2026
+-- credits to RavenAscendent from 3 years ago
+
+local spawned_weapons = {}
+
+function on_game_start()
+	--RegisterScriptCallback("on_key_press", on_key_press)
+	ini_loadouts = ini_file_ex("items\\settings\\npc_loadouts\\npc_loadouts.ltx")
+	RegisterScriptCallback("actor_on_first_update", actor_on_first_update)
+end
+
+local allowed_kinds = {}
+allowed_kinds.w_pistol = true
+allowed_kinds.w_rifle = true
+allowed_kinds.w_shotgun = true
+allowed_kinds.w_sniper = true
+allowed_kinds.w_smg = true
+allowed_kinds.w_explosive = true
+
+local disallowed_sections = {}
+
+local allowed_sections = {}
+
+function actor_on_first_update()
+	local scripted_loadouts = ini_loadouts:collect_section("loadouts_per_name")
+	for i, v in pairs(scripted_loadouts) do
+		local primary_loadout = ini_loadouts:r_string_ex(v, "primary") or "nil"
+		local secondary_loadout = ini_loadouts:r_string_ex(v, "secondary") or "nil"
+		local extra_loadout = ini_loadouts:r_string_ex(v, "extra") or "nil"
+		
+		disallowed_sections[primary_loadout] = true
+		disallowed_sections[secondary_loadout] = true
+		disallowed_sections[extra_loadout] = true
+		printf("made these sections disallowed: %s, %s, %s", primary_loadout, secondary_loadout, extras_loadout)
+	end
+	
+	ini_loadouts:section_for_each(loadout_exists_iterator)
+		
+	ini_loadouts:section_for_each(iterator)
+end
+
+function on_key_press(key)
+	if key == DIK_keys.DIK_NUMPAD5 then
+		spawn_all_valid_weapons()
+	end
+end
+
+function loadout_exists_iterator(section)
+	-- checks if a loadout section is mentioned in any stalker loadout section; exists just in case sections that arent assigned to any loadout exists
+	local primary = ini_loadouts:r_string_ex(section, "primary") or "nil"
+	local secondary = ini_loadouts:r_string_ex(section, "secondary") or "nil"
+	local extra = ini_loadouts:r_string_ex(section, "extra") or "nil"
+	allowed_sections[primary] = true
+	allowed_sections[secondary] = true
+	allowed_sections[extra] = true
+end
+
+function iterator(section)
+	printf("iterator called")
+	
+	--checks if loadout is a 'scripted' loadout, i.e. probably not 'valid'
+	if disallowed_sections[section] or not (allowed_sections[section]) then 
+		printf("section %s is a scripted_loadout", section) 
+		return 
+	end
+	local key_to_dik = ini_loadouts:collect_section(section)
+	printf("section is %s", section)
+	print_r(key_to_dik)
+	for key, value in pairs(key_to_dik) do
+		local wpn_sec_name = str_explode(key, ":")[1]
+		wpn_sec_name = ini_sys:r_string_ex(wpn_sec_name, "parent_section") or wpn_sec_name
+		printf("wpn_sec_name is %s", wpn_sec_name)
+		if ini_sys:section_exist(wpn_sec_name) and not spawned_weapons[wpn_sec_name] then
+			local kind = ini_sys:r_string_ex(wpn_sec_name, "kind")
+			if allowed_kinds[kind] then
+				spawned_weapons[wpn_sec_name] = kind
+				printf("wpn_sec_name is %s", wpn_sec_name)
+				--give_object_to_actor(wpn_sec_name)
+			end
+			--give_object_to_actor(wpn_sec_name)
+		end
+	end
+end
+
+function spawn_kind(kind)
+	for i,v in pairs(spawned_weapons) do
+		if (v == kind) or (kind == "all") then
+			give_object_to_actor(i)
+		end
+	end
+end

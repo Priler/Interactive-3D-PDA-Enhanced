@@ -210,7 +210,6 @@ local function ss_dispatch_tip(target_id, archetype, is_lying, witness_icon, dec
 	local ac_id = "ss_tip_a_" .. target_id .. "_" .. start_tg
 
 	local function deliver()
-		if time_global() - start_tg < 5000 then return end
 		if not db.actor then return true end
 
 		local se = alife_object(target_id)
@@ -255,7 +254,8 @@ local function ss_dispatch_tip(target_id, archetype, is_lying, witness_icon, dec
 		return true
 	end
 
-	CreateTimeEvent(ev_id, ac_id, 0, deliver)
+	-- fire once after ~5s instead of busy-polling time_global every frame.
+	CreateTimeEvent(ev_id, ac_id, 5, deliver)
 end
 
 local function ss_check_cooldown(name)
@@ -656,10 +656,12 @@ end
 
 --------------------------------------------------------
 
+-- NOTE: currently unused. assigned_target_id is the real squad target field
+-- (assigned_ss_target_id does not exist, so smart_id was always nil here)
 local function is_smart_valid(squad_id)
 	local squad = alife_object(squad_id)
 	if squad then
-		local smart_id = squad.assigned_ss_target_id
+		local smart_id = squad.assigned_target_id
 		if smart_id then
 			local smrt = SIMBOARD.smarts[smart_id]
 			local smart = smrt and smrt.smrt
@@ -712,9 +714,13 @@ xr_effects.setup_tracking_stalker_task = function(actor,npc,p)
 	printdbg("- %s | setup_tracking_stalker_task | ss_target_id: %s - target_comm: %s - lvl_task: %s - lvl_target: %s", p[1], ss_target_id, target_comm, level_task, level_target)
 
 	local function postpone_for_next_frame(ss_target_id)
+		-- re-validate the target: the closure-captured se_target may have been released
+		-- by the time this fires next frame (dangling C++ ref -> hard CTD).
+		local se_t = alife_object(ss_target_id)
+		if not (se_t and db.actor) then return true end
 		local news_caption = game.translate_string(task_manager.task_ini:r_string_ex(p[1], "title")) or "error"
-		local news_text = game.translate_string("st_mm_new_game_name") .. " " .. se_target:character_name() .. "\n " .. game.translate_string("st_mm_new_game_faction_2") .. " " .. game.translate_string(se_target:community()) .. "\n " .. game.translate_string("st_location") .. " " .. game.translate_string(level_target)
-		db.actor:give_talk_message2(news_caption, news_text, se_target:character_icon(), "iconed_answer_item")
+		local news_text = game.translate_string("st_mm_new_game_name") .. " " .. se_t:character_name() .. "\n " .. game.translate_string("st_mm_new_game_faction_2") .. " " .. game.translate_string(se_t:community()) .. "\n " .. game.translate_string("st_location") .. " " .. game.translate_string(level_target)
+		db.actor:give_talk_message2(news_caption, news_text, se_t:character_icon(), "iconed_answer_item")
 		return true
 	end
 	local setup_tg = time_global()

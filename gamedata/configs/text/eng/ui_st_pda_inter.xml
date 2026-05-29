@@ -962,7 +962,19 @@
 	<string id="trade_category_rifles">
 		<text>Rifles</text>
 	</string>
-	
+
+	<string id="trade_category_shotguns">
+		<text>Shotguns</text>
+	</string>
+
+	<string id="trade_category_snipers">
+		<text>Snipers</text>
+	</string>
+
+	<string id="trade_category_smgs">
+		<text>SMGs</text>
+	</string>
+
 	<string id="trade_category_ammo">
 		<text>Ammo</text>
 	</string>

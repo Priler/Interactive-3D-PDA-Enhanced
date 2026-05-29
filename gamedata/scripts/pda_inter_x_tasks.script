@@ -981,8 +981,11 @@ function setup_task(idx)
 		Active_pda_tasks[#Active_pda_tasks].guide_time = t[idx].guide_time
 		Active_pda_tasks[#Active_pda_tasks].start_guide_time = ctime_to_t(cur_time)
 
-		-- add giver as companion
-		dialogs_axr_companion.become_actor_companion(db.actor, giver)
+		-- add giver as companion. level.object_by_id returns nil when the giver is
+		-- offline; passing nil to become_actor_companion would error.
+		if giver then
+			dialogs_axr_companion.become_actor_companion(db.actor, giver)
+		end
 
 	end
 
@@ -2253,7 +2256,7 @@ function get_or_build_stash_cache()
 			if stash and IsInvbox(stash) and obj_not_in_lab(stash) then
 				local parent_id = stash.parent_id
 				local parent_obj = parent_id and parent_id ~= 65535 and alife_object(parent_id)
-				local stash_wo_alive_parent = parent_id and (parent_id == 65535 or (parent_obj and not parent_obj.alive))
+				local stash_wo_alive_parent = parent_id and (parent_id == 65535 or (parent_obj and not parent_obj:alive()))
 				local stash_name = stash:name()
 				local stash_in_blacklist = stash_name and stashes_blacklist[stash_name]
 				
@@ -3135,10 +3138,11 @@ end
 
 function obj_in_squad(obj_id, squad_id)
 	local squad = alife_object(squad_id)
-	if squad and squad.commander_id then
+	if squad and squad:commander_id() then
 		for member in squad:squad_members() do
-			local se_member = alife_object(member.id)
-			if se_member.id == obj_id then
+			-- member.id is the id directly; the old alife_object(member.id).id lookup
+			-- both was redundant and crashed when the member had just been released.
+			if member.id == obj_id then
 				return true
 			end
 		end

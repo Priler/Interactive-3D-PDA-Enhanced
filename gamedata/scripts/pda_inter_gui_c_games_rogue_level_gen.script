@@ -564,23 +564,29 @@ function CustomPDAX:LevelGetMiddleCell(map_t)
 end
 
 function CustomPDAX:LevelSetFlagsReachable(map_t, p)
-	if map_t[p.row+1] and map_t[p.row+1][p.col] == 0 then
-		map_t[p.row+1][p.col] = 2
-		self:LevelSetFlagsReachable(map_t, {row=p.row+1, col=p.col})
-	end
+	-- Iterative flood fill (4-way). instead one Lua call frame per cell
+	-- on a large open map (~900 cells) could overflow the C call stack and CTD
+	local stack = { {row=p.row, col=p.col} }
+	while #stack > 0 do
+		local c = stack[#stack]
+		stack[#stack] = nil
+		local r, col = c.row, c.col
 
-	if map_t[p.row-1] and map_t[p.row-1][p.col] == 0 then
-		map_t[p.row-1][p.col] = 2
-		self:LevelSetFlagsReachable(map_t, {row=p.row-1, col=p.col})
-	end
-
-	if map_t[p.row][p.col+1] and map_t[p.row][p.col+1] == 0 then
-		map_t[p.row][p.col+1] = 2
-		self:LevelSetFlagsReachable(map_t, {row=p.row, col=p.col+1})
-	end
-
-	if map_t[p.row][p.col-1] and map_t[p.row][p.col-1] == 0 then
-		map_t[p.row][p.col-1] = 2
-		self:LevelSetFlagsReachable(map_t, {row=p.row, col=p.col-1})
+		if map_t[r+1] and map_t[r+1][col] == 0 then
+			map_t[r+1][col] = 2
+			stack[#stack+1] = {row=r+1, col=col}
+		end
+		if map_t[r-1] and map_t[r-1][col] == 0 then
+			map_t[r-1][col] = 2
+			stack[#stack+1] = {row=r-1, col=col}
+		end
+		if map_t[r][col+1] == 0 then
+			map_t[r][col+1] = 2
+			stack[#stack+1] = {row=r, col=col+1}
+		end
+		if map_t[r][col-1] == 0 then
+			map_t[r][col-1] = 2
+			stack[#stack+1] = {row=r, col=col-1}
+		end
 	end
 end

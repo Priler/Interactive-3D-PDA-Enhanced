@@ -114,7 +114,7 @@ end
 
 function CustomPDAX:PlaySound(name)
 	local snd = sound_object("rogue_game\\" .. name)
-	snd:play_no_feedback(db.actor, 0, 0, db.actor:position(), 1.0, 1.0)
+	snd:play_no_feedback(db.actor, sound_object.s2d, 0, db.actor:position(), 1.0, 1.0)		-- s2d: 2D UI sound, not positional
 end
 
 

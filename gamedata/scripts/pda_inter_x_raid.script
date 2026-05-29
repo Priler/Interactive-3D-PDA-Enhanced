@@ -85,7 +85,7 @@ function add_squad()
 	-- get random squad and its index from viable squads list
 	local squad, squad_index = pick_squad(viable_squads_list)		-- this also checks if squad is still alife_object
 	if not (squad and squad_index) then return end
-	if not (squad.commander_id) then return end
+	if not (squad:commander_id()) then return end		-- commander_id is a method; field access was always truthy
 	if not (squad.online) then return end		-- for rare case of squad going offline in this 1 sec interval
 
 	-- get size, rank and rank name
@@ -138,7 +138,7 @@ function upd_squad()
 
 		-- check if squad still exist, still online and viable
 		local squad = alife_object(t.id)
-		if squad and squad.online and squad.commander_id then
+		if squad and squad.online and squad:commander_id() then
 
 			-- get squad size
 			local squad_size = 0
@@ -272,9 +272,9 @@ function remove_companion_raid_squad()
 	for id, _ in pairs(axr_companions.companion_squads) do		-- scared to get squad object from it, better to get it again from id
 		if Hired_squad.id and Hired_squad.id == id then
 			local squad = alife_object(id)
-			if squad and squad.commander_id then
+			if squad and squad:commander_id() then
 				local commander = alife_object(squad:commander_id())
-				if commander and commander.alive and commander:alive() then
+				if commander and commander:alive() then
 					npc = commander
 				end
 			end

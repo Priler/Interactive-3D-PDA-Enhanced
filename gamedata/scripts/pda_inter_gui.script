@@ -418,15 +418,36 @@ function start_PDAX()
 	end
 end
 
--- Detect Fatal Error (by Ncenka). It ships the "mac_mcm" launcher script and
--- registers an "eptLauncher" subdialog. When present, the Network window shows
--- a Launcher button that opens it. Cached after first lookup.
+-- Apps already exposed as our own PDA tabs, never shown in the launcher grid.
+-- Defined here (not just in BuildAppsCategory) because fe_has_apps() needs it too.
+local APPS_SKIP = {
+	["app_interactive"] = true,
+	["app_taskboard"] = true,
+}
+
+-- "mac_mcm" is the Mod App Creator framework, NOT Fatal Error itself. It is shipped
+-- by both Fatal Error AND standalone Mod App Creator, so its mere presence does not
+-- mean FE is installed. Cached after first lookup.
 local fe_installed = nil
 function is_fatal_error_installed()
 	if fe_installed == nil then
 		fe_installed = (mac_mcm ~= nil)
 	end
 	return fe_installed
+end
+
+-- true only when at least one launchable app is registered (excluding our own tabs).
+-- Fatal Error registers app_bios/contacts/encyclopedia/logs/etc. via mac_mcm.add_app;
+-- with FE off the framework can still be loaded but PDA_APPS holds nothing launchable.
+-- no cache: apps may register after the framework loads
+function fe_has_apps()
+	if not (mac_mcm and mac_mcm.PDA_APPS) then return false end
+	for app_id, app_data in pairs(mac_mcm.PDA_APPS) do
+		if not APPS_SKIP[app_id] and app_data and app_data.tab then
+			return true
+		end
+	end
+	return false
 end
 
 -- Detect Player Group Command (PGC). It ships the "hvt_pgc_ui_team" script and
@@ -444,6 +465,7 @@ end
 -- present AND the user left the MCM compatibility toggle on.
 function fe_compat_enabled()
 	if not is_fatal_error_installed() then return false end
+	if not fe_has_apps() then return false end		-- no launchable apps (e.g. FE off) -> no button
 	if pda_inter_mcm and pda_inter_mcm.get_config then
 		return pda_inter_mcm.get_config("fe_compat_enabled")
 	end
@@ -784,11 +806,7 @@ end
 -- Build the apps grid from Fatal Error's registered apps (mac_mcm.PDA_APPS).
 -- Each app opens its own full-screen subdialog when clicked (those apps are not
 -- embeddable). Apps we already expose as PDA tabs are skipped: our own Network
--- (app_interactive) and the Taskboard (app_taskboard).
-local APPS_SKIP = {
-	["app_interactive"] = true,
-	["app_taskboard"] = true,
-}
+-- (app_interactive) and the Taskboard (app_taskboard). APPS_SKIP defined at top.
 function CustomPDAX:BuildAppsCategory()
 	self.apps_mid_cont = xml:InitStatic("mid_container_apps", self.background)
 	self.apps_mid_cont:Show(false)
