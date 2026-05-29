@@ -721,6 +721,21 @@
 			<texture>ui_inter_pda_btn</texture>
 		</notes_switch_btn>
 
+		<!-- Notes page navigation -->
+		<notes_page_prev_btn x="0" y="225" width="24" height="20" check_mode="0">
+			<text complex_mode="1" align="c" vert_align="c" font="letterica16">&lt;</text>
+			<texture>ui_inter_pda_btn</texture>
+		</notes_page_prev_btn>
+
+		<notes_page_label x="28" y="225" width="80" height="20">
+			<text complex_mode="1" r="190" g="190" b="190" vert_align="c" align="c" font="letterica16"></text>
+		</notes_page_label>
+
+		<notes_page_next_btn x="112" y="225" width="24" height="20" check_mode="0">
+			<text complex_mode="1" align="c" vert_align="c" font="letterica16">&gt;</text>
+			<texture>ui_inter_pda_btn</texture>
+		</notes_page_next_btn>
+
 		<notes_task_text_wnd x="0" y="0" width="480" height="25">
 			<text complex_mode="1" r="190" g="190" b="190" vert_align="c" align="l" font="letterica16"></text>
 		</notes_task_text_wnd>

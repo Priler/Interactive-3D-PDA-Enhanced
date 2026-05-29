@@ -3,6 +3,16 @@ local gt = game.translate_string
 local CustomPDAX = pda_inter_gui.CustomPDAX
 local pr = pda_inter_gui.pr
 
+-- notes are paginated so we never build more than one page of row widgets at once
+-- (1000 notes loaded as 1000x3 widgets would stutter). Only the current page renders.
+local NOTES_PAGE_SIZE = 20
+
+local function notes_page_count()
+	local n = #pmain.pda_notes_t
+	if n <= 0 then return 1 end
+	return math.ceil(n / NOTES_PAGE_SIZE)
+end
+
 function CustomPDAX:BuildNotesUpperMenu()
 	local xml = self.xml
 
@@ -23,6 +33,14 @@ function CustomPDAX:BuildNotesUpperMenu()
 	-- scrolling notes list (per-note rows are (re)built in UpdNotesMenu)
 	self.notes_scroll = xml:InitScrollView("mid_container_5:notes_scrollbar", self.pda_t[5].mid_cont)
 	self.notes_rows = {}
+
+	-- page navigation (only one page of rows is rendered at a time)
+	self.notes_page = self.notes_page or notes_page_count()
+	self.notes_page_prev_btn = xml:Init3tButton("mid_container_5:notes_page_prev_btn", self.pda_t[5].mid_cont)
+	self:Register(self.notes_page_prev_btn, "notes_page_prev_btn")
+	self.notes_page_label = xml:InitTextWnd("mid_container_5:notes_page_label", self.pda_t[5].mid_cont)
+	self.notes_page_next_btn = xml:Init3tButton("mid_container_5:notes_page_next_btn", self.pda_t[5].mid_cont)
+	self:Register(self.notes_page_next_btn, "notes_page_next_btn")
 
 	-- note picker
 	self.notes_picker_hint = xml:InitTextWnd("mid_container_5:notes_picker_hint", self.pda_t[5].mid_cont)
@@ -90,7 +108,10 @@ function CustomPDAX:InitNotesCallbacks()
 	self:AddCallback("notes_delete_btn", ui_events.BUTTON_CLICKED, self.OnClickNotesDelete, self)
 
 	self:AddCallback("notes_switch_btn", ui_events.BUTTON_CLICKED, self.OnClickNotesSwitch, self)
-	
+
+	self:AddCallback("notes_page_prev_btn", ui_events.BUTTON_CLICKED, self.OnClickNotesPagePrev, self)
+	self:AddCallback("notes_page_next_btn", ui_events.BUTTON_CLICKED, self.OnClickNotesPageNext, self)
+
 
 	for i = 1, pmain.pda_max_tasks do
 		CustomPDAX["OnClickNotesTaskCancel_".. i] = function(self)
@@ -148,8 +169,9 @@ function CustomPDAX:OnClickNotesConfirm()
 		-- string
 		pmain.pda_notes_t[#pmain.pda_notes_t][3] = str_to_add .. "\\n \\n"
 
-		-- update text window
-		self:UpdNotesMenu()
+		-- jump to the last page so the new note is visible, then render + scroll to it
+		self.notes_page = notes_page_count()
+		self:UpdNotesMenu(true)
 
 	end
 
@@ -259,6 +281,9 @@ function CustomPDAX:OnClickNotesSwitch()
 	self.notes_delete_btn:Show(show_notes)
 	self.notes_input_box:Show(show_notes)
 	self.notes_input_confirm_btn:Show(show_notes)
+	self.notes_page_prev_btn:Show(show_notes)
+	self.notes_page_label:Show(show_notes)
+	self.notes_page_next_btn:Show(show_notes)
 
 	-- hide/show Active tasks elements
 	for i = 1, #self.notes_tasks do
@@ -285,7 +310,9 @@ function CustomPDAX:OnClickNotesTaskCancel(num)
 
 end
 
-function CustomPDAX:UpdNotesMenu()
+-- scroll_end: when true, scroll to the bottom of the page (used after adding a note,
+-- which jumps to the last page so the new note is visible).
+function CustomPDAX:UpdNotesMenu(scroll_end)
 	-- Safety check: Notes tab may not be built yet (lazy loading)
 	if not self.notes_scroll then
 		return
@@ -296,22 +323,40 @@ function CustomPDAX:UpdNotesMenu()
 		self.notes_economy_wnd:SetText(pda_inter_economy.get_economy_report())
 	end
 
+	-- relabel every note by its global index (cheap, no widgets) so "#N" stays correct
+	-- regardless of which page is shown.
+	local total = #pmain.pda_notes_t
+	for i = 1, total do
+		pmain.pda_notes_t[i][1] = "#" .. i
+	end
+
+	-- resolve and clamp the current page
+	local pages = notes_page_count()
+	self.notes_page = self.notes_page or pages		-- default to the newest page
+	if self.notes_page > pages then self.notes_page = pages end
+	if self.notes_page < 1 then self.notes_page = 1 end
+
+	if self.notes_page_label then
+		self.notes_page_label:SetText(self.notes_page .. " / " .. pages)
+	end
+
 	local white_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 255)
 	local yel_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 0)
 	local def_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
 
-	-- rebuild per-note rows (striped background + text + delete [X])
+	-- rebuild ONLY the current page's rows (bounds widget churn to NOTES_PAGE_SIZE)
 	self.notes_scroll:Clear()
 	self.notes_rows = {}
 
-	for i = 1, #pmain.pda_notes_t do
-		pmain.pda_notes_t[i][1] = "#" .. i
+	local first = (self.notes_page - 1) * NOTES_PAGE_SIZE + 1
+	local last  = math.min(self.notes_page * NOTES_PAGE_SIZE, total)
 
+	for i = first, last do
 		local row = {}
 
 		-- striped background container: stretch the 1px white none.dds and tint it. Every
-		-- second note (2nd, 4th, ...) gets a faint light overlay; the rest stay transparent,
-		-- so the first note has no background.
+		-- second note (by global index) gets a faint light overlay; the rest stay
+		-- transparent, so the first note has no background.
 		row.cont = self.xml:InitStatic("mid_container_5:notes_row_cont", self.notes_scroll)
 		row.cont:SetStretchTexture(true)
 		local a = (i % 2 == 0) and 22 or 0
@@ -338,14 +383,26 @@ function CustomPDAX:UpdNotesMenu()
 		self:AddCallback("notes_del_btn_" .. i, ui_events.BUTTON_CLICKED, CustomPDAX["OnClickNoteDelete_" .. i], self)
 
 		self.notes_scroll:AddWindow(row.cont, true)
-		self.notes_rows[i] = row
+		self.notes_rows[#self.notes_rows + 1] = row		-- contiguous (rendered page only)
 	end
 
-	self.notes_scroll:ScrollToEnd()
+	if scroll_end then
+		self.notes_scroll:ScrollToEnd()
+	end
 
 	-- reset input box
 	self.notes_input_box:SetText("")
 
+end
+
+function CustomPDAX:OnClickNotesPagePrev()
+	self.notes_page = (self.notes_page or 1) - 1
+	self:UpdNotesMenu()
+end
+
+function CustomPDAX:OnClickNotesPageNext()
+	self.notes_page = (self.notes_page or 1) + 1
+	self:UpdNotesMenu()
 end
 
 -- delete a specific note via its row [X] button

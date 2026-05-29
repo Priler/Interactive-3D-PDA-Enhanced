@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
+	<moduleName>Interactive 3D PDA Enhanced</moduleName>
+
+	<!-- Always install the full mod. -->
+	<requiredInstallFiles>
+		<folder source="gamedata" destination="gamedata" priority="0" />
+	</requiredInstallFiles>
+
+	<installSteps order="Explicit">
+		<installStep name="Patches">
+			<optionalFileGroups order="Explicit">
+				<group name="Do you use iTheon's Taskboard?" type="SelectExactlyOne">
+					<plugins order="Explicit">
+
+						<plugin name="Yes (GAMMA, EFP, Zona, etc.)">
+							<description>(DEFAULT) Keeps the Taskboard tab in the PDA tab bar. Choose this if iTheon's Taskboard is installed (it provides that tab).</description>
+							<files />
+							<typeDescriptor>
+								<type name="Recommended" />
+							</typeDescriptor>
+						</plugin>
+
+						<plugin name="No (why, though?)">
+							<description>Removes the Taskboard tab from the PDA tab bar. Choose this if you do NOT use iTheon's Taskboard (for some strange reason). The tab would be otherwise dead button, thus opening it crashes the game.</description>
+							<files>
+								<folder source="optional/no_taskboard/gamedata" destination="gamedata" priority="1" />
+							</files>
+							<typeDescriptor>
+								<type name="Optional" />
+							</typeDescriptor>
+						</plugin>
+
+					</plugins>
+				</group>
+			</optionalFileGroups>
+		</installStep>
+	</installSteps>
+</config>
