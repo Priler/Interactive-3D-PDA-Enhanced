@@ -16,6 +16,7 @@ local defaults = {
 	["pgc_compat_enabled"] = true,
 
 	-- Minimum PDA tier required per Network category (1 = any PDA)
+	["network_min_tier"] = 0,
 	["tier_min_raid"] = 1,
 	["tier_min_info"] = 1,
 	["tier_min_games"] = 1,
@@ -48,6 +49,8 @@ local defaults = {
 	["trade_scam_revenge"] = true,
 	["trade_price_mult"] = 1.0,
 	["trade_strict_stock"] = true,
+	["exclude_ltx_weapons"] = true,
+	["market_show_price"] = true,
 	["trade_exclude_items"] = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, helmet_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant",
 	["trade_debug_always_offer"] = false,
 	["trade_debug_traders_only"] = false,
@@ -166,6 +169,7 @@ local def_map = {
 	["fe_compat_enabled"] = "pda_compat",
 	["pgc_compat_enabled"] = "pda_compat",
 
+	["network_min_tier"] = "pda_tier_access",
 	["tier_min_raid"] = "pda_tier_access",
 	["tier_min_info"] = "pda_tier_access",
 	["tier_min_games"] = "pda_tier_access",
@@ -198,6 +202,8 @@ local def_map = {
 	["trade_scam_revenge"] = "pda_trade",
 	["trade_price_mult"] = "pda_trade",
 	["trade_strict_stock"] = "pda_trade",
+	["exclude_ltx_weapons"] = "pda_trade",
+	["market_show_price"] = "pda_trade",
 	["trade_exclude_items"] = "pda_trade",
 	["trade_debug_always_offer"] = "pda_trade",
 	["trade_debug_traders_only"] = "pda_trade",
@@ -332,6 +338,7 @@ function on_mcm_load()
 
 			{id = "pda_tier_access",sh=true,gr={
 				{ id= "tieraccesstitle",type= "slide",link= "ui_options_slider_player",text="ui_mcm_pda_inter_tieraccesstitle",size= {512,50},spacing= 20 },
+				{id = "network_min_tier", type = "track", val = 2, min=0, max=3, step=1, def = 0},
 				{id = "tier_min_raid", type = "track", val = 2, min=1, max=3, step=1, def = 1},
 				{id = "tier_min_info", type = "track", val = 2, min=1, max=3, step=1, def = 1},
 				{id = "tier_min_games", type = "track", val = 2, min=1, max=3, step=1, def = 1},
@@ -376,6 +383,8 @@ function on_mcm_load()
 				{id = "trade_scam_revenge", type = "check", val = 1, def = true},
 				{id = "trade_price_mult", type = "track", val = 2, min=0.25, max=2, step=0.05, def = 1.0},
 				{id = "trade_strict_stock", type = "check", val = 1, def = true},
+				{id = "exclude_ltx_weapons", type = "check", val = 1, def = true},
+				{id = "market_show_price", type = "check", val = 1, def = true},
 				{id = "trade_exclude_items", type = "input", val = 0, def = "itm_basickit, itm_advancedkit, itm_expertkit, itm_drugkit, itm_ammokit, prt_o_support_1, light_repair_kit, medium_repair_kit, heavy_repair_kit, exo_repair_kit, helmet_repair_kit, toolkit_s, toolkit_r5, toolkit_r7, hide_boar, hide_flesh, hide_pseudodog, hide_lurker, hide_psy_dog, hide_psysucker, hide_burer, hide_controller, hide_bloodsucker, hide_chimera, hide_pseudogiant"},
 				{id = "trade_debug_always_offer", type = "check", val = 1, def = false},
 				{id = "trade_debug_traders_only", type = "check", val = 1, def = false},

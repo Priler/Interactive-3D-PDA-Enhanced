@@ -29,6 +29,15 @@ local ctime_to_t = utils_data.CTime_to_table
 local t_to_ctime = utils_data.CTime_from_table
 local gt = game.translate_string
 
+-- true when the section has usable inventory-icon metadata (non-zero grid size).
+-- inv_grid_width/height default to 0 when omitted, which renders as a blank/zero-size
+-- icon in the market (utils_xml.get_item_axis), so such sections are excluded.
+local function has_icon(sec)
+	local gw = ini_sys:r_float_ex(sec, "inv_grid_width") or 0
+	local gh = ini_sys:r_float_ex(sec, "inv_grid_height") or 0
+	return gw > 0 and gh > 0
+end
+
 -- bandit/renegade-flavored message id; falls back to base when no variant authored.
 -- kept file-local so it has no cross-script load dependency.
 local function comm_msg(base_id, comm)
@@ -751,6 +760,7 @@ end
 -- matched by section id (not display name) so it is language-independent.
 local market_excluded = nil       -- set: lowercased section id -> true
 local market_exclude_raw = nil    -- last raw MCM string, to detect real changes
+local last_exclude_ltx_weapons = nil  -- last exclude_ltx_weapons value, to detect changes
 
 function build_market_excluded()
 	market_excluded = {}
@@ -782,31 +792,46 @@ function collect_all_items()
 		end
 	end
 
+	-- collect loadout guns up front so we can decide whether to drop the static-ltx
+	-- weapon list. When exclude_ltx_weapons (MCM) is on AND the loadout merge actually
+	-- produced guns, the weapon list comes purely from npc_loadouts; otherwise (no
+	-- loadout file, e.g. non-GAMMA) we keep the static list so weapons never vanish.
+	local loadout_wpns = collect_loadout_weapons()
+	local exclude_ltx_weapons = pda_inter_mcm.get_config("exclude_ltx_weapons")
+	last_exclude_ltx_weapons = exclude_ltx_weapons
+	local drop_ltx_guns = exclude_ltx_weapons and (next(loadout_wpns) ~= nil)
+
 	for i = 1, #to_collect do
 		local n = 0
 		n = trade_ini:line_count(to_collect[i])
 		for j = 0, n - 1 do
 			result, id, value	= trade_ini:r_line_ex(to_collect[i], j, "", "")
 			if ini_sys:section_exist(id) then
-				-- collect into all_items (for search)
-				local name = ini_sys:r_string_ex(id, "inv_name")
-				if name and not is_item_excluded(id) then
-					all_items[id] = name
-				end
-
-				-- sort into item_groups (for traders).
-				-- weapons are grouped by engine "kind" (splits shotguns/snipers/smgs out of
-				-- the rifles ltx bucket); everything else falls back to its ltx section group
+				-- weapons are grouped by engine "kind" (splits shotguns/snipers/smgs out
+				-- of the rifles ltx bucket); everything else falls back to its ltx section.
 				local kind = ini_sys:r_string_ex(id, "kind")
 				local kg = kind and kind_to_group[kind]
-				if kg then
-					item_groups[id] = kg
-				else
-					for group, t in pairs(to_group) do
-						for g = 1, #t do
-							if to_collect[i] == t[g] then
-								-- save section to certain group
-								item_groups[id] = group
+
+				-- when dropping the static weapon list, skip ltx guns entirely; the
+				-- loadout merge below supplies the weapon list instead. Non-gun items
+				-- (kg == nil: ammo, armor, etc.) are always kept.
+				if not (kg and drop_ltx_guns) then
+					-- collect into all_items (for search)
+					local name = ini_sys:r_string_ex(id, "inv_name")
+					if name and not is_item_excluded(id) and has_icon(id) then
+						all_items[id] = name
+					end
+
+					-- sort into item_groups (for traders)
+					if kg then
+						item_groups[id] = kg
+					else
+						for group, t in pairs(to_group) do
+							for g = 1, #t do
+								if to_collect[i] == t[g] then
+									-- save section to certain group
+									item_groups[id] = group
+								end
 							end
 						end
 					end
@@ -816,13 +841,13 @@ function collect_all_items()
 		end
 	end
 
-	-- union the static ltx weapon lists with every gun NPCs actually spawn with
-	-- (loadout-derived). Catches modded guns and keeps the list current across GAMMA updates.
-	-- is_valid_item still gates these in the categorized_items pass below.
-	local loadout_wpns = collect_loadout_weapons()
+	-- add the loadout-derived guns (collected above). With exclude_ltx_weapons on these
+	-- ARE the weapon list; with it off they union with the static ltx weapons. Catches
+	-- modded guns and keeps the list current across GAMMA updates. is_valid_item still
+	-- gates these in the categorized_items pass below.
 	for sec, kind in pairs(loadout_wpns) do
 		local kg = kind_to_group[kind]
-		if kg and not is_item_excluded(sec) then
+		if kg and not is_item_excluded(sec) and has_icon(sec) then
 			local name = ini_sys:r_string_ex(sec, "inv_name")
 			if name then
 				all_items[sec] = name        -- searchable
@@ -831,19 +856,41 @@ function collect_all_items()
 		end
 	end
 
+	-- visual identity of a market entry: what the player actually sees in the grid
+	-- (the icon is set from icons_texture + inv_grid_x/y via utils_xml.set_icon, label
+	-- from inv_name). Sections that share all of these are indistinguishable in the
+	-- market, so we collapse them to a single entry. Weapons that share a NAME but use
+	-- a different icon (e.g. the two FN P90 variants) keep their own entry.
+	local function visual_key(sec)
+		local name = ini_sys:r_string_ex(sec, "inv_name") or sec
+		local tex  = ini_sys:r_string_ex(sec, "icons_texture") or ""
+		local gx   = ini_sys:r_float_ex(sec, "inv_grid_x") or 0
+		local gy   = ini_sys:r_float_ex(sec, "inv_grid_y") or 0
+		return gt(name) .. "|" .. tex .. "|" .. gx .. "," .. gy
+	end
+
 	-- add groups to categorized_items for GUI
 	for group, _ in pairs(to_group) do
 		categorized_items[group] = categorized_items[group] or {}
 
-		-- add sec and cost to this group
+		-- collect valid items, de-duplicating visually-identical sections (keep the
+		-- cheapest as the canonical entry for that name+icon).
+		local seen = {}
 		for sec, item_group in pairs(item_groups) do
 			if item_group == group then
-				-- add only valid items
 				local cost = ini_sys:r_float_ex(sec, "cost")
 				if cost and is_valid_item(sec) then
-					categorized_items[group][sec] = cost
+					local vk = visual_key(sec)
+					local prev = seen[vk]
+					if not prev or cost < prev.cost then
+						seen[vk] = { sec = sec, cost = cost }
+					end
 				end
 			end
+		end
+
+		for _, e in pairs(seen) do
+			categorized_items[group][e.sec] = e.cost
 		end
 	end
 
@@ -886,6 +933,11 @@ function is_valid_item(sec)
 	-- allow only cost > 10
 	local cost = ini_sys:r_float_ex(sec, "cost")
 	if (not cost) or cost < 11 then
+		return
+	end
+
+	-- exclude items with no usable inventory icon (blank/zero-size grid in the market)
+	if not has_icon(sec) then
 		return
 	end
 
@@ -1293,14 +1345,15 @@ function on_option_change()
 	-- on_option_change is a global MCM callback (fires for any mod's option save),
 	-- so this guard avoids a needless full re-parse on unrelated changes.
 	local raw = pda_inter_mcm.get_config("trade_exclude_items")
-	if raw ~= market_exclude_raw then
+	local ex_ltx = pda_inter_mcm.get_config("exclude_ltx_weapons")
+	if raw ~= market_exclude_raw or ex_ltx ~= last_exclude_ltx_weapons then
 		market_excluded = nil
 		empty_table(all_items)
 		empty_table(item_groups)
 		empty_table(categorized_items)
 		invalidate_npc_item_list_cache()
 		invalidate_trader_cat_cache()
-		collect_all_items()   -- rebuilds market_excluded + refreshes market_exclude_raw
+		collect_all_items()   -- rebuilds market_excluded + refreshes the change-trackers
 	end
 end
 

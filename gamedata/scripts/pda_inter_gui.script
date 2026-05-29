@@ -367,6 +367,32 @@ function on_before_key_press(key, action, dis,flags)
 	end
 end
 
+-- continuous backspace: the engine deletes one char on the initial key press but does
+-- not auto-repeat, so holding Backspace only removed one symbol. on_key_hold fires every
+-- frame while a key is held; after a short initial delay we delete a char on a fixed
+-- interval. The initial delay prevents a quick tap (which already deletes 1 via the engine)
+-- from removing extra chars.
+local bs_hold_start = nil
+local bs_last_fire = 0
+local bs_last_seen = 0
+function on_key_hold(key)
+	if key ~= DIK_keys.DIK_BACK then return end
+	if not (GUI and M_locked and GUI:IsShown()) then return end
+
+	local tg = time_global()
+	-- a gap since the last hold event means this is a fresh press, not a continued hold
+	if (not bs_hold_start) or (tg - bs_last_seen > 120) then
+		bs_hold_start = tg
+		bs_last_fire = 0
+	end
+	bs_last_seen = tg
+
+	if tg - bs_hold_start < 250 then return end		-- initial delay before auto-repeat
+	if tg - bs_last_fire < 50 then return end		-- repeat interval
+	bs_last_fire = tg
+	GUI:DeleteFocusedChar()
+end
+
 local krelease_og = bind_stalker_ext.on_key_release
 function bind_stalker_ext.on_key_release(binder,key)
 	if not M_locked then
@@ -1040,6 +1066,28 @@ function CustomPDAX:BuildMainMenu(xml)
 end
 
 function CustomPDAX:RefreshTabVisibility()
+	-- Whole-Network tier lock: hide every tab + integration button and any open
+	-- container, then let ResetUpperMenus (called right after in start_PDAX) show the
+	-- notice. cur_tree flags the locked state. The text is shown from ResetUpperMenus
+	-- because that runs last and would otherwise hide it.
+	if self:is_network_locked() then
+		for i = 1, main_menu_btns do
+			local t = self.pda_t[i]
+			if t and t.btn then
+				t.btn:Show(false)
+				t.enabled = false
+			end
+			if t and t.mid_cont then t.mid_cont:Show(false) end
+		end
+		if self.team_btn then self.team_btn:Show(false) end
+		if self.fe_launcher_btn then self.fe_launcher_btn:Show(false) end
+		if self.apps_mid_cont then self.apps_mid_cont:Show(false) end
+		if self.team_mid_cont then self.team_mid_cont:Show(false) end
+		if self.main_arrow then self.main_arrow:Show(false) end
+		self.cur_tree = "network_locked"
+		return
+	end
+
 	local visual_slot = 0
 	self.tab_visual_positions = self.tab_visual_positions or {}
 	self:ComputeSlotStep()
@@ -1258,6 +1306,13 @@ function CustomPDAX:ResetUpperMenus()
 		self:ResetTaskMenu()		-- 7
 	end
 
+	-- whole-Network tier lock: show the notice in place of the interface
+	if self:is_network_locked() and self.restricted_text then
+		self.cur_tree = "network_locked"
+		self.restricted_text:SetText(gt("pda_inter_network_locked"))
+		self.restricted_text:Show(true)
+	end
+
 end
 
 function CustomPDAX:ResetLowerMenus()
@@ -1283,6 +1338,17 @@ function CustomPDAX:is_category_allowed(num)
 		min_tier = pda_inter_mcm.get_config("tier_min_" .. key) or 1
 	end
 	return get_pda_tier() >= min_tier
+end
+
+-- Whole-Network tier lock (FE-style): when the actor's PDA tier is below the MCM
+-- threshold the entire interface is hidden and only a notice is shown. 0 = disabled.
+function CustomPDAX:is_network_locked()
+	local min_tier = 0
+	if pda_inter_mcm and pda_inter_mcm.get_config then
+		min_tier = pda_inter_mcm.get_config("network_min_tier") or 0
+	end
+	if min_tier <= 0 then return false end
+	return get_pda_tier() < min_tier
 end
 
 -- ### ON CLICK EVENTS
@@ -1547,6 +1613,68 @@ function CustomPDAX:Update()
 
 	-- Games (slots and snake)
 	self:GamesUpdate()
+
+	-- auto-toggle PDA control (input capture) based on whether the cursor is over a text
+	-- input, so the player can type without clicking the lock button. Edge-triggered:
+	-- enter -> enable (and remember we did it); leave -> disable, but ONLY if we were the
+	-- ones who enabled it (manual lock-button use is left untouched).
+	local inputs = { self.notes_input_box, self.notes_picker_input, self.stalker_box_find, self.trade_quan_input }
+	local over = false
+	for i = 1, #inputs do
+		local b = inputs[i]
+		if b and b:IsShown() and b:IsCursorOverWindow() then
+			over = true
+			break
+		end
+	end
+	if over and (not self._input_hover) then
+		if not M_locked then
+			self:OnClickNotesLock()			-- enable control
+			self._auto_locked = true
+		end
+	elseif (not over) and self._input_hover then
+		if self._auto_locked and M_locked then
+			self:OnClickNotesLock()			-- disable control we auto-enabled
+		end
+		self._auto_locked = false
+	end
+	self._input_hover = over
+
+	-- control is off (e.g. user toggled the lock button manually) -> forget the auto flag,
+	-- so we never auto-disable a state the player set themselves.
+	if not M_locked then self._auto_locked = false end
+
+	-- notes list: reveal a row's delete [X] only while that row is hovered
+	if self.cur_tree == 5 and self.notes_tab == 1 and self.notes_rows then
+		for i = 1, #self.notes_rows do
+			local r = self.notes_rows[i]
+			if r and r.del and r.cont then
+				local a = (r.cont:IsCursorOverWindow() or r.del:IsCursorOverWindow()) and 255 or 0
+				if r._del_a ~= a then
+					r._del_a = a
+					r.del:SetTextureColor(GetARGB(a, 255, 255, 255))
+					r.del:TextControl():SetTextColor(GetARGB(a, 190, 0, 0))
+				end
+			end
+		end
+	end
+end
+
+-- delete the last char from the active text input of the current tab. notes_picker_input
+-- is intentionally excluded (it coexists with notes_input_box on the Notes tab); the
+-- three below are each the sole text field of their tab, so "first shown" picks correctly.
+function CustomPDAX:DeleteFocusedChar()
+	local boxes = { self.notes_input_box, self.stalker_box_find, self.trade_quan_input }
+	for i = 1, #boxes do
+		local b = boxes[i]
+		if b and b:IsShown() then
+			local t = b:GetText()
+			if t and t ~= "" then
+				b:SetText(string.sub(t, 1, -2))
+			end
+			return
+		end
+	end
 end
 
 function CustomPDAX:managecontrols(key, keyboard_action)
@@ -1872,6 +2000,7 @@ function on_game_start()
 	RegisterScriptCallback("load_state", load_state)
 	RegisterScriptCallback("actor_on_update", actor_on_update)
 	RegisterScriptCallback("on_before_key_press", on_before_key_press)
+	RegisterScriptCallback("on_key_hold", on_key_hold)
 	RegisterScriptCallback("on_before_save_input", on_before_save_input)
 	RegisterScriptCallback("actor_on_first_update", actor_on_first_update)
 	RegisterScriptCallback("on_option_change", on_option_change)

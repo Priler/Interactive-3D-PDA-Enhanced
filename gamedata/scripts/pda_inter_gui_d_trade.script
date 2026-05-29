@@ -89,6 +89,7 @@ function CustomPDAX:BuildTradeUpperMenu()
 
 			-- string name for tooltip
 			self.trade_categories[group].item_btns[size].str_name = inv_name
+			self.trade_categories[group].item_btns[size].item_sec = item_sec	-- for hover price
 
 			-- add button
 			self.trade_categories[group].item_btns[size].btn = xml:Init3tButton("mid_container_4:item_main_cont:btn", self.trade_categories[group].item_btns[size].cont)
@@ -567,7 +568,18 @@ function CustomPDAX:TradeUpdate()
 			self._trade_tooltip_shown = true
 		end
 		if self._trade_tooltip_last ~= hovered.str_name then
-			self.trade_tooltip:TextControl():SetText(gt(hovered.str_name))
+			local txt = gt(hovered.str_name)
+			-- optionally append an approximate price (base cost * price multiplier).
+			-- Approximate: the real offer also depends on trader, condition and delivery.
+			if hovered.item_sec and pda_inter_mcm.get_config("market_show_price") then
+				local cost = ini_sys:r_float_ex(hovered.item_sec, "cost") or 0
+				local mult = pda_inter_mcm.get_config("trade_price_mult") or 1.0
+				local approx = math.floor(cost * mult)
+				if approx > 0 then
+					txt = txt .. "  ~" .. approx .. " RU"
+				end
+			end
+			self.trade_tooltip:TextControl():SetText(txt)
 			self._trade_tooltip_last = hovered.str_name
 		end
 	elseif self._trade_tooltip_shown then

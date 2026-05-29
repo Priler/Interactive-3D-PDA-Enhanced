@@ -231,6 +231,20 @@
 		<text>Off (default): traders may broker any item in a category they sell (sells AKs, can offer SR-25). On: traders only offer the exact items in their buy_supplies list. Realistic but very restrictive.</text>
 	</string>
 
+	<string id="ui_mcm_pda_inter_pda_trade_exclude_ltx_weapons">
+		<text>Weapons from NPC loadouts only</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_exclude_ltx_weapons_desc">
+		<text>On (default): the weapon list (pistols/rifles/shotguns/snipers/SMGs/explosives) is built only from guns NPCs can actually spawn with (npc_loadouts.ltx), so it stays in sync with your modpack. Off: also include the mod's static built-in weapon list. Ignored if no loadout file is found (then the static list is always used).</text>
+	</string>
+
+	<string id="ui_mcm_pda_inter_pda_trade_market_show_price">
+		<text>Show approximate price on hover</text>
+	</string>
+	<string id="ui_mcm_pda_inter_pda_trade_market_show_price_desc">
+		<text>On (default): hovering an item in the market appends an approximate price (~RU) to its name. The real offer still varies by trader, item condition and delivery fee.</text>
+	</string>
+
 	<string id="ui_mcm_pda_inter_pda_trade_trade_exclude_items">
 		<text>Excluded items (section IDs)</text>
 	</string>
@@ -905,6 +919,7 @@
 	<string id="ui_mcm_pda_inter_tieraccesstitle">
 		<text>Minimum PDA tier required per category (1 = any PDA)</text>
 	</string>
+	<string id="ui_mcm_pda_inter_pda_tier_access_network_min_tier"><text>Lock entire Network below PDA tier (0 = off)</text></string>
 	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_raid"><text>Raid - minimum PDA tier</text></string>
 	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_info"><text>Buy Info - minimum PDA tier</text></string>
 	<string id="ui_mcm_pda_inter_pda_tier_access_tier_min_games"><text>Games - minimum PDA tier</text></string>

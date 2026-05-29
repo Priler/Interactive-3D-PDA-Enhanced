@@ -662,13 +662,25 @@
 	<mid_container_5 x="212" y="20" width="575" height="290" stretch="1">
 		<texture r="190" g="190" b="190" a="0">none.dds</texture>
 
-		<!-- Notes scrollbar -->
-		<notes_scrollbar x="0" y="0" width="575" height="225" right_ident="0" left_ident="0" top_indent="0" bottom_indent="0" vert_interval="0" always_show_scroll="0" stretch="1"/>
-
-		<!-- Notes text window -->
-		<notes_text_wnd x="0" y="0" width="553" height="600">
+		<!-- Sticky money tracker line (always visible above the scrolling notes) -->
+		<notes_economy_wnd x="0" y="0" width="553" height="24">
 			<text complex_mode="1" r="190" g="190" b="190" vert_align="t" align="l" font="letterica18"></text>
-		</notes_text_wnd>
+		</notes_economy_wnd>
+
+		<!-- Notes scrollbar (sits below the sticky money line) -->
+		<notes_scrollbar x="0" y="26" width="575" height="199" right_ident="0" left_ident="0" top_indent="0" bottom_indent="0" vert_interval="0" always_show_scroll="0" stretch="1"/>
+
+		<!-- Per-note row: striped background container, note text, and delete [X] -->
+		<notes_row_cont x="0" y="0" width="553" height="25">
+			<texture>none.dds</texture>
+		</notes_row_cont>
+		<notes_row_text x="6" y="2" width="495" height="25">
+			<text complex_mode="1" r="190" g="190" b="190" vert_align="t" align="l" font="letterica18"></text>
+		</notes_row_text>
+		<notes_row_del_btn x="525" y="2" width="22" height="21" check_mode="0">
+			<text complex_mode="1" align="c" vert_align="c" r="190" g="0" b="0" font="graffiti22">X</text>
+			<texture>ui_inter_pda_btn</texture>
+		</notes_row_del_btn>
 
 		<!-- Notes picker Hint -->
 		<notes_picker_hint x="375" y="225" width="100" height="20">
@@ -693,7 +705,7 @@
 
 		<!-- Notes input box -->
 		<notes_input_box x="0" y="250" width="525" height="20">
-			<text complex_mode="1" r="190" g="190" b="190" vert_align="t" align="l" font="letterica18" />
+			<text x="6" complex_mode="1" r="190" g="190" b="190" vert_align="c" align="l" font="letterica18" />
 			<texture>ui_inGame2_edit_box_2</texture>
 		</notes_input_box>
 

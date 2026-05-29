@@ -17,32 +17,12 @@ function CustomPDAX:BuildNotesUpperMenu()
 	self.notes_switch_btn:TextControl():SetText(gt("pda_notes_switch_to_" .. self.notes_tab))
 
 	-- Notes tab
-	-- Add economy report at top
-	local economy_str = ""
-	if pda_inter_economy and pda_inter_economy.get_economy_report then
-		economy_str = pda_inter_economy.get_economy_report()
-	end
-	
-	-- load if array exist and insert all elements as one big string
-	local big_str = economy_str
-	if #pmain.pda_notes_t > 0 then
-		local white_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 255)
-		local yel_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 0)
-		local def_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
-		for i = 1, #pmain.pda_notes_t do
-			big_str = big_str .. yel_clr_str .. pmain.pda_notes_t[i][1] .. white_clr_str .. pmain.pda_notes_t[i][2] .. def_clr_str .. pmain.pda_notes_t[i][3]
-		end
-	end
+	-- sticky money tracker line (outside the scroll, so it stays visible while scrolling)
+	self.notes_economy_wnd = xml:InitTextWnd("mid_container_5:notes_economy_wnd", self.pda_t[5].mid_cont)
 
-	-- text and scroll
+	-- scrolling notes list (per-note rows are (re)built in UpdNotesMenu)
 	self.notes_scroll = xml:InitScrollView("mid_container_5:notes_scrollbar", self.pda_t[5].mid_cont)
-
-	self.notes_text_wnd = xml:InitTextWnd("mid_container_5:notes_text_wnd", self.notes_scroll)
-	self.notes_text_wnd:SetText(big_str)
-
-	self.notes_text_wnd:AdjustHeightToText()
-
-	self.notes_text_wnd:SetAutoDelete(false)
+	self.notes_rows = {}
 
 	-- note picker
 	self.notes_picker_hint = xml:InitTextWnd("mid_container_5:notes_picker_hint", self.pda_t[5].mid_cont)
@@ -272,7 +252,7 @@ function CustomPDAX:OnClickNotesSwitch()
 
 	-- hide/show Notes elements
 	self.notes_scroll:Show(show_notes)
-	self.notes_text_wnd:Show(show_notes)
+	self.notes_economy_wnd:Show(show_notes)
 	self.notes_picker_hint:Show(show_notes)
 	self.notes_picker_input:Show(show_notes)
 	self.notes_edit_btn:Show(show_notes)
@@ -307,42 +287,75 @@ end
 
 function CustomPDAX:UpdNotesMenu()
 	-- Safety check: Notes tab may not be built yet (lazy loading)
-	if not self.notes_text_wnd then
+	if not self.notes_scroll then
 		return
 	end
 
-	-- reset scroll and rebuild/adjust all the text based on pda_msg_states table
-	local big_str = ""
-	
-	-- Add economy report at top
-	if pda_inter_economy and pda_inter_economy.get_economy_report then
-		big_str = pda_inter_economy.get_economy_report()
+	-- sticky money tracker (lives outside the scroll, always visible)
+	if self.notes_economy_wnd and pda_inter_economy and pda_inter_economy.get_economy_report then
+		self.notes_economy_wnd:SetText(pda_inter_economy.get_economy_report())
 	end
-	
+
 	local white_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 255)
 	local yel_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 0)
 	local def_clr_str = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
 
+	-- rebuild per-note rows (striped background + text + delete [X])
+	self.notes_scroll:Clear()
+	self.notes_rows = {}
+
 	for i = 1, #pmain.pda_notes_t do
-		-- add new index string
 		pmain.pda_notes_t[i][1] = "#" .. i
 
-		big_str = big_str .. yel_clr_str .. pmain.pda_notes_t[i][1] .. white_clr_str .. pmain.pda_notes_t[i][2] .. def_clr_str .. pmain.pda_notes_t[i][3]
+		local row = {}
+
+		-- striped background container: stretch the 1px white none.dds and tint it. Every
+		-- second note (2nd, 4th, ...) gets a faint light overlay; the rest stay transparent,
+		-- so the first note has no background.
+		row.cont = self.xml:InitStatic("mid_container_5:notes_row_cont", self.notes_scroll)
+		row.cont:SetStretchTexture(true)
+		local a = (i % 2 == 0) and 22 or 0
+		row.cont:SetTextureColor(GetARGB(a, 255, 255, 255))
+
+		-- note text
+		row.text = self.xml:InitTextWnd("mid_container_5:notes_row_text", row.cont)
+		row.text:SetText(yel_clr_str .. pmain.pda_notes_t[i][1] .. white_clr_str .. pmain.pda_notes_t[i][2] .. def_clr_str .. pmain.pda_notes_t[i][3])
+		row.text:AdjustHeightToText()
+
+		-- size container to the text height (min one row tall)
+		local th = row.text:GetHeight()
+		local rh = (th < 25) and 25 or th
+		row.cont:SetWndSize(vector2():set(553, rh))
+
+		-- delete [X] button (right side). Transparent by default, made fully visible on
+		-- hover (handled per-frame in CustomPDAX:Update).
+		row.del = self.xml:Init3tButton("mid_container_5:notes_row_del_btn", row.cont)
+		self:Register(row.del, "notes_del_btn_" .. i)
+		row.del:SetTextureColor(GetARGB(0, 255, 255, 255))
+		row.del:TextControl():SetTextColor(GetARGB(0, 190, 0, 0))
+		row._del_a = 0
+		CustomPDAX["OnClickNoteDelete_" .. i] = function(self) self:OnClickNoteDelete(i) end
+		self:AddCallback("notes_del_btn_" .. i, ui_events.BUTTON_CLICKED, CustomPDAX["OnClickNoteDelete_" .. i], self)
+
+		self.notes_scroll:AddWindow(row.cont, true)
+		self.notes_rows[i] = row
 	end
-
-	self.notes_text_wnd:SetText(big_str)
-
-	self.notes_text_wnd:AdjustHeightToText()
-
-	self.notes_scroll:Clear()
-	self.notes_scroll:AddWindow(self.notes_text_wnd, true)
-	self.notes_text_wnd:SetAutoDelete(false)
 
 	self.notes_scroll:ScrollToEnd()
 
 	-- reset input box
 	self.notes_input_box:SetText("")
 
+end
+
+-- delete a specific note via its row [X] button
+function CustomPDAX:OnClickNoteDelete(idx)
+	if not pmain.pda_notes_t[idx] then return end
+	table.remove(pmain.pda_notes_t, idx)
+	self.notes_picker_input:SetText("")
+	self.selected_edit_note = nil
+	self.notes_input_confirm_btn:TextControl():SetText(gt("pda_notes_add_btn"))
+	self:UpdNotesMenu()
 end
 
 function CustomPDAX:UpdNotesTasks()

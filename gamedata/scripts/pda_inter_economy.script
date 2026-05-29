@@ -1,64 +1,84 @@
 -- PDA Interactive Economy Tracker
--- properly accumulates money changes
+--   Today  = net balance change during the current in-game day (income - spending, +/-)
+--   Week   = net balance change over the last 7 in-game days (rolling window, +/-)
+--   Total  = GROSS income all-time (positive changes only; spending never subtracted,
+--            since you can never have spent more than you ever earned)
 
 local gt = game.translate_string
 local math_floor = math.floor
 
 -- tracking state
 local prev_money = nil
-local today_net = 0
-local week_net = 0
-local total_net = 0
-local cur_day = 0
-local cur_week = 0
+local total_earn = 0       -- all-time gross income (positive diffs only)
+local daily_net = {}       -- absolute-day-index -> NET balance change that day (+/-)
+local cur_day = nil        -- current absolute day index
 local tmr = 0
 
-local function get_day()
-    local Y, M, D = 0, 0, 0
-    Y, M, D = game.get_game_time():get(Y, M, D, 0, 0, 0, 0)
-    return Y * 365 + M * 30 + D
+local WEEK_DAYS = 7
+
+-- Days-from-civil (Howard Hinnant's algorithm): a TRUE absolute day index from a
+-- calendar date, so day-changes and the rolling 7-day window are exact across month
+-- and year boundaries (Y*365+M*30+D-style keys are not contiguous and drift).
+local function days_from_civil(y, m, d)
+    y = (m <= 2) and (y - 1) or y
+    local era = math_floor((y >= 0 and y or (y - 399)) / 400)
+    local yoe = y - era * 400
+    local doy = math_floor((153 * ((m > 2) and (m - 3) or (m + 9)) + 2) / 5) + d - 1
+    local doe = yoe * 365 + math_floor(yoe / 4) - math_floor(yoe / 100) + doy
+    return era * 146097 + doe - 719468
 end
 
-local function get_week()
-    return math_floor(get_day() / 7)
+local function get_abs_day()
+    local Y, M, D = 0, 0, 0
+    Y, M, D = game.get_game_time():get(Y, M, D, 0, 0, 0, 0)
+    return days_from_civil(Y, M, D)
+end
+
+-- advance to a new in-game day, dropping net entries outside the rolling 7-day window
+local function roll_day(ad)
+    if cur_day == nil then
+        cur_day = ad
+        return
+    end
+    if ad ~= cur_day then
+        cur_day = ad
+        for day, _ in pairs(daily_net) do
+            if day <= ad - WEEK_DAYS then
+                daily_net[day] = nil
+            end
+        end
+    end
+end
+
+local function week_sum()
+    local s = 0
+    for _, v in pairs(daily_net) do
+        s = s + v
+    end
+    return s
 end
 
 local function on_update()
     local t = time_global()
     if t < tmr then return end
     tmr = t + 3000
-    
+
     if not db.actor then return end
-    
+
     local money = db.actor:money()
-    local d = get_day()
-    local w = get_week()
-    
+    roll_day(get_abs_day())
+
     -- first run - just store current money, don't count as change
     if prev_money == nil then
         prev_money = money
-        cur_day = d
-        cur_week = w
         return
     end
-    
-    -- check for day/week reset BEFORE calculating diff
-    if d ~= cur_day then
-        today_net = 0
-        cur_day = d
-    end
-    if w ~= cur_week then
-        week_net = 0
-        cur_week = w
-    end
-    
-    -- accumulate changes
+
     local diff = money - prev_money
     if diff ~= 0 then
-        today_net = today_net + diff
-        week_net = week_net + diff
+        daily_net[cur_day] = (daily_net[cur_day] or 0) + diff   -- net (+/-) for today/week
         if diff > 0 then
-            total_net = total_net + diff
+            total_earn = total_earn + diff                      -- gross income only
         end
         prev_money = money
     end
@@ -66,48 +86,33 @@ end
 
 function get_economy_report()
     if not db.actor then return "" end
-    
+
     local money = db.actor:money()
-    local d = get_day()
-    local w = get_week()
-    
-    -- initialize if needed
+    roll_day(get_abs_day())
+
     if prev_money == nil then
         prev_money = money
-        cur_day = d
-        cur_week = w
     end
-    
-    -- check resets
-    if d ~= cur_day then
-        today_net = 0
-        cur_day = d
-    end
-    if w ~= cur_week then
-        week_net = 0
-        cur_week = w
-    end
-    
-    -- capture any pending change
+
+    -- include any not-yet-committed change in the live display
     local diff = money - prev_money
-    local display_today = today_net + diff
-    local display_week = week_net + diff
-    local display_total = total_net + (diff > 0 and diff or 0)
-    if display_total < money then display_total = money end
-    
+    local display_today = (daily_net[cur_day] or 0) + diff
+    local display_week  = week_sum() + diff
+    local display_total = total_earn + ((diff > 0) and diff or 0)
+
     -- colors
     local cg = strformat("%c[%s,%s,%s,%s]", 255, 100, 255, 100)
     local cr = strformat("%c[%s,%s,%s,%s]", 255, 255, 100, 100)
     local cy = strformat("%c[%s,%s,%s,%s]", 255, 255, 255, 0)
     local cx = strformat("%c[%s,%s,%s,%s]", 255, 140, 140, 140)
     local cd = strformat("%c[%s,%s,%s,%s]", 255, 190, 190, 190)
-    
+
     local function f(v)
         if v == 0 then return cx .. "0" .. cd
         elseif v > 0 then return cg .. "+" .. v .. cd
         else return cr .. v .. cd end
     end
-    
+
     local s = cy .. "[" .. gt("pda_economy_title") .. "]" .. cd .. "  "
     s = s .. cx .. gt("pda_economy_today") .. cd .. " " .. f(display_today)
     s = s .. cx .. "  |  " .. cd
@@ -120,37 +125,39 @@ end
 
 local function save_state(m_data)
     if prev_money == nil then return end
-    
-    -- commit any pending diff before save
+
+    -- commit any pending change before save
     local money = db.actor and db.actor:money() or prev_money
     local diff = money - prev_money
     if diff ~= 0 then
-        today_net = today_net + diff
-        week_net = week_net + diff
+        daily_net[cur_day] = (daily_net[cur_day] or 0) + diff
         if diff > 0 then
-            total_net = total_net + diff
+            total_earn = total_earn + diff
         end
         prev_money = money
     end
 
-    m_data.econ3 = {
+    m_data.econ4 = {
         pm = prev_money,
-        td = today_net,
-        wk = week_net,
-        tt = total_net,
+        tt = total_earn,
         cd = cur_day,
-        cw = cur_week,
+        dn = daily_net,
     }
 end
 
 local function load_state(m_data)
-    if m_data.econ3 then
+    if m_data.econ4 then
+        prev_money = m_data.econ4.pm
+        total_earn = m_data.econ4.tt or 0
+        cur_day    = m_data.econ4.cd
+        daily_net  = m_data.econ4.dn or {}
+    elseif m_data.econ3 then
+        -- migrate all-time total from the previous tracker; the daily history can't
+        -- be reconstructed, so Today/Week restart from here.
+        total_earn = m_data.econ3.tt or 0
         prev_money = m_data.econ3.pm
-        today_net = m_data.econ3.td or 0
-        week_net = m_data.econ3.wk or 0
-        total_net = m_data.econ3.tt or 0
-        cur_day = m_data.econ3.cd or 0
-        cur_week = m_data.econ3.cw or 0
+        daily_net = {}
+        cur_day = nil
     end
 end
 
